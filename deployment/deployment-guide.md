@@ -52,16 +52,33 @@ Keep `ENABLE_EMAIL_WORKER=true` in production so Code of Resonance and assessmen
 
 ## 3. Hostinger VPS flow
 
-Install Node 20+, Nginx, PM2, and Git on the VPS. Then place the project at:
+Install Node 20+, Nginx, PM2, and Git on the VPS. If you already created the old folder, remove it first:
 
 ```bash
-/var/www/earned-credibility
+sudo rm -rf /var/www/earned-credibility
+sudo mkdir -p /var/www/magdalene
+sudo chown -R $USER:$USER /var/www/magdalene
+```
+
+Then place the repository at:
+
+```bash
+/var/www/magdalene
+```
+
+The project root must contain `package.json`, `frontend`, `backend`, and `deployment` directly. If you accidentally end up with `/var/www/magdalene/magdalene`, flatten it before installing:
+
+```bash
+cd /var/www/magdalene
+rsync -a magdalene/ ./
+rm -rf magdalene
+test -f package.json && test -d frontend && test -d backend && test -d deployment && echo "Project root is correct"
 ```
 
 Build or upload the already-built frontend so this exists:
 
 ```bash
-/var/www/earned-credibility/frontend/dist/index.html
+/var/www/magdalene/frontend/dist/index.html
 ```
 
 Create the backend production `.env` from `backend/.env.production.example`.
@@ -69,7 +86,7 @@ Create the backend production `.env` from `backend/.env.production.example`.
 If the full repository is on the VPS, install dependencies and build from the project root:
 
 ```bash
-cd /var/www/earned-credibility
+cd /var/www/magdalene
 npm ci
 npm run build --workspace frontend
 pm2 start deployment/ecosystem.config.js --env production
@@ -79,7 +96,7 @@ pm2 save
 If you uploaded the prepared backend archive instead of the full repository, install backend dependencies from the backend folder before starting PM2:
 
 ```bash
-cd /var/www/earned-credibility/backend
+cd /var/www/magdalene/backend
 npm install --omit=dev
 cd ..
 pm2 start deployment/ecosystem.config.js --env production
@@ -89,8 +106,10 @@ pm2 save
 Copy `deployment/nginx.conf` to the Nginx sites folder, enable it, then reload Nginx:
 
 ```bash
-sudo cp deployment/nginx.conf /etc/nginx/sites-available/earned-credibility
-sudo ln -s /etc/nginx/sites-available/earned-credibility /etc/nginx/sites-enabled/earned-credibility
+sudo rm -f /etc/nginx/sites-enabled/earned-credibility
+sudo rm -f /etc/nginx/sites-available/earned-credibility
+sudo cp deployment/nginx.conf /etc/nginx/sites-available/magdalene
+sudo ln -s /etc/nginx/sites-available/magdalene /etc/nginx/sites-enabled/magdalene
 sudo nginx -t
 sudo systemctl reload nginx
 ```
