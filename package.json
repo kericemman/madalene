@@ -1,0 +1,25 @@
+{
+  "name": "earned-credibility-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Earned Credibility Trust Hub and automated assessment platform.",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace backend",
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "start": "npm run start --workspace backend",
+    "seed:email": "npm run seed:email --workspace backend",
+    "seed:assessment": "npm run seed:assessment --workspace backend",
+    "seed:offers": "npm run seed:offers --workspace backend",
+    "seed:code": "npm run seed:code --workspace backend",
+    "seed:admin": "npm run seed:admin --workspace backend"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

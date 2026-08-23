@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /results/
+Disallow: /application/
+Disallow: /booking/
+Disallow: /resources/
+Disallow: /testimonial-request
+
+Sitemap: https://magdalenewambui.com/sitemap.xml

@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-deep-emerald: #0B6E4F;
+  --color-soft-mist-white: #F5F7F4;
+  --color-charcoal: #222222;
+  --color-sage: #DCE8DF;
+  --color-muted-mint: #CFE5D8;
+  --color-primary: var(--color-deep-emerald);
+  --color-emerald: var(--color-deep-emerald);
+  --color-background: var(--color-soft-mist-white);
+  --color-white: var(--color-soft-mist-white);
+  color: var(--color-charcoal);
+  background: var(--color-soft-mist-white);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+.font-serif {
+  font-family: "Newsreader", Georgia, "Times New Roman", serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(11, 110, 79, 0.3);
+  outline-offset: 3px;
+}
+
+.container-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+@layer components {
+  .input {
+    width: 100%;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(34, 34, 34, 0.14);
+    background: var(--color-soft-mist-white);
+    padding: 0.75rem;
+    color: var(--color-charcoal);
+    box-shadow: none;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .input::placeholder {
+    color: rgba(11, 110, 79, 0.58);
+  }
+
+  .input:hover,
+  .input:focus {
+    border-color: var(--color-emerald);
+  }
+
+  .tiptap-editor .ProseMirror {
+    min-height: 320px;
+  }
+
+  .tiptap-editor .ProseMirror > * + * {
+    margin-top: 0.9rem;
+  }
+
+  .tiptap-editor h2 {
+    font-family: "Newsreader", Georgia, "Times New Roman", serif;
+    font-size: 1.75rem;
+    line-height: 1.15;
+  }
+
+  .tiptap-editor h3 {
+    font-family: "Newsreader", Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+    line-height: 1.25;
+  }
+
+  .tiptap-editor ul,
+  .tiptap-editor ol {
+    padding-left: 1.25rem;
+  }
+
+  .tiptap-editor ul {
+    list-style: disc;
+  }
+
+  .tiptap-editor ol {
+    list-style: decimal;
+  }
+
+  .tiptap-editor blockquote {
+    border-left: 3px solid var(--color-deep-emerald);
+    color: rgba(34, 34, 34, 0.72);
+    padding-left: 1rem;
+  }
+
+  .tiptap-editor a {
+    color: var(--color-deep-emerald);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .tiptap-editor img {
+    border: 1px solid var(--color-sage);
+    border-radius: 0.5rem;
+    display: block;
+    height: auto;
+    margin-block: 1rem;
+    margin-inline: auto;
+    max-height: 280px;
+    max-width: min(100%, 520px);
+    object-fit: contain;
+  }
+
+  .tiptap-editor iframe {
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--color-sage);
+    border-radius: 0.5rem;
+    display: block;
+    margin-block: 1rem;
+    margin-inline: auto;
+    max-height: 360px;
+    max-width: 640px;
+    width: 100%;
+  }
+
+  .code-entry-content img {
+    border: 1px solid var(--color-sage);
+    border-radius: 0.5rem;
+    display: block;
+    height: auto;
+    margin: 1rem auto;
+    max-height: 320px;
+    max-width: min(100%, 560px);
+    object-fit: contain;
+  }
+
+  .code-entry-content iframe {
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--color-sage);
+    border-radius: 0.5rem;
+    display: block;
+    margin: 1rem auto;
+    max-height: 380px;
+    max-width: 680px;
+    width: 100%;
+  }
+}
