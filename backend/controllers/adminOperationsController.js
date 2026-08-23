@@ -280,7 +280,7 @@ const toAbsoluteUrl = (value) => {
   const rawValue = String(value || "/assessment").trim();
   if (/^(https?:|mailto:|tel:)/i.test(rawValue)) return rawValue;
 
-  const appUrl = String(env.appUrl || env.frontendUrl || "http://localhost:5173").replace(/\/+$/, "");
+  const appUrl = String(env.frontendUrl || env.appUrl || "http://localhost:5173").replace(/\/+$/, "");
   return rawValue.startsWith("/") ? `${appUrl}${rawValue}` : `${appUrl}/${rawValue}`;
 };
 
@@ -892,7 +892,7 @@ export const updateApplication = asyncHandler(async (req, res) => {
   if (statusChanged && ["accepted", "not_ready", "declined"].includes(application.status)) {
     const offer = application.offer ? await Offer.findById(application.offer).lean() : null;
     const isAccepted = application.status === "accepted";
-    const appUrl = String(env.appUrl || env.frontendUrl || "http://localhost:5173").replace(/\/+$/, "");
+    const appUrl = String(env.frontendUrl || env.appUrl || "http://localhost:5173").replace(/\/+$/, "");
     const bookingUrl =
       offer?.externalBookingUrl ||
       oneToOneBookingUrl() ||

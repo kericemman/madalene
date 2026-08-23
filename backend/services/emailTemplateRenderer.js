@@ -9,15 +9,46 @@ const escapeHtml = (value) =>
     .replaceAll("'", "&#039;");
 
 const trimTrailingSlash = (value) => String(value || "").replace(/\/+$/, "");
+const localFrontendUrlPattern = /https?:\/\/(?:localhost|127\.0\.0\.1):(?:5173|5174|5175|5176|5177|5178|5179)/g;
+const localBackendUrlPattern = /https?:\/\/(?:localhost|127\.0\.0\.1):(?:5000|5050|5051|5060)/g;
+
+const escapeRegExp = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const apiOriginFromUrl = (value, fallback) => {
+  const cleanValue = trimTrailingSlash(value || "");
+  if (!cleanValue) return fallback;
+
+  return cleanValue.replace(/\/api$/i, "");
+};
+
+const toPublicUrl = (value, baseUrl) => {
+  const trimmedValue = String(value || "").trim();
+  if (!trimmedValue) return "";
+  if (/^https?:\/\//i.test(trimmedValue)) return trimmedValue;
+
+  return `${baseUrl}${trimmedValue.startsWith("/") ? "" : "/"}${trimmedValue}`;
+};
 
 const brandVariables = () => {
-  const appUrl = trimTrailingSlash(env.appUrl || env.frontendUrl || "http://localhost:5173");
+  const frontendUrl = trimTrailingSlash(env.frontendUrl || env.appUrl || "http://localhost:5173");
+  const logoUrl = toPublicUrl(env.emailLogoUrl, frontendUrl) || `${frontendUrl}/email/mw-lockup-dark-crop.png`;
 
   return {
-    brandHomeUrl: appUrl,
-    brandLogoUrl: env.emailLogoUrl || `${appUrl}/email/mw-lockup-dark-crop.png`,
+    brandHomeUrl: frontendUrl,
+    brandLogoUrl: logoUrl,
     currentYear: new Date().getFullYear()
   };
+};
+
+const normalizeRenderedUrls = (content = "") => {
+  const frontendUrl = trimTrailingSlash(env.frontendUrl || env.appUrl || "http://localhost:5173");
+  const apiOrigin = apiOriginFromUrl(env.apiUrl, "https://api.magdalenewambui.com");
+  const apiEmailPattern = new RegExp(`${escapeRegExp(apiOrigin)}/email/`, "g");
+
+  return String(content)
+    .replace(localFrontendUrlPattern, frontendUrl)
+    .replace(localBackendUrlPattern, apiOrigin)
+    .replace(apiEmailPattern, `${frontendUrl}/email/`);
 };
 
 export const renderTemplate = (template, variables = {}) => {
@@ -36,7 +67,7 @@ export const renderTemplate = (template, variables = {}) => {
 
   return {
     subject: replace(template.subject),
-    html: replace(template.html),
-    text: replace(template.text || "", false)
+    html: normalizeRenderedUrls(replace(template.html)),
+    text: normalizeRenderedUrls(replace(template.text || "", false))
   };
 };

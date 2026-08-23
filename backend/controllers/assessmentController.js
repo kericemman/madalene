@@ -130,7 +130,7 @@ const toAbsoluteUrl = (value = "/contact") => {
   const rawValue = String(value || "/contact").trim();
   if (/^(https?:|mailto:|tel:)/i.test(rawValue)) return rawValue;
 
-  const appUrl = String(env.appUrl || env.frontendUrl || "http://localhost:5173").replace(/\/+$/, "");
+  const appUrl = String(env.frontendUrl || env.appUrl || "http://localhost:5173").replace(/\/+$/, "");
   return rawValue.startsWith("/") ? `${appUrl}${rawValue}` : `${appUrl}/${rawValue}`;
 };
 
