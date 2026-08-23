@@ -76,7 +76,7 @@ describe("renderTemplate", () => {
     env.emailLogoUrl = original.emailLogoUrl;
 
     expect(rendered.html).toContain('href="https://magdalenewambui.com"');
-    expect(rendered.html).toContain('src="https://magdalenewambui.com/email/mw-lockup-dark-crop.png"');
+    expect(rendered.html).toContain('src="https://magdalenewambui.com/email/mw-lockup-transparent.png"');
     expect(rendered.html).not.toContain("https://api.magdalenewambui.com/email");
   });
 
@@ -98,7 +98,7 @@ describe("renderTemplate", () => {
     env.frontendUrl = original.frontendUrl;
     env.emailLogoUrl = original.emailLogoUrl;
 
-    expect(rendered.html).toContain('src="https://magdalenewambui.com/email/mw-lockup-dark-crop.png"');
+    expect(rendered.html).toContain('src="https://magdalenewambui.com/email/mw-lockup-transparent.png"');
   });
 
   it("rewrites old localhost frontend links in saved email buttons", () => {
@@ -143,7 +143,7 @@ describe("renderTemplate", () => {
     env.frontendUrl = original.frontendUrl;
     env.apiUrl = original.apiUrl;
 
-    expect(rendered.html).toContain('src="https://magdalenewambui.com/email/mw-lockup-dark-crop.png"');
-    expect(rendered.text).toContain("https://magdalenewambui.com/email/mw-lockup-dark-crop.png");
+    expect(rendered.html).toContain('src="https://magdalenewambui.com/email/mw-lockup-transparent.png"');
+    expect(rendered.text).toContain("https://magdalenewambui.com/email/mw-lockup-transparent.png");
   });
 });

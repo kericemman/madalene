@@ -11,6 +11,9 @@ const escapeHtml = (value) =>
 const trimTrailingSlash = (value) => String(value || "").replace(/\/+$/, "");
 const localFrontendUrlPattern = /https?:\/\/(?:localhost|127\.0\.0\.1):(?:5173|5174|5175|5176|5177|5178|5179)/g;
 const localBackendUrlPattern = /https?:\/\/(?:localhost|127\.0\.0\.1):(?:5000|5050|5051|5060)/g;
+const emailLogoPath = "/email/mw-lockup-transparent.png";
+const legacyEmailLogoFilename = "mw-lockup-dark-crop.png";
+const emailLogoFilename = "mw-lockup-transparent.png";
 
 const escapeRegExp = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -29,9 +32,11 @@ const toPublicUrl = (value, baseUrl) => {
   return `${baseUrl}${trimmedValue.startsWith("/") ? "" : "/"}${trimmedValue}`;
 };
 
+const normalizeEmailLogoAsset = (value = "") => String(value).replaceAll(legacyEmailLogoFilename, emailLogoFilename);
+
 const brandVariables = () => {
   const frontendUrl = trimTrailingSlash(env.frontendUrl || env.appUrl || "http://localhost:5173");
-  const logoUrl = toPublicUrl(env.emailLogoUrl, frontendUrl) || `${frontendUrl}/email/mw-lockup-dark-crop.png`;
+  const logoUrl = normalizeEmailLogoAsset(toPublicUrl(env.emailLogoUrl, frontendUrl)) || `${frontendUrl}${emailLogoPath}`;
 
   return {
     brandHomeUrl: frontendUrl,
@@ -48,7 +53,8 @@ const normalizeRenderedUrls = (content = "") => {
   return String(content)
     .replace(localFrontendUrlPattern, frontendUrl)
     .replace(localBackendUrlPattern, apiOrigin)
-    .replace(apiEmailPattern, `${frontendUrl}/email/`);
+    .replace(apiEmailPattern, `${frontendUrl}/email/`)
+    .replaceAll(legacyEmailLogoFilename, emailLogoFilename);
 };
 
 export const renderTemplate = (template, variables = {}) => {

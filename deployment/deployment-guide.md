@@ -48,6 +48,8 @@ Required backend production secrets:
 - `CLOUDINARY_API_SECRET`
 - `OPENAI_API_KEY` if AI scoring is enabled
 
+Use `EMAIL_LOGO_URL=https://magdalenewambui.com/email/mw-lockup-transparent.png` so email headers use the transparent logo asset.
+
 Keep `ENABLE_EMAIL_WORKER=true` in production so Code of Resonance and assessment follow-up emails are delivered.
 
 ## 3. Hostinger VPS flow
