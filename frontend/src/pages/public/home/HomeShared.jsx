@@ -13,7 +13,7 @@ export function SectionEyebrow({ children, light = false }) {
 export function DarkTexture() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(207,229,216,0.12),transparent_34%,rgba(34,34,34,0.28)),linear-gradient(180deg,rgba(245,247,244,0.08),transparent_48%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(184,216,197,0.12),transparent_34%,rgba(26,26,26,0.28)),linear-gradient(180deg,rgba(247,248,246,0.08),transparent_48%)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-mistWhite/10" />
       <div className="absolute inset-x-0 bottom-0 h-px bg-mistWhite/10" />
     </div>
@@ -48,14 +48,14 @@ export function MagnificImage({
       className={`group relative overflow-hidden rounded border ${
         dark
           ? "border-mistWhite/20 bg-mistWhite/[0.06] shadow-[0_24px_50px_rgba(0,0,0,0.28)]"
-          : "border-sage bg-sage/30 shadow-[0_14px_32px_rgba(34,34,34,0.05)]"
+          : "border-sage bg-sage/30 shadow-[0_14px_32px_rgba(26,26,26,0.05)]"
       } ${className}`}
     >
       <img
         src={imageSrc}
         alt={imageAlt}
         loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : undefined}
+        fetchpriority={priority ? "high" : undefined}
         referrerPolicy="no-referrer"
         className={`${resolvedSize} w-full object-cover transition duration-700 group-hover:scale-[1.025]`}
         style={{ objectPosition: resolvedPosition }}
@@ -63,8 +63,8 @@ export function MagnificImage({
       <div
         className={`pointer-events-none absolute inset-0 ${
           dark
-            ? "bg-[linear-gradient(180deg,rgba(34,34,34,0.04),rgba(34,34,34,0.38)),linear-gradient(115deg,rgba(11,110,79,0.28),transparent_46%)]"
-            : "bg-[linear-gradient(180deg,rgba(245,247,244,0),rgba(245,247,244,0.2)),linear-gradient(115deg,rgba(11,110,79,0.16),transparent_45%)]"
+            ? "bg-[linear-gradient(180deg,rgba(26,26,26,0.04),rgba(26,26,26,0.38)),linear-gradient(115deg,rgba(15,77,62,0.28),transparent_46%)]"
+            : "bg-[linear-gradient(180deg,rgba(247,248,246,0),rgba(247,248,246,0.2)),linear-gradient(115deg,rgba(15,77,62,0.16),transparent_45%)]"
         }`}
         aria-hidden="true"
       />
@@ -76,7 +76,7 @@ export function ResourceCard({ resource }) {
   const Icon = resource.icon;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded border border-sage bg-mistWhite shadow-[0_18px_40px_rgba(34,34,34,0.05)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded border border-sage bg-mistWhite shadow-[0_18px_40px_rgba(26,26,26,0.05)]">
       <MagnificImage image={resource.image} size="compact" className="border-0 shadow-none" />
       <div className="flex flex-1 flex-col p-5">
         <Icon className="text-deepEmerald" size={24} aria-hidden="true" />
@@ -97,7 +97,7 @@ export function OfferCard({ offer }) {
   const remainingBullets = Math.max(offer.bullets.length - visibleBullets.length, 0);
 
   return (
-    <article className={`group relative flex h-full flex-col overflow-hidden rounded border p-5 shadow-[0_16px_34px_rgba(34,34,34,0.055)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_44px_rgba(34,34,34,0.09)] sm:p-6 xl:min-h-[620px] ${
+    <article className={`group relative flex h-full flex-col overflow-hidden rounded border p-5 shadow-[0_16px_34px_rgba(26,26,26,0.055)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_44px_rgba(26,26,26,0.09)] sm:p-6 xl:min-h-[620px] ${
       featured
         ? "border-charcoal bg-charcoal text-mistWhite"
         : "border-sage bg-white text-charcoal"

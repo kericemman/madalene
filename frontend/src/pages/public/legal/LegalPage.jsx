@@ -143,7 +143,7 @@ export default function LegalPage({ page: pageProp }) {
           Back to home
         </Link>
 
-        <section className="mt-8 border border-sage bg-white p-6 shadow-[0_18px_42px_rgba(34,34,34,0.055)] sm:p-10">
+        <section className="mt-8 border border-sage bg-white p-6 shadow-[0_18px_42px_rgba(26,26,26,0.055)] sm:p-10">
           <Icon className="text-deepEmerald" size={28} aria-hidden="true" />
           <p className="mt-7 text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">{content.eyebrow}</p>
           <h1 className="mt-3 font-serif text-4xl leading-tight text-charcoal sm:text-5xl">{content.title}</h1>

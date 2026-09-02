@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, Quote, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import SiteButton from "../../../components/SiteButton.jsx";
 import { listPublicReviews } from "../../../services/api.js";
@@ -11,15 +11,6 @@ const recognitionQuotes = [
   "I really care about my clients.",
   "My qualifications.",
   "My method is holistic."
-];
-
-const buriedDifferentiators = [
-  "The experiences that changed how you see your work.",
-  "The patterns you've noticed after years of practice.",
-  "The stories that shaped your philosophy.",
-  "The results you've repeatedly created.",
-  "The beliefs you hold that others in your industry don't.",
-  "The things you know now that you couldn't have known when you started."
 ];
 
 const costPoints = [
@@ -76,12 +67,10 @@ const transformationRows = [
 ];
 
 const deliverables = [
-  ["Your Core Expertise Assets", "The knowledge and patterns strengthening your authority."],
-  ["Your Lived Experience Assets", "The experiences that give your work depth and context."],
-  ["Your Strategic Stories", "The stories worth associating with your brand."],
-  ["Your Proof Assets", "The evidence that makes your authority believable."],
-  ["Your Perspective Assets", "The beliefs and ideas that can make your thinking recognisable."],
-  ["Your Positioning Direction", "Where these assets point strategically."]
+  ["What makes your authority meaningfully different", "The distinct qualities and depth that set you apart from others."],
+  ["Which parts of your experience strengthen that distinction", "The foundational moments and patterns that back up your expertise."],
+  ["What proof deserves greater visibility", "The evidence and accomplishments that make your authority undeniable."],
+  ["The direction your future positioning should build from", "A clear roadmap for expressing your true value in the market."]
 ];
 
 const notThis = [
@@ -102,23 +91,16 @@ const whoItsFor = [
 ];
 
 const processSteps = [
-  ["Extract", "Strategic pre-work before the session so the strongest material is already on the table."],
-  ["Discover", "A private deep-dive with Magdalene into your expertise, lived experience, proof, story and perspective."],
-  ["Distill", "The strongest findings are organised into your Earned Credibility™ Map."],
-  ["Position", "A focused follow-up turns those findings into a clear strategic direction."]
-];
-
-const proofPoints = [
-  "Favikon Ambassador",
-  "#1 Wellness Personal Brand",
-  "Top 1% Personal Branding & Thought Leadership"
+  ["Strategic pre-work", "You complete a focused intake before our session so I can understand your body of work before we meet."],
+  ["Private deep-dive", "We work together to uncover the authority assets with the strongest strategic value."],
+  ["Earned Credibility™ Map", "I distil the findings into your written Map, including the direction your positioning should build from next."]
 ];
 
 function CheckList({ items, dark = false, className = "" }) {
   return (
     <ul className={`space-y-4 ${className}`}>
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-3 text-base leading-7">
+        <li key={item} className="flex items-start gap-3 text-base leading-relaxed">
           <Check className={`mt-1 shrink-0 ${dark ? "text-mutedMint" : "text-deepEmerald"}`} size={17} aria-hidden="true" />
           <span>{item}</span>
         </li>
@@ -129,7 +111,7 @@ function CheckList({ items, dark = false, className = "" }) {
 
 function EditorialImage({ image, className = "", priority = false }) {
   return (
-    <figure className={`overflow-hidden border border-sage bg-sage ${className}`}>
+    <figure className={`overflow-hidden rounded-3xl border border-sage/80 bg-sage shadow-md ${className}`}>
       <img
         src={image.src}
         alt={image.alt}
@@ -142,69 +124,48 @@ function EditorialImage({ image, className = "", priority = false }) {
 }
 
 export default function EarnedCredibilityIntensivePage({ actionPath, loading, offer }) {
-  const [testimonials, setTestimonials] = useState([]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    let active = true;
-
-    listPublicReviews({ limit: 50 })
-      .then((response) => {
-        if (!active) return;
-        const reviews = response.data.reviews || [];
-        const relevant = reviews.filter((review) =>
-          /different|position|story|authority|clar|brand|strateg|credib/i.test(`${review.headline || ""} ${review.review || ""}`)
-        );
-        setTestimonials((relevant.length ? relevant : reviews).slice(0, 2));
-      })
-      .catch(() => {
-        if (active) setTestimonials([]);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const investment = useMemo(() => {
-    const price = Number(offer?.price);
-    return Number.isFinite(price) && price > 0 ? `$${price.toLocaleString("en-US")}` : "Confirmed privately";
-  }, [offer?.price]);
-
   return (
-    <main className="bg-mistWhite text-charcoal">
-      <section className="border-b border-sage bg-mistWhite">
-        <div className="container-shell py-8 sm:py-10 lg:py-14">
-          <Link to="/offers" className="inline-flex items-center gap-2 text-sm font-bold text-charcoal/72 transition hover:text-deepEmerald">
-            <ArrowLeft size={16} aria-hidden="true" />
-            All offers
+    <main className="bg-[#FAF9F6] text-charcoal">
+      
+      {/* Hero Section */}
+      <section className="border-b border-sage/60 bg-[#FAF9F6] py-12 sm:py-16 lg:py-24">
+        <div className="container-shell mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Link to="/offers" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-charcoal/70 transition hover:text-deepEmerald">
+            <ArrowLeft size={15} aria-hidden="true" />
+            <span>All offers</span>
           </Link>
 
-          <div className="mt-10 grid gap-10 lg:mt-14 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.72fr)] lg:items-center lg:gap-16">
+          <div className="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 border-y border-sage py-2 text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">
-                <Sparkles size={15} aria-hidden="true" />
-                Earned Credibility™ Intensive
-              </div>
-              <h1 className="mt-6 font-serif text-2xl font-bold leading-[1.04] text-balance sm:text-6xl lg:text-4xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-mutedMint/60 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-deepEmerald">
+                <Sparkles size={14} aria-hidden="true" />
+                <span>Earned Credibility™ Intensive</span>
+              </span>
+              <h1 className="mt-4 font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-charcoal leading-[1.1]">
                 You've Earned More Credibility Than You're <span className="text-deepEmerald">Using.</span>
               </h1>
-              <div className="mt-7 max-w-2xl space-y-5 text-lg leading-8 text-charcoal/72 sm:text-xl sm:leading-9">
-                <p>Your years of expertise, lived experience, stories, accomplishments and perspective carry an authority your brand may not yet be communicating.</p>
-                <p>The Earned Credibility™ Intensive helps you uncover the strategic assets that make your authority distinctive, credible and difficult to copy.</p>
+              
+              <div className="mt-6 space-y-4 font-serif text-lg sm:text-xl text-charcoal/80 leading-relaxed">
+                <p>
+                  You have years of expertise behind your work. But your positioning may still make that expertise sound more ordinary than it is.
+                </p>
+                <p className="font-sans text-sm sm:text-base text-charcoal/70 leading-relaxed">
+                  The Earned Credibility™ Intensive uncovers what is distinctly valuable in your body of work, so you know what your positioning deserves to be built from.
+                </p>
               </div>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <SiteButton to={actionPath} variant="blackGreen" className="w-full sm:w-auto">
-                  Book My Earned Credibility™ Intensive
-                  <ArrowRight size={16} aria-hidden="true" />
+
+              <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <SiteButton to={actionPath} variant="lightPrimary" className="justify-center px-6 py-3.5 text-xs font-bold shadow-md">
+                  <span>Uncover What Sets Me Apart</span>
+                  <ArrowRight size={15} aria-hidden="true" />
                 </SiteButton>
-        
+                
               </div>
             </div>
 
             <div className="mx-auto w-full max-w-md lg:max-w-none">
               <EditorialImage image={magnificImages.assessment} priority className="aspect-[4/5]" />
-              <p className="mt-3 border-l-2 border-deepEmerald pl-3 text-sm leading-6 text-charcoal/62">
+              <p className="mt-3 border-l-2 border-deepEmerald pl-3 text-xs sm:text-sm leading-relaxed text-charcoal/70">
                 Your authority should not sound like everyone else's version of expertise.
               </p>
             </div>
@@ -212,278 +173,303 @@ export default function EarnedCredibilityIntensivePage({ actionPath, loading, of
         </div>
       </section>
 
-      <section className="bg-white py-8 sm:py-10 lg:py-15">
-        <div className="container-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">Recognition</p>
-            <h2 className="mt-5 max-w-md font-serif text-2xl leading-tight text-balance sm:text-2xl lg:text-3xl">
-              You know you're different. Explaining why is the hard part.
-            </h2>
-          </div>
-          <div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {recognitionQuotes.map((quote) => (
-                <p key={quote} className="border border-sage bg-mistWhite px-4 py-3 font-serif text-xl leading-tight text-charcoal">
-                  “{quote}”
+      {/* Recognition Section */}
+      <section className="py-8 sm:py-10 bg-white">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-4 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">Recognition</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-charcoal leading-snug text-balance">
+                You know you're different. Explaining why is the hard part.
+              </h2>
+            </div>
+            <div>
+          
+              <div className="mt-8 space-y-4 font-serif text-base sm:text-lg text-charcoal/75 leading-relaxed">
+                <p>You can point to your experience. Your qualifications may establish that you know what you're doing.</p>
+                <p>But neither explains why your authority is distinctly yours.</p>
+                <p>That's how experienced professionals end up with positioning that is accurate, yet interchangeable.</p>
+                <p className="font-serif text-xl sm:text-2xl font-bold text-charcoal pt-2">
+                  You don't need to manufacture a differentiator. You need to uncover what your years of work have already earned you.
                 </p>
-              ))}
-            </div>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-charcoal/72">
-              All of those things may be true. But they're rarely enough to make someone distinctive, because your real differentiation may be buried much deeper.
-            </p>
-     
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-charcoal py-8 text-mistWhite sm:py-10 lg:py-15">
-        <div className="container-shell grid gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:gap-16">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">The cost</p>
-            <h2 className="mt-5 max-w-lg font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
-              When you haven't extracted your credibility, you borrow positioning.
-            </h2>
-          </div>
-          <div>
-            <CheckList items={costPoints} dark className="border-y border-mistWhite/20 py-6 text-mistWhite/78" />
-            <div className="mt-8 max-w-2xl space-y-5 text-lg leading-8 text-mistWhite/76">
-              <p>Eventually, years of depth get compressed into: “I'm an expert who helps...”</p>
-              <p className="font-serif text-xl leading-tight text-mistWhite">The problem isn't that you don't have differentiation. You may simply not have extracted it yet.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-deepEmerald py-12 text-mistWhite sm:py-16 lg:py-20">
-        <div className="container-shell">
-          <div className="mx-auto max-w-4xl text-center">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">Your core IP</p>
-            <h2 className="mt-6 font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
-              Expertise + Lived Experience = Earned Credibility™
+      {/* Cost Section (Dark Theme) */}
+      <section className="bg-charcoal py-8 sm:py-10 text-mistWhite">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-mutedMint">The Cost</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-white leading-snug text-balance">
+                When you haven't extracted your credibility, you borrow positioning.
+              </h2>
+              
+              {/* Cropped Image Below Cost H2 */}
+              <div className="mt-6 overflow-hidden rounded-2xl border border-white/15 shadow-lg">
+                <img
+                  src="/src/assets/home/earned.avif"
+                  alt="Earned credibility strategy insight"
+                  className="w-full h-48 sm:h-56 object-cover object-top"
+                />
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 sm:p-10 backdrop-blur-md">
+              <CheckList items={costPoints} dark className="text-mistWhite/80" />
+              <div className="mt-8 border-t border-white/10 pt-6 space-y-3 font-serif text-base sm:text-lg text-mistWhite/90">
+                <p>Eventually, years of depth get compressed into standard industry language.</p>
+                <p className="font-serif text-xl font-bold text-white">The problem isn't that you lack distinction. You simply haven't extracted it yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Core IP Section (Deep Emerald Theme) */}
+      <section className="bg-deepEmerald py-8 sm:py-10 text-mistWhite">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="text-xs font-bold uppercase tracking-widest text-mutedMint">We find what your brand should be built from</span>
+            <h2 className="mt-3 font-serif text-xl sm:text-3xl lg:text-4xl font-bold text-white leading-snug text-balance">
+              Inside the Intensive, I examine your body of work to identify the experiences and evidence carrying the most strategic weight.
             </h2>
-            <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-mistWhite/78">
-              Together, they create something much harder to imitate.
+            <p className="mt-5 text-sm sm:text-base leading-relaxed text-mistWhite/80">
+              We look beyond what you've done to uncover what it has taught you, how it has shaped your judgement and what you have earned the right to be known for. Not everything we uncover belongs in your positioning. Part of the value is knowing what does.
             </p>
           </div>
-          <div className="mt-10 grid gap-3 md:grid-cols-5">
+          
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {coreIpPoints.map((point, index) => (
-              <article key={point} className="border border-mistWhite/20 bg-mistWhite/8 p-5">
-                <p className="text-sm font-extrabold text-mutedMint">0{index + 1}</p>
-                <p className="mt-4 text-base leading-7 text-mistWhite/82">{point}</p>
+              <article key={point} className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-sm">
+                <span className="font-serif text-xl font-bold text-mutedMint">0{index + 1}</span>
+                <p className="mt-3 text-xs sm:text-sm leading-relaxed text-mistWhite/85">{point}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-mistWhite py-8 sm:py-10 lg:py-15">
-        <div className="container-shell grid gap-10 lg:grid-cols-[minmax(290px,0.76fr)_minmax(0,1.24fr)] lg:items-center lg:gap-16">
-          <EditorialImage image={magnificImages.proof} className="aspect-[4/5] max-w-md" />
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">Introduce the Intensive</p>
-            <h2 className="mt-5 max-w-2xl font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
-              We don't invent your differentiation. We uncover it.
-            </h2>
-            <div className="mt-7 max-w-2xl space-y-5 text-lg leading-8 text-charcoal/72">
-              <p>The Earned Credibility™ Intensive is a strategic deep dive into the credibility you've accumulated but may never have intentionally identified, articulated or positioned.</p>
-              <p>Together, we uncover the raw strategic assets sitting inside your expertise, lived experience, story, proof and perspective.</p>
-              <p>Then we identify which ones deserve to shape the authority your brand becomes known for.</p>
-            </div>
-            <SiteButton to={actionPath} variant="blackGreen" className="mt-9 w-full sm:w-auto">
-              Book Your Intensive
-              <ArrowRight size={16} aria-hidden="true" />
-            </SiteButton>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white py-8 sm:py-10 lg:py-15">
-        <div className="container-shell">
+      {/* 5 Assets Section */}
+      <section className="bg-white py-8 sm:py-10">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
           <div className="max-w-2xl">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">The five assets</p>
-            <h2 className="mt-5 font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">The Five Assets</span>
+            <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-charcoal leading-tight">
               The 5 Earned Credibility™ Assets
             </h2>
           </div>
-          <div className="mt-12 grid gap-x-10 gap-y-0 border-y border-sage lg:grid-cols-2">
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {assets.map((asset, index) => (
-              <article key={asset.title} className="border-b border-sage py-7 last:border-b-0 lg:odd:border-r lg:odd:pr-10 lg:even:pl-10">
-                <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-deepEmerald">0{index + 1}. {asset.title}</p>
-                <h3 className="mt-4 font-serif text-2xl leading-tight">{asset.question}</h3>
-                <p className="mt-3 max-w-xl text-base leading-7 text-charcoal/70">{asset.text}</p>
+              <article key={asset.title} className="rounded-3xl border border-sage/80 bg-[#FAF9F6] p-7 sm:p-8 flex flex-col justify-between shadow-sm">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald block mb-2">
+                    0{index + 1}. {asset.title}
+                  </span>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-charcoal leading-snug">
+                    {asset.question}
+                  </h3>
+                </div>
+                <p className="mt-4 text-xs sm:text-sm leading-relaxed text-charcoal/70">
+                  {asset.text}
+                </p>
               </article>
-              
             ))}
           </div>
-          
         </div>
       </section>
 
-      <section className="bg-mistWhite py-8 sm:py-10 lg:py-15">
-        <div className="container-shell">
+      {/* Transformation Table Section */}
+      <section className="bg-[#FAF9F6] py-8 sm:py-10">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
           <div className="max-w-2xl">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">The transformation</p>
-            <h2 className="mt-5 font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">The Transformation</span>
+            <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-charcoal leading-tight">
               Stop searching for your differentiation. Start recognising what you've already earned.
             </h2>
           </div>
-          <div className="mt-12 overflow-hidden border border-sage">
-            <div className="grid bg-charcoal text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint sm:grid-cols-2">
-              <p className="border-b border-mistWhite/14 px-5 py-4 sm:border-b-0 sm:border-r">Before the Intensive</p>
-              <p className="px-5 py-4">After the Intensive</p>
+          
+          <div className="mt-12 overflow-hidden rounded-3xl border border-sage/80 bg-white shadow-sm">
+            <div className="grid bg-charcoal text-xs font-bold uppercase tracking-wider text-mutedMint sm:grid-cols-2">
+              <p className="border-b border-white/10 px-6 py-4 sm:border-b-0 sm:border-r border-white/10">Before the Intensive</p>
+              <p className="px-6 py-4">After the Intensive</p>
             </div>
-            {transformationRows.map(([before, after]) => (
-              <div key={before} className="grid border-t border-sage bg-white sm:grid-cols-2">
-                <p className="border-b border-sage px-5 py-5 text-base leading-7 text-charcoal/70 sm:border-b-0 sm:border-r">{before}</p>
-                <p className="px-5 py-5 font-serif text-2xl leading-tight text-charcoal">{after}</p>
+            {transformationRows.map(([before, after], idx) => (
+              <div key={before} className={`grid border-t border-sage/60 ${idx % 2 === 0 ? "bg-white" : "bg-[#FAF9F6]/50"} sm:grid-cols-2`}>
+                <p className="border-b border-sage/60 px-6 py-5 text-xs sm:text-sm leading-relaxed text-charcoal/70 sm:border-b-0 sm:border-r">{before}</p>
+                <p className="px-6 py-5 font-serif text-lg sm:text-xl font-bold text-charcoal leading-snug flex items-center">{after}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-white py-8 sm:py-10 lg:py-15">
-        <div className="container-shell">
-          <div className="grid gap-8 lg:grid-cols-[0.76fr_1.24fr] lg:items-end">
+      {/* What You Leave With Section */}
+      <section className="bg-white py-8 sm:py-10">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">What you leave with</p>
-              <h2 className="mt-5 font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">What You Leave With</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-charcoal leading-tight">
                 Your Earned Credibility™ Map.
               </h2>
             </div>
-            <p className="max-w-2xl text-lg leading-8 text-charcoal/70">
-              A strategic articulation of the authority assets already inside your body of work, plus a positioning direction so the document has somewhere useful to go.
+            <p className="font-serif text-base sm:text-lg leading-relaxed text-charcoal/75">
+              Your Map distils the strongest authority assets we uncover and shows you what deserves to shape your positioning.
             </p>
           </div>
-          <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
             {deliverables.map(([title, text]) => (
-              <article key={title} className="border border-sage bg-mistWhite p-5 shadow-[0_14px_32px_rgba(34,34,34,0.04)]">
-                <h3 className="font-serif text-2xl leading-tight">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-charcoal/68">{text}</p>
+              <article key={title} className="rounded-3xl border border-sage/80 bg-[#FAF9F6] p-7 sm:p-8 shadow-sm">
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-charcoal leading-snug">{title}</h3>
+                <p className="mt-3 text-xs sm:text-sm leading-relaxed text-charcoal/70">{text}</p>
               </article>
             ))}
           </div>
-        </div>
-      </section>
 
-      <section className="bg-charcoal py-8 text-mistWhite sm:py-10 lg:py-15">
-        <div className="container-shell grid gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:gap-16">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">What this is not</p>
-            <h2 className="mt-5 max-w-lg font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
-              This isn't a personal branding makeover.
-            </h2>
-          </div>
-          <div>
-            <CheckList items={notThis} dark className="border-y border-mistWhite/20 py-6 text-mistWhite/78" />
-            <p className="mt-8 max-w-2xl font-serif text-xl leading-tight text-mistWhite">
-              We're going deeper first: finding what the brand should be built from.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-mistWhite py-16 sm:py-20 lg:py-28">
-        <div className="container-shell grid gap-10 lg:grid-cols-[minmax(290px,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:gap-16">
-          <EditorialImage image={magnificImages.offers} className="aspect-[4/5] max-w-md" />
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">Who it's for</p>
-            <h2 className="mt-5 max-w-2xl font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
-              The Earned Credibility™ Intensive is for you if...
-            </h2>
-            <CheckList items={whoItsFor} className="mt-8 max-w-2xl text-charcoal/74" />
-            <p className="mt-8 border-l-2 border-deepEmerald pl-4 text-lg leading-8 text-charcoal/82">
-              You don't need to manufacture a differentiator. You need to understand the authority you've already earned.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-charcoal py-16 text-mistWhite sm:py-20 lg:py-24">
-        <div className="container-shell grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
-          <EditorialImage image={magnificImages.finalCta} className="aspect-[16/10] max-w-xl border-mistWhite/20" />
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">Why Magdalene</p>
-            <h2 className="mt-5 max-w-2xl font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
-              This is the work behind Earned Credibility™.
-            </h2>
-            <div className="mt-6 max-w-2xl space-y-5 text-lg leading-8 text-mistWhite/76">
-              <p>I did not build my authority by becoming more impressive. I built it by recognising the credibility I had already earned.</p>
-              <p>That is the work I now help other experts do: see the expertise, experiences, proof and perspective already shaping their authority, then position those assets more intentionally.</p>
-            </div>
-            <div className="mt-8 grid gap-3 border-y border-mistWhite/18 py-5 sm:grid-cols-3">
-              {proofPoints.map((point) => (
-                <p key={point} className="text-sm font-bold leading-6 text-mutedMint">{point}</p>
-              ))}
-            </div>
-            {testimonials.length > 0 && (
-              <div className="mt-8 grid gap-5 lg:grid-cols-2">
-                {testimonials.map((testimonial) => (
-                  <blockquote key={testimonial._id || `${testimonial.name}-${testimonial.createdAt}`} className="border-l-2 border-mutedMint pl-5">
-                    <Quote className="text-mutedMint" size={20} aria-hidden="true" />
-                    <p className="mt-3 text-base leading-7 text-mistWhite/78">&ldquo;{testimonial.review}&rdquo;</p>
-                    <cite className="mt-4 block text-sm not-italic text-mistWhite/62">
-                      {testimonial.name}{testimonial.role ? `, ${testimonial.role}` : ""}
-                    </cite>
-                  </blockquote>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white py-8 sm:py-10 lg:py-15">
-        <div className="container-shell">
-          <div className="grid gap-8 lg:grid-cols-[0.76fr_1.24fr] lg:items-end">
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">How it works</p>
-              <h2 className="mt-5 font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
-                A focused extraction journey.
-              </h2>
-            </div>
-            <p className="max-w-2xl text-lg leading-8 text-charcoal/70">
-              The exact delivery details are confirmed before booking, but the work follows a clear extraction-to-positioning path.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-x-10 gap-y-0 border-y border-sage lg:grid-cols-2">
-            {processSteps.map(([title, text], index) => (
-              <article key={title} className="border-b border-sage py-7 last:border-b-0 lg:odd:border-r lg:odd:pr-10 lg:even:pl-10">
-                <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-deepEmerald">0{index + 1}. {title}</p>
-                <p className="mt-4 max-w-xl text-base leading-7 text-charcoal/70">{text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        <div className="container-shell mt-12 grid gap-12 border-t border-sage pt-12 lg:grid-cols-[0.76fr_1.24fr] lg:gap-16">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">Investment</p>
-            <h2 className="mt-5 font-serif text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl">
-              Earned Credibility™ Intensive
-            </h2>
-            <p className="mt-8 font-serif text-2xl leading-tight text-deepEmerald sm:text-3xl lg:text-4xl">{investment}</p>
-          </div>
-          <div className="border-y border-sage">
-            <div className="grid gap-5 border-b border-sage py-6 sm:grid-cols-[180px_1fr]">
-              <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-deepEmerald">Format</p>
-              <p className="text-base leading-7 text-charcoal/74">Strategic pre-work, private deep-dive, distillation and positioning direction.</p>
-            </div>
-            <div className="grid gap-5 border-b border-sage py-6 sm:grid-cols-[180px_1fr]">
-              <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-deepEmerald">Included</p>
-              <p className="text-base leading-7 text-charcoal/74">Your written Earned Credibility™ Map.</p>
-            </div>
-            <div className="grid gap-5 py-6 sm:grid-cols-[180px_1fr]">
-              <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-deepEmerald">Best next step</p>
-              <p className="text-base leading-7 text-charcoal/74">Book the Intensive when you want differentiation before a fuller brand repositioning.</p>
-            </div>
-            <SiteButton to={actionPath} variant="blackGreen" className="mb-2 mt-8 w-full sm:w-auto">
-              Book Your Intensive
-              {loading ? <ShieldCheck size={16} aria-hidden="true" /> : <ArrowRight size={16} aria-hidden="true" />}
+          <div className="mt-10 text-center">
+            <SiteButton to={actionPath} variant="lightPrimary" className="px-8 py-3.5 text-xs font-bold shadow-md">
+              <span>Uncover My Earned Credibility™</span>
+              <ArrowRight size={15} aria-hidden="true" />
             </SiteButton>
           </div>
         </div>
       </section>
+
+      
+
+      {/* Who It's For Section */}
+      <section className="bg-[#FAF9F6] py-8 sm:py-10">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <EditorialImage image={magnificImages.offers} className="aspect-[4/5] max-w-md mx-auto w-full" />
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">Who It's For</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-charcoal leading-tight text-balance">
+                This is for you if your expertise has outgrown generic positioning.
+              </h2>
+              
+              <div className="mt-6 space-y-4 font-serif text-base sm:text-lg text-charcoal/80 leading-relaxed">
+                <p>You've done enough work to know there is depth behind what you do.</p>
+                <p className="font-sans text-xs sm:text-sm text-charcoal/70 leading-relaxed">
+                  The problem is that you cannot yet articulate what makes that depth strategically valuable, or decide which parts of it should become visible. This Intensive gives you that clarity.
+                </p>
+              </div>
+
+              <div className="mt-8 rounded-3xl border border-sage/80 bg-white p-4 sm:p-8 shadow-sm">
+                <CheckList items={whoItsFor} className="text-charcoal/75 " />
+              </div>
+
+              <div className="mt-8 rounded-3xl border border-deepEmerald/30 bg-deepEmerald/5 p-6 sm:p-8">
+                <span className="text-xs font-bold uppercase tracking-wider text-deepEmerald block mb-1">
+                  Looking for a complete 90-day repositioning?
+                </span>
+                <p className="text-xs sm:text-sm leading-relaxed text-charcoal/75">
+                  If you're looking for a complete 90-day repositioning of your brand and reputation, DISCERN™ is the better fit.
+                </p>
+                <div className="mt-4">
+                  <Link to="/discern" className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-deepEmerald hover:text-charcoal transition">
+                    <span>Explore DISCERN™</span>
+                    <ArrowRight size={15} />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Work With Magdalene (Dark Theme) */}
+      <section className="bg-charcoal py-8 sm:py-10 text-mistWhite">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <EditorialImage image={magnificImages.finalCta} className="aspect-[4/5] max-w-md mx-auto w-full border-white/20" />
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-mutedMint">Why Work With Magdalene</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-white leading-snug text-balance">
+                What have you already earned that the market isn't seeing?
+              </h2>
+              
+              <div className="mt-6 space-y-4 font-serif text-base sm:text-lg text-mistWhite/80 leading-relaxed">
+                <p>My work is built around one question: What have you already earned that the market isn't seeing?</p>
+                <p className="font-sans text-xs sm:text-sm text-mistWhite/70 leading-relaxed">
+                  I look for what is strategically significant inside your body of work, then help you recognise what deserves to become part of the authority you're known for.
+                </p>
+              </div>
+
+              <div className="mt-8 grid gap-3 border-y border-white/15 py-6 sm:grid-cols-2">
+                <p className="text-xs sm:text-sm font-bold text-mutedMint">#1 Wellness Personal Brand · Favikon</p>
+                <p className="text-xs sm:text-sm font-bold text-mutedMint">Top 1% Personal Branding & Thought Leadership</p>
+              </div>
+
+              <div className="mt-8">
+                <Link to="/about" className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-mutedMint hover:text-white transition group">
+                  <span>See Client Transformations</span>
+                  <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works & Investment Section */}
+      <section className="bg-white py-8 sm:py-10">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">How It Works</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-charcoal leading-tight">
+                A clear path from extraction to positioning direction.
+              </h2>
+            </div>
+            <p className="font-serif text-base sm:text-lg leading-relaxed text-charcoal/75">
+              The exact delivery details are confirmed before booking, but the work follows a clear extraction-to-positioning path.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {processSteps.map(([title, text], index) => (
+              <article key={title} className="rounded-3xl border border-sage/80 bg-[#FAF9F6] p-7 sm:p-8 shadow-sm flex flex-col justify-between">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald block mb-2">
+                    0{index + 1}. {title}
+                  </span>
+                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-charcoal/70">
+                    {text}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* Final Conversion Card */}
+        <div className="container-shell mx-auto max-w-5xl px-1 sm:px-6 lg:px-8 mt-16">
+          <div className="rounded-3xl border border-sage/80 bg-[#FAF9F6] p-8 sm:p-12 text-center shadow-md">
+            <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">Ready to see what your expertise has already earned you?</span>
+            <h2 className="mt-3 font-serif text-2xl sm:text-3xl font-bold text-charcoal">Earned Credibility™ Intensive</h2>
+            
+            <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs sm:text-sm font-semibold text-charcoal/75">
+              <span>✓ Private strategic pre-work</span>
+              <span>✓ Private deep-dive with Magdalene</span>
+              <span>✓ Written Earned Credibility™ Map with positioning direction</span>
+            </div>
+
+            <div className="mt-8">
+              <SiteButton to={actionPath} variant="lightPrimary" className="px-8 py-3.5 text-xs font-bold shadow-md">
+                <span>Uncover What Sets Me Apart</span>
+                <ArrowRight size={15} aria-hidden="true" />
+              </SiteButton>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   );
 }

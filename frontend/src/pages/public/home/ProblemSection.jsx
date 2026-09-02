@@ -1,55 +1,87 @@
-import { CheckCircle2, BadgeCheck} from "lucide-react";
+import { ArrowRight, Link } from "lucide-react";
+import SiteButton from "../../../components/SiteButton.jsx";
 import { magnificImages } from "./homeContent.js";
 import { SectionEyebrow } from "./HomeShared.jsx";
 
-const problemRows = [
-  {
-    number: "01",
-    icon: CheckCircle2,
-    title: "People compare you on price.",
-    text: "Not because your work lacks value, but because the value is not immediately visible."
-  },
-  {
-    number: "02",
-    icon: CheckCircle2,
-    title: "Your expertise is clear to you.",
-    text: "The right clients still need a story, proof, and language that makes it easy to trust you."
-  },
-  {
-    number: "03",
-    icon: CheckCircle2,
-    title: "Invisible credibility cannot become trusted credibility.",
-    text: "People cannot choose what they cannot see, name, remember, or repeat."
-  }
+const bulletPoints = [
+  "Compare you on price.",
+  "Struggle to understand what makes your approach different."
 ];
-
-const credibilityAssets = ["Expertise", "Care", "Experience"];
 
 export default function ProblemSection() {
   return (
     <section
       id="earned-credibility"
-      className="relative overflow-hidden bg-[linear-gradient(180deg,#F5F7F4_0%,#FFFFFF_52%,#DCE8DF_100%)] py-16 sm:py-20 lg:py-28"
+      className="relative overflow-hidden bg-[#FAF9F6] py-8 sm:py-10 lg:py-15"
     >
-      <div className="container-shell">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-          <div>
-            <SectionEyebrow>The Problem</SectionEyebrow>
-            <h2 className="max-w-3xl font-serif text-2xl leading-tight text-charcoal text-balance sm:text-3xl lg:text-4xl">
-              You are not struggling because you are unqualified.
-            </h2>
-          </div>
-
-          <div className=" bg-mistWhite px-5 py-5 shadow-[0_16px_36px_rgba(34,34,34,0.06)] sm:px-7">
-            <p className="text-lg leading-8 text-charcoal/78 sm:text-lg sm:leading-9">
-              You have the expertise. You care deeply about the people you serve. You have invested
-              years learning, growing, and becoming exceptional at what you do.
-            </p>
-          </div>
+      <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+        
+        {/* Section Header */}
+        <div className="max-w-3xl">
+          <SectionEyebrow>The Problem</SectionEyebrow>
+          <h2 className="mt-3 font-serif text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-charcoal leading-[1.15] text-balance">
+            You are not struggling because you are unqualified.
+          </h2>
         </div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch">
-          <div className="relative min-h-[460px] overflow-hidden rounded-md border border-sage bg-charcoal shadow-[0_24px_55px_rgba(34,34,34,0.14)]">
+        {/* Main Content Split with Image on the Left */}
+        <div className="mt-8 lg:mt-16 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+          
+          
+
+          {/* Right Side: Narrative Content Card */}
+          <div className="flex flex-col justify-between rounded-3xl border border-sage/80 bg-white p-8 sm:p-12 shadow-sm space-y-8 font-serif text-base sm:text-lg leading-relaxed text-charcoal/85">
+            
+            <p>
+              You have spent years becoming good at what you do. But when your expertise is not positioned clearly, people cannot see its full value.
+            </p>
+
+            <div>
+              <p className="font-sans text-xs font-extrabold uppercase tracking-widest text-deepEmerald mb-4">
+                They:
+              </p>
+              <ul className="space-y-3 font-sans text-sm sm:text-base text-charcoal/75">
+                {bulletPoints.map((point, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <span className="h-2 w-2 rounded-full bg-deepEmerald shrink-0 mt-2.5" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <p>
+              Someone with less depth can become easier to choose simply because they are easier to understand.
+            </p>
+
+            <p className="font-medium text-charcoal">
+              You don't necessarily need to become more credible. You need what you've already earned to become easier to see.
+            </p>
+
+            {/* Action CTA */}
+            <p className="font-sans  pt-4 border-t border-sage/60 text-xs font-extrabold uppercase tracking-widest text-deepEmerald mb-4">
+              Do I Have a Credibility Gap? 
+              </p>
+            
+              
+              
+        
+            <div className="flex justify-center">
+            <SiteButton 
+              to="/assessment"
+              variant="brandOnLight"
+              className="px-6 py-3.5 text-xs font-bold justify-center shadow-lg bg-deepEmerald hover:bg-deepEmerald/90 text-white"
+            >
+              <span>Take the Earned Credibility™ Assessment</span>
+              
+            </SiteButton>
+              
+            </div>
+
+          </div>
+
+          {/* Left Side: Visual Frame */}
+          <div className="relative min-h-[480px] lg:min-h-[600px] overflow-hidden rounded-3xl border border-sage/80 bg-charcoal shadow-xl">
             <img
               src={magnificImages.problem.src}
               alt={magnificImages.problem.alt}
@@ -57,64 +89,22 @@ export default function ProblemSection() {
               className="absolute inset-0 h-full w-full object-cover"
               style={{ objectPosition: magnificImages.problem.objectPosition }}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(34,34,34,0.02)_34%,rgba(34,34,34,0.78)_100%),linear-gradient(115deg,rgba(11,110,79,0.26),transparent_58%)]" aria-hidden="true" />
-            <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
-              <div className="max-w-sm border border-mutedMint/30 bg-charcoal/88 px-5 py-4 text-mistWhite backdrop-blur">
-                <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-mutedMint">
-                  The real issue
-                </p>
-                <p className="mt-3 font-serif text-3xl leading-tight">
-                  Your credibility has been earned. It just has not been made visible yet.
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(26,26,26,0.02)_34%,rgba(26,26,26,0.85)_100%),linear-gradient(115deg,rgba(15,77,62,0.3),transparent_58%)]" aria-hidden="true" />
+            
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+              <div className="max-w-md rounded-2xl border border-mutedMint/30 bg-charcoal/90 p-5 backdrop-blur-md shadow-2xl">
+                <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-mutedMint block mb-1">
+                  That is the problem I call the Credibility Gap™:
+                </span>
+                <p className="font-serif text-base sm:text-lg font-bold text-white leading-snug">
+                  The gap between the credibility you have earned and the credibility others can perceive.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="grid content-between gap-5">
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              {credibilityAssets.map((asset) => (
-                <div key={asset} className="border border-sage bg-mistWhite px-3 py-4 text-center shadow-[0_14px_28px_rgba(34,34,34,0.04)]">
-                  <BadgeCheck className="mx-auto text-deepEmerald" size={20} aria-hidden="true" />
-                  <p className="mt-2 text-xs font-extrabold uppercase tracking-[0.08em] text-charcoal">
-                    {asset}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid gap-4">
-              {problemRows.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <article
-                    key={item.number}
-                    className="grid gap-4 rounded-md border border-sage bg-white p-5 shadow-[0_18px_38px_rgba(34,34,34,0.055)] sm:grid-cols-[48px_1fr]"
-                  >
-                    <div className="flex items-center gap-3 sm:block">
-                      {/* <span className="grid size-11 place-items-center rounded-full bg-sage text-deepEmerald">
-                        <Icon size={19} aria-hidden="true" />
-                      </span> */}
-                      <p className="font-serif text-2xl text-deepEmerald sm:mt-4">{item.number}</p>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-extrabold leading-tight text-charcoal text-balance sm:text-2xl">
-                        {item.title}
-                      </h3>
-                      <p className="mt-2 text-base leading-7 text-charcoal/70 sm:text-lg sm:leading-8">
-                        {item.text}
-                      </p>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-
-            <p className=" border-deepEmerald bg-charcoal px-5 py-5 font-serif text-2xl leading-8 text-mistWhite shadow-[0_18px_42px_rgba(34,34,34,0.12)] sm:text-3xl sm:leading-10">
-              People cannot trust what they cannot see.
-            </p>
-          </div>
         </div>
+
       </div>
     </section>
   );

@@ -198,7 +198,7 @@ export default function AdminOffersPage() {
       )}
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[0.78fr_1.22fr]">
-        <div className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <div className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           <label className="relative block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/42" size={17} aria-hidden="true" />
             <input
@@ -247,7 +247,7 @@ export default function AdminOffersPage() {
           </div>
         </div>
 
-        <form onSubmit={saveOffer} className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <form onSubmit={saveOffer} className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           <div className="flex flex-col gap-4 border-b border-sage pb-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">

@@ -41,10 +41,36 @@ const isAnswered = (value) => {
   return value !== undefined && value !== null;
 };
 
+const questionValidationMessage = (question, value) => {
+  if (question.required && !isAnswered(value)) {
+    return "Please answer every required question on this step.";
+  }
+
+  const minimumLength = Number(question.minAnswerLength || 0);
+  if (
+    isAnswered(value) &&
+    ["short_text", "long_text"].includes(question.answerType) &&
+    minimumLength > 0 &&
+    String(value).trim().length < minimumLength
+  ) {
+    return `Please provide at least ${minimumLength} characters for: ${question.questionText}`;
+  }
+
+  return "";
+};
+
 const emailLooksValid = (email) => /\S+@\S+\.\S+/.test(email);
 
 const fieldClass =
   "input bg-white text-charcoal placeholder:text-charcoal/38 focus:border-deepEmerald";
+
+const likertScaleLabels = [
+  { value: "1", label: "Strongly disagree" },
+  { value: "2", label: "Disagree" },
+  { value: "3", label: "Neutral" },
+  { value: "4", label: "Agree" },
+  { value: "5", label: "Strongly agree" }
+];
 
 function ProgressDots({ steps, activeIndex }) {
   return (
@@ -62,7 +88,25 @@ function ProgressDots({ steps, activeIndex }) {
   );
 }
 
+function LikertScaleGuide() {
+  return (
+    <div className="grid gap-1.5 rounded border border-mistWhite/10 bg-mistWhite/[0.07] p-3 text-[10px] font-semibold leading-4 text-mistWhite/74 sm:grid-cols-5 lg:grid-cols-1">
+      {likertScaleLabels.map((item) => (
+        <div key={item.value} className="flex items-center gap-2">
+          <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-mutedMint text-[10px] font-black text-charcoal">
+            {item.value}
+          </span>
+          <span>{item.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ProfileStep({ participant, onChange }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const update = (event) => {
     const { name, value } = event.target;
     onChange({ [name]: value });
@@ -157,6 +201,9 @@ function ProfileStep({ participant, onChange }) {
 }
 
 function QuestionStep({ step, answers, onAnswer }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="grid gap-5">
       {step.questions.map((question) => (
@@ -172,6 +219,9 @@ function QuestionStep({ step, answers, onAnswer }) {
 }
 
 function QuestionField({ question, value, onChange }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   if (question.answerType === "long_text") {
     const minimumLength = Number(question.minAnswerLength || 0);
     const currentLength = String(value || "").trim().length;
@@ -248,12 +298,6 @@ function QuestionField({ question, value, onChange }) {
   return (
     <fieldset className="rounded border border-sage bg-white p-4">
       <QuestionHeader question={question} />
-      {isLikertScale && (
-        <div className="mt-4 flex items-center justify-between gap-3 text-[11px] font-bold uppercase tracking-[0.08em] text-charcoal/52">
-          <span>1 = Strongly disagree</span>
-          <span>5 = Strongly agree</span>
-        </div>
-      )}
       <div className={`mt-4 grid gap-3 ${choiceColumns}`}>
         {question.options.map((option) => (
           <label
@@ -292,13 +336,16 @@ function QuestionField({ question, value, onChange }) {
 function QuestionHeader({ question }) {
   return (
     <div>
-      <p className="text-lg font-extrabold leading-7 text-charcoal">{question.questionText}</p>
+      <p className="text-lg font-bold leading-7 text-charcoal sm:text-xl sm:leading-8">{question.questionText}</p>
       {question.helperText && <p className="mt-2 text-sm leading-6 text-charcoal/60">{question.helperText}</p>}
     </div>
   );
 }
 
 function ContextStep({ participant, onChange }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const update = (event) => {
     const { name, value, type, checked } = event.target;
     onChange({ [name]: type === "checkbox" ? checked : value });
@@ -462,6 +509,9 @@ export default function AssessmentLandingPage() {
 
   const activeStep = steps[stepIndex];
   const progress = steps.length ? Math.round(((stepIndex + 1) / steps.length) * 100) : 0;
+  const showScaleGuide = activeStep?.questions?.some(
+    (question) => question.answerType === "likert" && question.options.length === 5
+  );
 
   const updateParticipant = (patch) => {
     setParticipant((current) => ({ ...current, ...patch }));
@@ -485,8 +535,11 @@ export default function AssessmentLandingPage() {
       return "";
     }
 
-    const missingQuestion = targetStep.questions.find((question) => question.required && !isAnswered(answers[question.key]));
-    if (missingQuestion) return "Please answer every required question on this step.";
+    const invalidQuestionMessage = targetStep.questions
+      .map((question) => questionValidationMessage(question, answers[question.key]))
+      .find(Boolean);
+    if (invalidQuestionMessage) return invalidQuestionMessage;
+
     return "";
   };
 
@@ -549,14 +602,20 @@ export default function AssessmentLandingPage() {
         setSubmitStatus("success");
       }
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Could not submit the assessment right now.");
+      const responseMessage = requestError.response?.data?.message;
+      const firstResponseError = requestError.response?.data?.errors?.[0]?.message;
+      setError(
+        firstResponseError
+          ? `${responseMessage || "Could not submit the assessment right now."} ${firstResponseError}`
+          : responseMessage || "Could not submit the assessment right now."
+      );
       setSubmitStatus("error");
     }
   };
 
   if (status === "loading") {
     return (
-      <section className="container-shell grid min-h-[62vh] place-items-center py-16">
+      <section className="container-shell grid min-h-[62vh] place-items-center py-16" aria-busy="true">
         <div className="flex items-center gap-3 text-sm font-extrabold text-deepEmerald">
           <Loader2 className="animate-spin" size={18} aria-hidden="true" />
           Loading assessment...
@@ -568,7 +627,7 @@ export default function AssessmentLandingPage() {
   if (status === "error") {
     return (
       <section className="container-shell grid min-h-[62vh] place-items-center py-16 text-center">
-        <div className="max-w-xl">
+        <div className="max-w-xl" role="alert">
           <AlertCircle className="mx-auto text-deepEmerald" size={34} aria-hidden="true" />
           <h1 className="mt-4 font-serif text-4xl">Assessment unavailable</h1>
           <p className="mt-3 text-charcoal/66">{error}</p>
@@ -590,14 +649,11 @@ export default function AssessmentLandingPage() {
               How visible is the credibility you have already earned?
             </h1>
           </div>
-          <p className="text-lg md:text-xl leading-9 text-charcoal/72">
-            Having credibility and having a brand that communicates it are two different things. This assessment shows where your
-            credibility is already working, where it may be getting lost, and what to focus on next.
-          </p>
+         
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[310px_minmax(0,1fr)]">
-          <aside className="rounded border border-charcoal bg-charcoal p-5 text-mistWhite shadow-[0_18px_45px_rgba(34,34,34,0.16)] lg:sticky lg:top-28 lg:self-start">
+          <aside className="sticky top-16 z-20 rounded border border-charcoal bg-charcoal p-4 text-mistWhite shadow-[0_18px_45px_rgba(26,26,26,0.16)] sm:p-5 lg:top-28 lg:self-start">
             <div className="lg:hidden">
               <div className="flex items-center justify-between gap-4">
                 <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">
@@ -611,14 +667,23 @@ export default function AssessmentLandingPage() {
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="mt-4 font-serif text-2xl leading-tight text-mistWhite">{activeStep.title}</p>
-              {activeStep.helper && <p className="mt-2 text-sm leading-6 text-mistWhite/62">{activeStep.helper}</p>}
+              {showScaleGuide && (
+                <div className="mt-3">
+                  <LikertScaleGuide />
+                </div>
+              )}
+              <p className="mt-3 font-serif text-lg leading-tight text-mistWhite sm:text-2xl">{activeStep.title}</p>
             </div>
 
             <div className="hidden lg:block">
               <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">Progress</p>
               <p className="mt-3 font-serif text-4xl">{progress}%</p>
               <ProgressDots steps={steps} activeIndex={stepIndex} />
+              {showScaleGuide && (
+                <div className="mt-4">
+                  <LikertScaleGuide />
+                </div>
+              )}
               <div className="mt-6 grid gap-3">
                 {steps.map((step, index) => (
                   <button
@@ -642,17 +707,17 @@ export default function AssessmentLandingPage() {
               </div>
               <div className="mt-6 flex gap-3 rounded border border-mistWhite/10 bg-mistWhite/[0.05] p-3 text-sm leading-6 text-mistWhite/62">
                 <LockKeyhole className="mt-1 shrink-0 text-mutedMint" size={17} aria-hidden="true" />
-                Your result is saved securely and connected to the admin dashboard for follow-up.
+                Your result is saved securely and connected to the Magdalene for follow-up.
               </div>
             </div>
           </aside>
 
-          <div className="rounded border border-sage bg-mistWhite shadow-[0_18px_45px_rgba(34,34,34,0.04)]">
+          <div className="rounded border border-sage bg-mistWhite shadow-[0_18px_45px_rgba(26,26,26,0.04)]">
             <div className="border-b border-sage bg-white p-5 sm:p-6">
               <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">
                 Step {stepIndex + 1} of {steps.length}
               </p>
-              <h2 className="mt-2 font-serif text-4xl leading-tight text-charcoal">{activeStep.title}</h2>
+              <h2 className="mt-2 font-serif text-xl text-extrabold leading-tight text-charcoal sm:text-2xl lg:text-3xl">{activeStep.title}</h2>
               {activeStep.helper && <p className="mt-3 text-sm leading-6 text-charcoal/62">{activeStep.helper}</p>}
             </div>
 

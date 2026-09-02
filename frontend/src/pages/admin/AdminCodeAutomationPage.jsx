@@ -29,11 +29,11 @@ import {
 import { getCodeAutomation, updateCodeAutomationTemplate } from "../../services/api.js";
 
 const emailColors = {
-  deepEmerald: "#0B6E4F",
-  mistWhite: "#F5F7F4",
-  charcoal: "#222222",
-  sage: "#DCE8DF",
-  mutedMint: "#CFE5D8",
+  deepEmerald: "#0F4D3E",
+  mistWhite: "#F7F8F6",
+  charcoal: "#1A1A1A",
+  sage: "#B8D8C5",
+  mutedMint: "#B8D8C5",
   white: "#FFFFFF"
 };
 
@@ -103,7 +103,7 @@ const EmailImage = Node.create({
       mergeAttributes(
         {
           style:
-            "display:block;width:100%;max-width:520px;height:auto;margin:22px auto;border:1px solid #DCE8DF;border-radius:8px;"
+            "display:block;width:100%;max-width:520px;height:auto;margin:22px auto;border:1px solid #B8D8C5;border-radius:8px;"
         },
         HTMLAttributes
       )
@@ -335,7 +335,7 @@ const toPlainText = ({ title, bodyHtml, ctaHref, ctaLabel }) => {
 
 function StatTile({ label, value, icon: Icon }) {
   return (
-    <article className="rounded border border-sage bg-mistWhite p-4 shadow-[0_12px_26px_rgba(34,34,34,0.035)]">
+    <article className="rounded border border-sage bg-mistWhite p-4 shadow-[0_12px_26px_rgba(26,26,26,0.035)]">
       <Icon className="text-deepEmerald" size={20} aria-hidden="true" />
       <p className="mt-4 text-xs font-bold uppercase tracking-[0.14em] text-charcoal/55">{label}</p>
       <p className="mt-1 text-2xl font-extrabold text-charcoal">{value}</p>
@@ -353,7 +353,7 @@ function StepCard({ step, active, onClick }) {
       onClick={onClick}
       className={`w-full rounded border p-4 text-left transition ${
         active
-          ? "border-deepEmerald bg-mutedMint/60 shadow-[0_14px_30px_rgba(11,110,79,0.08)]"
+          ? "border-deepEmerald bg-mutedMint/60 shadow-[0_14px_30px_rgba(15,77,62,0.08)]"
           : "border-sage bg-mistWhite hover:border-deepEmerald/35 hover:bg-white"
       }`}
     >
@@ -737,7 +737,7 @@ export default function AdminCodeAutomationPage() {
 
           <form
             onSubmit={handleSave}
-            className="flex max-h-[calc(100dvh-7rem)] min-h-0 flex-col overflow-hidden rounded border border-sage bg-mistWhite shadow-[0_16px_36px_rgba(34,34,34,0.04)] xl:sticky xl:top-8 xl:max-h-[calc(100dvh-4rem)]"
+            className="flex max-h-[calc(100dvh-7rem)] min-h-0 flex-col overflow-hidden rounded border border-sage bg-mistWhite shadow-[0_16px_36px_rgba(26,26,26,0.04)] xl:sticky xl:top-8 xl:max-h-[calc(100dvh-4rem)]"
           >
             <div className="shrink-0 bg-mistWhite px-4 pb-5 pt-4 sm:px-6 sm:pt-6">
               <div className="flex flex-col gap-3 border-b border-sage pb-5 sm:flex-row sm:items-center sm:justify-between">

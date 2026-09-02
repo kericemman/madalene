@@ -1,9 +1,9 @@
 const colors = {
-  deepEmerald: "#0B6E4F",
-  mistWhite: "#F5F7F4",
-  charcoal: "#222222",
-  sage: "#DCE8DF",
-  mutedMint: "#CFE5D8",
+  deepEmerald: "#0F4D3E",
+  mistWhite: "#F7F8F6",
+  charcoal: "#1A1A1A",
+  sage: "#B8D8C5",
+  mutedMint: "#B8D8C5",
   white: "#FFFFFF"
 };
 
@@ -327,54 +327,52 @@ export const defaultEmailTemplates = [
   },
   {
     key: "assessment_results",
-    version: 4,
+    version: 5,
     name: "Assessment Results Delivered",
     type: "results_delivered",
-    subject: "Your Earned Credibility assessment results",
-    preheader: "Your Resonance Quotient score and recommended next step are ready.",
+    subject: "Your Earned Credibility™ results are in",
+    preheader: "Your score, stage, biggest opportunity, and recommended resource are inside.",
     html: shell({
-      preheader: "Your Resonance Quotient score and recommended next step are ready.",
+      preheader: "Your score, stage, biggest opportunity, and recommended resource are inside.",
       eyebrow: "Assessment Results",
-      title: "Your Resonance Quotient is ready.",
+      title: "Your Earned Credibility™ results are in.",
       body: `
         ${paragraph("Hello {{firstName}},")}
-        ${paragraph("You completed the 7-minute Earned Credibility assessment. Your result gives you a clearer view of how your trust, presence, message, and proof are currently landing.")}
+        ${paragraph("Your assessment gives you a clearer view of how visible, trusted, and easy to choose your earned credibility currently is.")}
         ${metricGrid([
-          { label: "RQ Score", value: "{{score}}/{{scoreMax}}" },
-          { label: "Credibility Stage", value: "{{stage}}" }
+          { label: "Earned Credibility™ Score", value: "{{score}}/{{scoreMax}}" },
+          { label: "Your Stage", value: "{{stage}}" }
         ])}
-        ${paragraph("{{scoreBasis}}")}
-        ${paragraph("<strong>Strongest area:</strong> {{strongestCategory}}")}
-        ${paragraph("<strong>Needs attention:</strong> {{weakestCategory}}")}
-        ${heading("{{personalizedHeadline}}")}
-        ${paragraph("{{personalizedSummary}}")}
-        ${note("{{earnedCredibility}}")}
+        ${heading("{{stage}}")}
+        ${paragraph("{{stageWhatItMeans}}")}
+        ${heading("Your Biggest Opportunity")}
+        ${note("{{stageBiggestOpportunity}}")}
+        ${heading("Start Here")}
+        <div style="margin:0 0 20px;color:${colors.charcoal};font-size:16px;line-height:1.65;">
+          {{{stageNextStepsHtml}}}
+        </div>
         ${heading("Recommended for you")}
         ${paragraph("<strong>{{stageResourceTitle}}</strong><br />{{stageResourceDescription}}")}
-        ${heading("Your focused resources")}
-        <div style="margin:0 0 22px;">{{{gapResourcesHtml}}}</div>
-        ${paragraph("I will send the full content for each recommended resource directly to your inbox, so you can work through it without opening a separate download.")}
+        ${paragraph("Use it to begin working on the credibility gap your result revealed, without needing to open a separate download.")}
+        ${note("{{stageFinalNote}}")}
         ${note("Ready to turn these insights into a positioning direction people can recognise and remember?")}
         ${button("{{intensiveCtaUrl}}", "{{intensiveCtaText}}")}
         ${button("{{resultsUrl}}", "View Full Results")}
       `
     }),
-    text: "Hello {{firstName}},\n\nYou completed the 7-minute Earned Credibility assessment.\n\nYour Resonance Quotient score is {{score}}/{{scoreMax}}.\nYour current credibility stage is {{stage}}.\n\n{{scoreBasis}}\n\nYour strongest area is {{strongestCategory}}, and the area that most needs attention is {{weakestCategory}}.\n\n{{personalizedHeadline}}\n{{personalizedSummary}}\n\n{{earnedCredibility}}\n\nRecommended for you: {{stageResourceTitle}}\n{{stageResourceDescription}}\n\nYour focused resources:\n{{gapResourcesText}}\n\nI will send the full content for each recommended resource directly to your inbox, so you can work through it without opening a separate download.\n\n{{intensiveCtaText}}: {{intensiveCtaUrl}}\n\nView your full results: {{resultsUrl}}",
+    text: "Hello {{firstName}},\n\nYour Earned Credibility™ Score is {{score}}/{{scoreMax}}.\n\n{{stage}}\n\n{{stageWhatItMeans}}\n\nYour Biggest Opportunity\n{{stageBiggestOpportunity}}\n\nStart Here\n{{stageNextStepsText}}\n\nRecommended for you: {{stageResourceTitle}}\n{{stageResourceDescription}}\n\n{{stageFinalNote}}\n\n{{intensiveCtaText}}: {{intensiveCtaUrl}}\n\nView your full results: {{resultsUrl}}",
     variables: withSystemVariables([
       "firstName",
       "score",
       "scoreMax",
       "stage",
-      "scoreBasis",
-      "strongestCategory",
-      "weakestCategory",
-      "personalizedHeadline",
-      "personalizedSummary",
-      "earnedCredibility",
+      "stageWhatItMeans",
+      "stageBiggestOpportunity",
+      "stageNextStepsHtml",
+      "stageNextStepsText",
+      "stageFinalNote",
       "stageResourceTitle",
       "stageResourceDescription",
-      "gapResourcesHtml",
-      "gapResourcesText",
       "intensiveCtaText",
       "intensiveCtaUrl",
       "recommendedAction",

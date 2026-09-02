@@ -113,7 +113,7 @@ const resultMatchesGradeFilter = (result, gradeCheck) => {
 function StatTile({ label, value, icon: Icon, tone = "light" }) {
   return (
     <article
-      className={`rounded border p-4 shadow-[0_12px_26px_rgba(34,34,34,0.035)] ${
+      className={`rounded border p-4 shadow-[0_12px_26px_rgba(26,26,26,0.035)] ${
         tone === "dark" ? "border-charcoal bg-charcoal text-mistWhite" : "border-sage bg-mistWhite text-charcoal"
       }`}
     >
@@ -137,7 +137,7 @@ function ResultListItem({ result, active, onClick }) {
       onClick={onClick}
       className={`w-full rounded border p-4 text-left transition ${
         active
-          ? "border-deepEmerald bg-mutedMint/60 shadow-[0_14px_30px_rgba(11,110,79,0.08)]"
+          ? "border-deepEmerald bg-mutedMint/60 shadow-[0_14px_30px_rgba(15,77,62,0.08)]"
           : "border-sage bg-mistWhite hover:border-deepEmerald/35 hover:bg-white"
       }`}
     >
@@ -374,7 +374,7 @@ export default function AdminAssessmentResultsPage() {
         <StatTile label="Email Ready" value={emailReadyCount} icon={Mail} />
       </div>
 
-      <div className="mt-6 rounded border border-sage bg-mistWhite p-4 shadow-[0_12px_26px_rgba(34,34,34,0.035)]">
+      <div className="mt-6 rounded border border-sage bg-mistWhite p-4 shadow-[0_12px_26px_rgba(26,26,26,0.035)]">
         <div className="flex items-center gap-2 text-sm font-extrabold text-charcoal">
           <SlidersHorizontal size={18} className="text-deepEmerald" aria-hidden="true" />
           Filter results
@@ -487,7 +487,7 @@ export default function AdminAssessmentResultsPage() {
           )}
         </article>
 
-        <article className="min-w-0 rounded border border-sage bg-mistWhite shadow-[0_16px_36px_rgba(34,34,34,0.04)]">
+        <article className="min-w-0 rounded border border-sage bg-mistWhite shadow-[0_16px_36px_rgba(26,26,26,0.04)]">
           {!selectedResult ? (
             <div className="grid min-h-[520px] place-items-center p-8 text-center">
               <div>

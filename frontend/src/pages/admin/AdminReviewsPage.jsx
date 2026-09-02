@@ -99,7 +99,7 @@ export default function AdminReviewsPage() {
         </button>
       </div>
 
-      <div className="grid gap-4 border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(34,34,34,0.045)] lg:grid-cols-[1fr_320px] lg:items-center">
+      <div className="grid gap-4 border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.045)] lg:grid-cols-[1fr_320px] lg:items-center">
         <div className="flex flex-wrap gap-2">
           {statuses.map((item) => (
             <button
@@ -135,11 +135,11 @@ export default function AdminReviewsPage() {
       )}
 
       {loading ? (
-        <div className="border border-sage bg-white p-8 text-charcoal shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <div className="border border-sage bg-white p-8 text-charcoal shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           Loading reviews...
         </div>
       ) : reviews.length === 0 ? (
-        <div className="border border-sage bg-white p-8 text-center shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <div className="border border-sage bg-white p-8 text-center shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           <CheckCircle2 className="mx-auto text-deepEmerald" size={34} aria-hidden="true" />
           <h2 className="mt-4 font-serif text-3xl">No reviews here.</h2>
           <p className="mt-2 text-sm text-charcoal/60">
@@ -151,7 +151,7 @@ export default function AdminReviewsPage() {
           {reviews.map((review) => (
             <article
               key={review._id}
-              className="grid gap-5 border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)] xl:grid-cols-[1fr_240px]"
+              className="grid gap-5 border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)] xl:grid-cols-[1fr_240px]"
             >
               <div>
                 <div className="flex flex-wrap items-center gap-2">

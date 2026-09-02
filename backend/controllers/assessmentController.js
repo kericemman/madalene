@@ -12,7 +12,7 @@ import {
   findScoreRange,
   selectRecommendationRule
 } from "../services/recommendationService.js";
-import { queueAndAttemptEmail, scheduleEmailSequence } from "../services/emailQueueService.js";
+import { queueAndAttemptEmail } from "../services/emailQueueService.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { created, ok } from "../utils/apiResponse.js";
 import { createSecureToken, hashToken } from "../utils/tokenUtils.js";
@@ -89,7 +89,7 @@ const normalizePublicRecommendation = (recommendation) => {
 const resultSummary = (result, resultToken) => ({
   id: result._id,
   resultToken,
-  resultUrl: resultToken ? `${env.appUrl}/results/${resultToken}` : undefined,
+  resultUrl: resultToken ? toAbsoluteUrl(`/results/${resultToken}`) : undefined,
   participant: result.participant,
   overallScore: result.overallScore,
   overallMaxScore: result.overallMaxScore || result.scoringSnapshot?.overallMaxScore || 100,
@@ -111,12 +111,6 @@ const activeAssessmentQuery = () => ({
   status: "active",
   $or: [{ activeUntil: { $exists: false } }, { activeUntil: null }, { activeUntil: { $gte: new Date() } }]
 });
-
-const stripHtml = (value = "") =>
-  String(value)
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
 
 const escapeHtml = (value = "") =>
   String(value)
@@ -208,46 +202,19 @@ const buildStageResource = (recommendationRule) => {
   };
 };
 
-const buildGapResourcesEmailHtml = (gapResources = []) =>
-  gapResources
-    .map(
-      (resource) => `
-        <div style="margin:14px 0;padding:16px;border:1px solid #DCE8DF;border-radius:8px;background:#F5F7F4;">
-          <p style="margin:0;color:#0B6E4F;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">${escapeHtml(resource.categoryName)} focus</p>
-          <p style="margin:7px 0 0;color:#222222;font-size:16px;font-weight:800;line-height:1.35;">${escapeHtml(resource.title)}</p>
-          <p style="margin:7px 0 0;color:#222222;font-size:14px;line-height:1.55;">${escapeHtml(resource.description)}</p>
-        </div>`
-    )
-    .join("");
+const buildNextStepsHtml = (steps = []) => {
+  const safeSteps = steps.filter(Boolean);
+  if (!safeSteps.length) return "<p style=\"margin:0;\">Start by making your strongest credibility signals easier to see and trust.</p>";
 
-const buildGapResourcesText = (gapResources = []) =>
-  gapResources
-    .map((resource) => `${resource.categoryName}: ${resource.title}\n${resource.description || ""}`.trim())
-    .join("\n\n");
+  return `<ul style="margin:0 0 18px;padding-left:22px;">${safeSteps
+    .map((step) => `<li style="margin:0 0 8px;">${escapeHtml(step)}</li>`)
+    .join("")}</ul>`;
+};
 
-const buildResourceEmailVariables = ({ result, resource, stage }) => {
-  const emailDelivery = resource?.emailDelivery || {};
-  const title = emailDelivery.title || resource?.title || "Your personalised credibility resource";
-  const bodyHtml =
-    emailDelivery.bodyHtml ||
-    `<p>${emailDelivery.intro || resource?.description || "Use this resource to make your earned credibility more visible."}</p>`;
-  const cta = resolveEmailCta({
-    text: emailDelivery.ctaText,
-    url: emailDelivery.ctaUrl
-  });
-
-  return {
-    firstName: result.participant.firstName || "there",
-    stage: stage?.name || result.credibilityStage?.name || "Earned Credibility",
-    resourceSubject: emailDelivery.subject || title,
-    resourcePreheader: emailDelivery.preheader || resource?.description || "Your personalised credibility resource is inside this email.",
-    resourceTitle: title,
-    resourceFocus: resource?.relatedAssessmentScoreRange || stage?.name || "Earned Credibility",
-    resourceBodyHtml: bodyHtml,
-    resourceText: emailDelivery.text || stripHtml(bodyHtml),
-    ctaText: cta.ctaText,
-    ctaUrl: cta.ctaUrl
-  };
+const buildNextStepsText = (steps = []) => {
+  const safeSteps = steps.filter(Boolean);
+  if (!safeSteps.length) return "Start by making your strongest credibility signals easier to see and trust.";
+  return safeSteps.map((step) => `- ${step}`).join("\n");
 };
 
 export const getActiveAssessment = asyncHandler(async (req, res) => {
@@ -425,10 +392,7 @@ export const submitAssessment = asyncHandler(async (req, res) => {
     }
   });
 
-  const aiReport = aiAnalysis.status === "complete" ? aiAnalysis.report : undefined;
-  const scoreBasis = scoring.scoringSnapshot?.scoreSource === "evidence_rubric"
-    ? "Your result is based on the written evidence you shared for each credibility pillar, with your statement ratings used as a self-reflection cross-check."
-    : "Your result currently uses your statement ratings because the written-evidence review was unavailable."
+  const stageReport = result.credibilityStage?.report || {};
   const intensiveCta = resolveEmailCta({
     text: recommendationSnapshot?.ctaText,
     url: recommendationSnapshot?.ctaDestination
@@ -446,85 +410,34 @@ export const submitAssessment = asyncHandler(async (req, res) => {
       score: result.overallScore,
       scoreMax: result.overallMaxScore || scoring.overallMaxScore || 100,
       stage: result.credibilityStage?.name || "Earned Credibility",
-      strongestCategory: result.strongestCategory?.name,
-      weakestCategory: result.weakestCategory?.name,
-      scoreBasis,
-      personalizedHeadline: aiReport?.headline || "Your current credibility picture",
-      personalizedSummary:
-        aiReport?.summary ||
-        result.credibilityStage?.report?.whatItMeans ||
+      stageWhatItMeans:
+        stageReport.whatItMeans ||
         result.credibilityStage?.description ||
         "Your score shows where your earned credibility is already visible and where it needs to become easier to trust.",
-      earnedCredibility:
-        aiReport?.earnedCredibility ||
-        "Your result is not a measure of your worth. It is a practical snapshot of what people can currently see and trust.",
-      gapResourcesHtml: buildGapResourcesEmailHtml(gapResources),
-      gapResourcesText: buildGapResourcesText(gapResources),
-      stageResourceTitle: stageResource?.title || result.credibilityStage?.report?.recommendedResourceTitle || "Your recommended resource",
+      stageBiggestOpportunity:
+        stageReport.biggestOpportunity ||
+        result.credibilityStage?.recommendedAction ||
+        "Make the credibility you have already earned easier for people to see, understand, and trust.",
+      stageNextStepsHtml: buildNextStepsHtml(stageReport.nextSteps || []),
+      stageNextStepsText: buildNextStepsText(stageReport.nextSteps || []),
+      stageFinalNote:
+        stageReport.finalNote ||
+        "Your result is a snapshot of how your earned credibility is showing up today. Every improvement can make you easier to trust, remember, and choose.",
+      stageResourceTitle: stageResource?.title || stageReport.recommendedResourceTitle || "Your recommended resource",
       stageResourceDescription:
         stageResource?.description || "I will send this resource directly to your inbox so you can work through it without a separate download.",
       intensiveCtaText: intensiveCta.ctaText,
       intensiveCtaUrl: intensiveCta.ctaUrl,
       recommendedAction: intensiveCta.ctaText,
-      resultsUrl: `${env.appUrl}/results/${resultToken}`
+      resultsUrl: toAbsoluteUrl(`/results/${resultToken}`)
     }
   });
-
-  const resourceIds = [...new Set([...gapResources.map((resource) => String(resource.resource)), String(stageResource?.resource || "")].filter(Boolean))];
-  const resourcesToDeliver = resourceIds.length
-    ? await Resource.find({ _id: { $in: resourceIds }, active: true }).lean()
-    : [];
-  const resourceDeliveries = await Promise.all(
-    resourcesToDeliver
-      .filter((resource) => resource?.emailDelivery?.bodyHtml || resource?.emailDelivery?.text)
-      .map((resource) =>
-        queueAndAttemptEmail({
-          to: result.participant.email,
-          name: `${result.participant.firstName} ${result.participant.lastName || ""}`.trim(),
-          templateKey: "resource_email_delivery",
-          relatedLead: lead._id,
-          relatedAssessment: result._id,
-          relatedOffer: recommendationSnapshot?.offer,
-          idempotencyKey: `resource-delivery:${result._id}:${resource._id}`,
-          variables: buildResourceEmailVariables({
-            result,
-            resource,
-            stage: scoreRange
-          })
-        })
-      )
-  );
-
-  let sequenceEmails = [];
-  if (recommendationRule?.emailSequenceKey) {
-    sequenceEmails = await scheduleEmailSequence({
-      sequenceKey: recommendationRule.emailSequenceKey,
-      to: result.participant.email,
-      name: `${result.participant.firstName} ${result.participant.lastName || ""}`.trim(),
-      relatedLead: lead._id,
-      variables: {
-        firstName: result.participant.firstName,
-        score: result.overallScore,
-        scoreMax: result.overallMaxScore || scoring.overallMaxScore || 100,
-        stage: result.credibilityStage?.name || "Earned Credibility",
-        weakestCategory: result.weakestCategory?.name || "your focus area",
-        strongestCategory: result.strongestCategory?.name || "your strongest area",
-        ctaText: intensiveCta.ctaText,
-        ctaUrl: intensiveCta.ctaUrl
-      },
-      metadata: {
-        source: "assessment_recommendation",
-        assessmentResult: result._id,
-        recommendationRule: recommendationRule._id
-      }
-    });
-  }
 
   created(res, "Assessment completed successfully.", {
     result: resultSummary(result.toObject(), resultToken),
     emailDelivery: resultDelivery.delivery,
-    resourceDeliveries: resourceDeliveries.map((delivery) => delivery.delivery),
-    scheduledSequenceEmails: sequenceEmails.length
+    resourceDeliveries: [],
+    scheduledSequenceEmails: 0
   });
 });
 

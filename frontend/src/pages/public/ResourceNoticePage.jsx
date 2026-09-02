@@ -15,7 +15,7 @@ export default function ResourceNoticePage() {
   return (
     <section className="bg-mistWhite py-14 sm:py-20 lg:py-24">
       <div className="container-shell max-w-3xl">
-        <div className="rounded border border-sage bg-white p-6 text-center shadow-[0_22px_50px_rgba(34,34,34,0.06)] sm:p-9">
+        <div className="rounded border border-sage bg-white p-6 text-center shadow-[0_22px_50px_rgba(26,26,26,0.06)] sm:p-9">
           <Mail className="mx-auto text-deepEmerald" size={38} aria-hidden="true" />
           <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">
             Email-delivered resource

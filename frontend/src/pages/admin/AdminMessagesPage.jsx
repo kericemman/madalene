@@ -129,7 +129,7 @@ export default function AdminMessagesPage() {
       )}
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[0.84fr_1.16fr]">
-        <div className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <div className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           <div className="grid gap-3 sm:grid-cols-[1fr_180px]">
             <label className="relative block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/42" size={17} aria-hidden="true" />
@@ -187,7 +187,7 @@ export default function AdminMessagesPage() {
           </div>
         </div>
 
-        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           {selected ? (
             <div>
               <div className="flex flex-col gap-4 border-b border-sage pb-5 lg:flex-row lg:items-start lg:justify-between">

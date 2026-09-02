@@ -113,7 +113,7 @@ export default function AdminApplicationsPage() {
         </div>
       )}
 
-      <div className="mt-8 grid gap-4 border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(34,34,34,0.045)] lg:grid-cols-[1fr_220px]">
+      <div className="mt-8 grid gap-4 border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.045)] lg:grid-cols-[1fr_220px]">
         <label className="relative block">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/42" size={17} aria-hidden="true" />
           <input
@@ -138,7 +138,7 @@ export default function AdminApplicationsPage() {
           <div className="border border-sage bg-white p-8 text-sm font-bold text-deepEmerald">Loading applications...</div>
         ) : applications.length ? (
           applications.map((application) => (
-            <article key={application._id} className="grid gap-5 border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)] xl:grid-cols-[1fr_320px]">
+            <article key={application._id} className="grid gap-5 border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)] xl:grid-cols-[1fr_320px]">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${statusClass(application.status)}`}>

@@ -2,7 +2,6 @@ import HeroSection from "./home/HeroSection.jsx";
 import ProblemSection from "./home/ProblemSection.jsx";
 import BigIdeaSection from "./home/BigIdeaSection.jsx";
 import AssessmentSection from "./home/AssessmentSection.jsx";
-import StagesSection from "./home/StagesSection.jsx";
 import ResourcesSection from "./home/ResourcesSection.jsx";
 import ProofSection from "./home/ProofSection.jsx";
 import FounderStorySection from "./home/FounderStorySection.jsx";
@@ -16,7 +15,7 @@ export default function HomePage() {
       <ProblemSection />
       <BigIdeaSection />
       <AssessmentSection />
-      <StagesSection />
+     
       <ResourcesSection />
       <ProofSection />
       <FounderStorySection />

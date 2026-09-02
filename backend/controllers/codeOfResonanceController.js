@@ -5,6 +5,10 @@ import { ok } from "../utils/apiResponse.js";
 export const listPublicCodeOfResonanceEntries = asyncHandler(async (req, res) => {
   const limit = Math.min(Math.max(Number(req.query.limit || 6), 1), 24);
   const query = { status: "ready" };
+  const sort =
+    req.query.sort === "latest"
+      ? { publishedAt: -1, updatedAt: -1, createdAt: -1 }
+      : { featured: -1, displayOrder: 1, updatedAt: -1 };
 
   if (codeOfResonanceTypes.includes(req.query.contentType)) {
     query.contentType = req.query.contentType;
@@ -15,10 +19,10 @@ export const listPublicCodeOfResonanceEntries = asyncHandler(async (req, res) =>
   }
 
   const items = await CodeOfResonanceEntry.find(query)
-    .sort({ featured: -1, displayOrder: 1, updatedAt: -1 })
+    .sort(sort)
     .limit(limit)
     .select(
-      "title slug contentType excerpt body ctaText ctaUrl category tags coverImage readingTimeMinutes strategicGoal editorialPlan source caseStudy testimonial seo updatedAt"
+      "title slug contentType excerpt body ctaText ctaUrl category tags coverImage readingTimeMinutes strategicGoal editorialPlan source caseStudy testimonial seo updatedAt publishedAt createdAt"
     )
     .populate("coverImage", "secureUrl optimizedUrl thumbnailUrl altText srcset")
     .lean();

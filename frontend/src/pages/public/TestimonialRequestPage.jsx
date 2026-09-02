@@ -53,7 +53,7 @@ export default function TestimonialRequestPage() {
   return (
     <main className="bg-mistWhite py-14 sm:py-20 lg:py-24">
       <div className="container-shell grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
-        <aside className="border border-charcoal bg-charcoal p-6 text-mistWhite shadow-[0_24px_58px_rgba(34,34,34,0.16)] sm:p-8">
+        <aside className="border border-charcoal bg-charcoal p-6 text-mistWhite shadow-[0_24px_58px_rgba(26,26,26,0.16)] sm:p-8">
           <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">
             Testimonial Request
           </p>
@@ -78,7 +78,7 @@ export default function TestimonialRequestPage() {
           </div>
         </aside>
 
-        <section className="border border-sage bg-white shadow-[0_22px_50px_rgba(34,34,34,0.06)]">
+        <section className="border border-sage bg-white shadow-[0_22px_50px_rgba(26,26,26,0.06)]">
           <div className="border-b border-sage bg-mistWhite px-5 py-5 sm:px-7">
             <div className="flex items-start gap-3">
               <ShieldCheck className="mt-1 shrink-0 text-deepEmerald" size={22} aria-hidden="true" />

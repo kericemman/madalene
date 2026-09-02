@@ -81,7 +81,7 @@ function MediaCard({ asset, active, onSelect }) {
       type="button"
       onClick={() => onSelect(asset)}
       className={`overflow-hidden rounded border bg-white text-left transition ${
-        active ? "border-deepEmerald shadow-[0_16px_34px_rgba(11,110,79,0.12)]" : "border-sage hover:border-deepEmerald/40"
+        active ? "border-deepEmerald shadow-[0_16px_34px_rgba(15,77,62,0.12)]" : "border-sage hover:border-deepEmerald/40"
       }`}
     >
       <MediaPreview asset={asset} />
@@ -278,7 +278,7 @@ export default function AdminMediaPage() {
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[1fr_360px]">
         <div className="grid gap-5">
-          <form onSubmit={uploadAsset} className="grid gap-4 rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(34,34,34,0.045)] lg:grid-cols-[1fr_1fr_1fr_auto] lg:items-end">
+          <form onSubmit={uploadAsset} className="grid gap-4 rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.045)] lg:grid-cols-[1fr_1fr_1fr_auto] lg:items-end">
             <label className="grid gap-2 lg:col-span-2">
               <span className="text-sm font-extrabold text-charcoal">Upload file</span>
               <input
@@ -335,7 +335,7 @@ export default function AdminMediaPage() {
             </label>
           </form>
 
-          <div className="grid gap-4 rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(34,34,34,0.045)] lg:grid-cols-[1fr_220px_220px] lg:items-center">
+          <div className="grid gap-4 rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.045)] lg:grid-cols-[1fr_220px_220px] lg:items-center">
             <div className="flex flex-wrap gap-2">
               {resourceFilters.map((filter) => (
                 <button
@@ -367,7 +367,7 @@ export default function AdminMediaPage() {
               Loading media...
             </div>
           ) : assets.length === 0 ? (
-            <div className="rounded border border-sage bg-white p-8 text-center shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+            <div className="rounded border border-sage bg-white p-8 text-center shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
               <UploadCloud className="mx-auto text-deepEmerald" size={34} aria-hidden="true" />
               <h2 className="mt-4 font-serif text-3xl">No media yet.</h2>
               <p className="mt-2 text-sm text-charcoal/60">Uploaded assets will appear here after Cloudinary optimization.</p>
@@ -387,7 +387,7 @@ export default function AdminMediaPage() {
           )}
         </div>
 
-        <aside className="rounded border border-sage bg-mistWhite p-4 shadow-[0_16px_34px_rgba(34,34,34,0.045)] xl:sticky xl:top-8">
+        <aside className="rounded border border-sage bg-mistWhite p-4 shadow-[0_16px_34px_rgba(26,26,26,0.045)] xl:sticky xl:top-8">
           {selected ? (
             <form onSubmit={saveAsset} className="grid gap-4">
               <MediaPreview asset={selected} />

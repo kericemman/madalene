@@ -22,6 +22,7 @@ export const env = {
   isProduction: process.env.NODE_ENV === "production",
   port: Number(process.env.PORT || 5000),
   mongoUri: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/earned-credibility",
+  mongoDbName: process.env.MONGODB_DB_NAME || "earned-credibility",
   jwtAccessSecret:
     process.env.JWT_ACCESS_SECRET ||
     (process.env.NODE_ENV === "production" ? "" : "dev-only-access-secret-change-me"),

@@ -1,225 +1,178 @@
-import { BookOpen, FileText, Layers3, Quote, Sparkles } from "lucide-react";
-import gardens00330 from "../../../assets/home/maggy-gardens-00330.jpg";
-import gardens00333 from "../../../assets/home/maggy-gardens-00333.jpg";
-import gardens00411 from "../../../assets/home/maggy-gardens-00411.jpg";
-import gardens00414 from "../../../assets/home/maggy-gardens-00414.jpg";
-import gardens00423 from "../../../assets/home/maggy-gardens-00423.jpg";
-import gardens00563 from "../../../assets/home/maggy-gardens-00563.jpg";
-
 const magnific = {
-  heroStudio: gardens00330,
-  heroSmile: gardens00563,
-  assessmentConfidence: gardens00423,
-  problemGarden: gardens00563,
-  problemPresence: gardens00333,
-  healthcareSupport: gardens00333,
-  clinicalNotes: gardens00411,
-  credibilityLeadership: gardens00414,
-  notebook: gardens00563,
-  careTrust: gardens00423
+  heroStudio: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00348?_a=BAMAPqM50",
+    alt: "Magdalene Wambui smiling in an emerald green dress and white blazer.",
+    objectPosition: "center 38%"
+  },
+  heroSmile: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00563-1?_a=BAMAPqM50",
+    alt: "Magdalene Wambui smiling in a white blouse and emerald trousers in a garden.",
+    objectPosition: "center 42%"
+  },
+  assessmentConfidence: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00425-edit?_a=BAMAPqM50",
+    alt: "Magdalene Wambui seated in an emerald outfit with a white blazer.",
+    objectPosition: "center 44%"
+  },
+  problemGarden: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00554-1?_a=BAMAPqM50",
+    alt: "Magdalene Wambui standing near red flowers in a white blouse and emerald trousers.",
+    objectPosition: "center 45%"
+  },
+  problemPresence: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00372?_a=BAMAPqM50",
+    alt: "Magdalene Wambui in a black top and white trousers in a garden setting.",
+    objectPosition: "center 42%"
+  },
+  healthcareSupport: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00373?_a=BAMAPqM50",
+    alt: "Magdalene Wambui standing in a black top and white trousers outdoors.",
+    objectPosition: "center 42%"
+  },
+  clinicalNotes: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00387?_a=BAMAPqM50",
+    alt: "Magdalene Wambui in a black editorial portrait with a thoughtful pose.",
+    objectPosition: "center 38%"
+  },
+  credibilityLeadership: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00548?_a=BAMAPqM50",
+    alt: "Magdalene Wambui in a white blouse with folded arms in an editorial portrait.",
+    objectPosition: "center 38%"
+  },
+  notebook: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00397t?_a=BAMAPqM50",
+    alt: "Magdalene Wambui smiling in a black top and emerald green trousers.",
+    objectPosition: "center 45%"
+  },
+  careTrust: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00425-edit?_a=BAMAPqM50",
+    alt: "Magdalene Wambui seated in an emerald outfit with a white blazer.",
+    objectPosition: "center 44%"
+  }
 };
 
 export const magnificImages = {
-  hero: {
-    src: magnific.heroStudio,
-    alt: "Magdalene Wambui in emerald green and white in a garden setting.",
-    objectPosition: "center 44%"
-  },
-  heroAccent: {
-    src: magnific.heroSmile,
-    alt: "Magdalene Wambui smiling in a white blouse among garden flowers.",
-    objectPosition: "center 42%"
-  },
-  problem: {
-    src: magnific.problemPresence,
-    alt: "Magdalene Wambui seated in emerald green in a garden setting.",
-    objectPosition: "center 56%"
-  },
-  assessment: {
-    src: magnific.assessmentConfidence,
-    alt: "Magdalene Wambui in an emerald green outfit and white blazer.",
-    objectPosition: "center 45%"
-  },
-  proof: {
-    src: magnific.problemGarden,
-    alt: "Magdalene Wambui outdoors in a white blouse and emerald green trousers.",
-    objectPosition: "center 42%"
-  },
-  founder: {
-    src: magnific.heroStudio,
-    alt: "Magdalene Wambui in an emerald green outfit in the garden.",
-    objectPosition: "center 44%"
-  },
-  offers: {
-    src: magnific.clinicalNotes,
-    alt: "Editorial portrait of Magdalene Wambui against a black background.",
-    objectPosition: "center 30%"
-  },
-  finalCta: {
-    src: magnific.credibilityLeadership,
-    alt: "Magdalene Wambui in a black editorial portrait.",
-    objectPosition: "center 32%"
-  }
+  hero: magnific.heroStudio,
+  heroAccent: magnific.heroSmile,
+  problem: magnific.problemPresence,
+  assessment: magnific.assessmentConfidence,
+  proof: magnific.problemGarden,
+  founder: magnific.heroStudio,
+  offers: magnific.clinicalNotes,
+  finalCta: magnific.credibilityLeadership
 };
 
 export const dimensions = [
   {
-    title: "Story Clarity",
-    text: "Can people see the experiences that shaped your expertise?"
+    title: "Story",
+    text: "Can people understand what has shaped the way you work?"
   },
   {
-    title: "Trust Signals",
-    text: "What helps clients feel confident choosing you?"
+    title: "Trust",
+    text: "Do people have enough reason to feel confident choosing you?"
   },
   {
-    title: "Positioning Clarity",
-    text: "Can someone immediately understand why you are different?"
+    title: "Positioning",
+    text: "Can the right person quickly understand what makes your work distinct?"
   },
   {
-    title: "Credibility Proof",
-    text: "Are you showing evidence that builds confidence before the first conversation?"
+    title: "Proof",
+    text: "Can people see evidence that supports the reputation you want to hold?"
   },
   {
     title: "Resonance",
-    text: "Will people remember you long after they have visited your profile?"
+    text: "When people encounter your work, does something meaningful stay with them?"
   }
 ];
 
 export const reportItems = [
   {
-    title: "Your Resonance Quotient (RQ)",
-    text: "A snapshot of how effectively your lived experience is translated into trust."
+    title: "Where credibility is clear",
+    text: "See where your credibility is already coming through strongly."
   },
   {
-    title: "Your Personalised Earned Credibility Report",
-    text: "A clear breakdown of your strengths, blind spots, and opportunities."
+    title: "Where perception is behind",
+    text: "Understand where people may still be missing the depth of your expertise."
   },
   {
-    title: "Your Strongest Trust Assets",
-    text: "The experiences and qualities already helping people believe in you."
+    title: "Your credibility gaps",
+    text: "Identify the specific areas that deserve attention next."
   },
   {
-    title: "Your Hidden Credibility Gaps",
-    text: "The invisible barriers preventing your value from being fully recognised."
+    title: "Your personalised next step",
+    text: "Receive a clearer view of what to strengthen after the assessment."
+  }
+];
+
+export const proofCaseStudies = [
+  {
+    title: "Mercy's Story",
+    slug: "",
+    excerpt: "From hidden expertise to national visibility and industry recognition.",
+    featured: true,
+    caseStudy: {
+      clientName: "Mercy",
+      challenge: "Her expertise was already there. Her positioning wasn't allowing people to see its depth.",
+      result: "Mercy's professional visibility expanded into national conversations and independent industry recognition."
+    },
+    editorialPlan: {
+      proofPoints: ["National visibility", "Industry recognition", "Clearer depth of expertise"]
+    }
   },
   {
-    title: "A Personalised Next-Step Roadmap",
-    text: "Practical recommendations to help you become the trusted choice in your niche."
+    title: "Rebecca's Story",
+    slug: "",
+    excerpt: "Her work had become bigger than the way she was introducing herself.",
+    caseStudy: {
+      clientName: "Rebecca",
+      challenge: "Her positioning no longer created enough room for the fuller professional identity that was emerging.",
+      result:
+        "Her positioning evolved alongside a broader professional world, including FINDME Wellness Organisation and mental-health-informed public speaking."
+    },
+    editorialPlan: {
+      proofPoints: ["Fuller professional identity", "FINDME Wellness Organisation", "Mental-health-informed public speaking"]
+    }
+  },
+  {
+    title: "Anne's Story",
+    slug: "",
+    excerpt: "She was afraid her story would reveal too much. Then it became part of why people understood her work.",
+    caseStudy: {
+      clientName: "Anne",
+      challenge: "She was afraid her story would reveal too much.",
+      result: "We clarified what her story was actually for, so it became part of why people understood her work."
+    },
+    editorialPlan: {
+      proofPoints: ["Clearer story boundaries", "Stronger connection", "More understandable work"]
+    }
   }
 ];
 
 export const stages = [
   {
+    number: "01",
     name: "Hidden Credibility",
-    score: "0-5",
-    text: "Your expertise is not the problem. The people who need you cannot yet see what makes you worth trusting.",
-    cta: "Become the Trusted Choice"
+    text: "Your expertise exists, but too much of what makes you worth trusting remains difficult to see."
   },
   {
+    number: "02",
     name: "Emerging Credibility",
-    score: "6-10",
-    text: "You have expertise. But your message deserves to be remembered, not just noticed.",
-    cta: "Turn your credibility into clarity"
+    text: "Parts of your credibility are becoming visible, but the message isn't yet consistent."
   },
   {
+    number: "03",
     name: "Visible Credibility",
-    score: "11-15",
-    text: "You are becoming more visible, but visibility without resonance rarely creates lasting trust.",
-    cta: "Transform visibility into trust"
+    text: "People can see your expertise. The next opportunity is becoming meaningfully distinct."
   },
   {
+    number: "04",
     name: "Resonant Credibility",
-    score: "16-20",
-    text: "You are already making an impression. Now people need to remember why you are their trusted choice.",
-    cta: "Build your authority ecosystem"
+    text: "People understand and remember your perspective. Your opportunity is turning recognition into stronger preference."
   },
   {
-    name: "Trusted Choice",
-    score: "21-25",
-    text: "You have built something many practitioners aspire to. Now the opportunity is to multiply your impact.",
-    cta: "Expand your influence"
-  }
-];
-
-export const resources = [
-  {
-    title: "Email Delivered Directly to You",
-    text: "Personalised workbooks and prompts delivered directly inside your result email.",
-    cta: "Take Assessment",
-    icon: FileText,
-    image: {
-      src: magnific.notebook,
-      alt: "Magdalene Wambui in a garden setting.",
-      objectPosition: "center 42%"
-    }
-  },
-  {
-    title: "The Code of Resonance",
-    text: "Weekly essays on trust, identity, earned credibility, and the stories that shape who we become.",
-    cta: "Subscribe",
-    icon: BookOpen,
-    image: {
-      src: magnific.healthcareSupport,
-      alt: "Magdalene Wambui in an emerald green outfit.",
-      objectPosition: "center 56%"
-    }
-  },
-  {
-    title: "Essays That Challenge Conventional Thinking",
-    text: "Explore ideas on positioning, trust, emotional intelligence, and the psychology behind becoming unforgettable.",
-    cta: "Explore Essays",
-    icon: Sparkles,
-    image: {
-      src: magnific.clinicalNotes,
-      alt: "Editorial portrait of Magdalene Wambui.",
-      objectPosition: "center 30%"
-    }
-  },
-  {
-    title: "Recommended Reading",
-    text: "The books, research, and ideas that have shaped Magdalene's philosophy on trust, leadership, and earned credibility.",
-    cta: "View Reading List",
-    icon: Layers3,
-    image: {
-      src: magnific.notebook,
-      alt: "Magdalene Wambui in a garden setting.",
-      objectPosition: "center 42%"
-    }
-  },
-  {
-    title: "Stories of Transformation",
-    text: "See how practitioners uncovered their earned credibility and became the trusted choice.",
-    cta: "Read Case Studies",
-    icon: Quote,
-    image: {
-      src: magnific.careTrust,
-      alt: "Magdalene Wambui in an emerald green outfit and white blazer.",
-      objectPosition: "center 45%"
-    }
-  }
-];
-
-export const testimonials = [
-  {
-    before: "I knew I was good at what I did, but I struggled to explain why clients should choose me.",
-    after:
-      "Working with Magdalene helped me see that my story was not something to hide. It became the reason people finally understood my value.",
-    name: "Client Name",
-    role: "Role | Profession"
-  },
-  {
-    before: "I kept collecting certifications, believing they would make me more credible.",
-    after:
-      "I discovered that the experiences I had overlooked were the very things my clients connected with most.",
-    name: "Client Name",
-    role: "Profession"
-  },
-  {
-    before: "I was trying to sound impressive.",
-    after:
-      "For the first time, I started communicating what was true. That changed how people responded to my work.",
-    name: "Client Name",
-    role: "Profession"
+    number: "05",
+    name: "Trusted Choice™",
+    text: "Your reputation is doing more of the decision-making before the first conversation. The opportunity now is expanding influence."
   }
 ];
 

@@ -63,6 +63,9 @@ function ActionLink({ href, children }) {
 }
 
 export default function AssessmentResultPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { token } = useParams();
   const location = useLocation();
   const [result, setResult] = useState(location.state?.result || null);
@@ -151,7 +154,7 @@ export default function AssessmentResultPage() {
                   : "Here is your Earned Credibility score.")}
             </h1>
           </div>
-          <p className="text-xl leading-9 text-charcoal/72">
+          <p className="text-lg leading-9 text-charcoal/72">
             {evidenceScored
               ? "Your written evidence has been assessed against the five credibility pillars, with your statement ratings used as a self-reflection cross-check."
               : "Your result currently reflects your statement ratings because the written-evidence review was unavailable."}
@@ -160,7 +163,7 @@ export default function AssessmentResultPage() {
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-          <aside className={`rounded border p-7 text-center shadow-[0_18px_45px_rgba(34,34,34,0.12)] ${scoreTone(result.overallScore, scoreMax)}`}>
+          <aside className={`rounded border p-7 text-center shadow-[0_18px_45px_rgba(26,26,26,0.12)] ${scoreTone(result.overallScore, scoreMax)}`}>
             <p className="text-xs font-extrabold uppercase tracking-[0.18em] opacity-70">Resonance Quotient</p>
             <p className="mt-4 text-7xl font-black">{Math.round(clampScore(result.overallScore, scoreMax))}</p>
             <p className="mt-1 text-sm font-bold opacity-70">out of {scoreMax}</p>
@@ -174,9 +177,9 @@ export default function AssessmentResultPage() {
           </aside>
 
           <div className="grid gap-6">
-            <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(34,34,34,0.035)]">
+            <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(26,26,26,0.035)]">
               <h2 className="font-serif text-3xl">What this means</h2>
-              <p className="mt-4 text-lg leading-8 text-charcoal/72">
+              <p className="mt-4 text-l leading-8 text-charcoal/72">
                 {aiReport.summary ||
                   report.whatItMeans ||
                   stage.description ||
@@ -184,9 +187,9 @@ export default function AssessmentResultPage() {
               </p>
             </article>
 
-            <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(34,34,34,0.035)]">
+            <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(26,26,26,0.035)]">
               <h2 className="font-serif text-3xl">Your biggest opportunity</h2>
-              <p className="mt-4 text-lg leading-8 text-charcoal/72">
+              <p className="mt-4 text-l leading-8 text-charcoal/72">
                 {aiReport.earnedCredibility ||
                   report.biggestOpportunity ||
                   stage.recommendedAction ||
@@ -208,7 +211,7 @@ export default function AssessmentResultPage() {
             </article>
 
             {gapInsights.length > 0 && (
-              <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(34,34,34,0.035)]">
+              <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(26,26,26,0.035)]">
                 <div className="flex items-center gap-2 text-deepEmerald">
                   <Lightbulb size={17} aria-hidden="true" />
                   <p className="text-xs font-extrabold uppercase tracking-[0.16em]">Where to focus first</p>
@@ -224,7 +227,7 @@ export default function AssessmentResultPage() {
               </article>
             )}
 
-            <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(34,34,34,0.035)]">
+            <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(26,26,26,0.035)]">
               <h2 className="font-serif text-3xl">Your credibility dimensions</h2>
               <div className="mt-6 grid gap-5">
                 {(result.categoryScores || []).map((category) => (
@@ -243,7 +246,7 @@ export default function AssessmentResultPage() {
             )}
 
             {gapResources.length > 0 && (
-              <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(34,34,34,0.035)]">
+              <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(26,26,26,0.035)]">
                 <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">Resources selected for your gaps</p>
                 <p className="mt-3 text-sm leading-6 text-charcoal/68">
                   The full content for each resource is being delivered to your inbox, so you can read and use it without a separate download.
@@ -289,7 +292,7 @@ export default function AssessmentResultPage() {
             </article>
 
             {report.finalNote && (
-              <article className="rounded border border-charcoal bg-charcoal p-6 text-mistWhite shadow-[0_18px_45px_rgba(34,34,34,0.12)]">
+              <article className="rounded border border-charcoal bg-charcoal p-6 text-mistWhite shadow-[0_18px_45px_rgba(26,26,26,0.12)]">
                 <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-mutedMint">Your journey starts here</p>
                 <p className="mt-4 text-lg leading-8 text-mistWhite/76">{report.finalNote}</p>
               </article>

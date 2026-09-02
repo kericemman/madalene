@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  AlertCircle,
   ArrowRight,
   CheckCircle2,
   Clock,
   MessageSquareText,
   Send,
   ShieldCheck,
-  Sparkles,
-  X
+  Sparkles
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,44 +16,44 @@ import { postContactMessage } from "../../services/api.js";
 import SiteButton from "../../components/SiteButton.jsx";
 
 const contactSchema = z.object({
-  name: z.string().min(2, "Enter your name."),
-  email: z.string().email("Enter a valid email address."),
+  name: z.string().min(2, "Please enter your name."),
+  email: z.string().email("Please enter a valid email address."),
   profession: z.string().optional(),
   reason: z.string().optional(),
-  message: z.string().min(10, "Tell us a little more."),
+  message: z.string().min(10, "Please share a few lines to give context."),
   consent: z.literal(true, {
-    errorMap: () => ({ message: "Consent is required." })
+    errorMap: () => ({ message: "Consent is required to submit." })
   })
 });
 
 const reasons = [
-  { value: "assessment", label: "Assessment or results" },
-  { value: "offer", label: "Offer or package" },
-  { value: "booking", label: "Booking or availability" },
-  { value: "collaboration", label: "Collaboration" }
+  { value: "assessment", label: "Assessment & Results Discussion" },
+  { value: "offer", label: "Offer & Strategic Positioning" },
+  { value: "booking", label: "Advisory Booking & Retainers" },
+  { value: "collaboration", label: "Partnership or Speaking" }
 ];
 
 const contactNotes = [
   {
     icon: ShieldCheck,
     title: "Fit before pressure",
-    text: "Share what feels unclear about your credibility, positioning, or next step."
+    text: "Share what feels unclear about your positioning, authority, or messaging."
   },
   {
     icon: MessageSquareText,
-    title: "Context helps",
-    text: "A few honest lines about where you are now will help me respond with care."
+    title: "Context over brevity",
+    text: "A few honest lines about your current stage help shape a tailored reply."
   },
   {
     icon: Clock,
-    title: "Clear next step",
-    text: "You will receive a confirmation email and your enquiry will be reviewed."
+    title: "Considered response",
+    text: "Enquiries are reviewed directly. Expect a thoughtful response within 48 hours."
   }
 ];
 
 export default function ContactPage() {
-  const [formOpen, setFormOpen] = useState(false);
   const [status, setStatus] = useState({ type: "idle", message: "" });
+
   const {
     register,
     handleSubmit,
@@ -73,298 +73,244 @@ export default function ContactPage() {
 
   const onSubmit = async (values) => {
     setStatus({ type: "idle", message: "" });
-
     try {
       const response = await postContactMessage(values);
       reset();
       setStatus({
         type: "success",
-        message: response.message || "Your message has been received."
+        message: response.message || "Your message has been received. I will be in touch shortly."
       });
     } catch (error) {
       setStatus({
         type: "error",
         message:
           error.response?.data?.message ||
-          "Your message could not be sent right now. Please try again."
+          "Unable to send message right now. Please try again shortly."
       });
     }
   };
 
-  const openForm = () => {
-    setStatus({ type: "idle", message: "" });
-    setFormOpen(true);
-  };
-
-  useEffect(() => {
-    if (!formOpen) return undefined;
-
-    const previousOverflow = document.body.style.overflow;
-    const onKeyDown = (event) => {
-      if (event.key === "Escape") setFormOpen(false);
-    };
-
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [formOpen]);
-
   return (
-    <main className="bg-mistWhite">
-      <section className="border-b border-sage bg-white py-14 sm:py-20 lg:py-24">
-        <div className="container-shell grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
-          <div>
-            <p className="mb-5 flex items-center gap-3 text-xs font-extrabold uppercase tracking-[0.2em] text-deepEmerald">
-              <span className="h-px w-8 bg-deepEmerald" aria-hidden="true" />
-              Contact
-            </p>
-            <h1 className="max-w-3xl font-serif text-4xl leading-tight text-balance sm:text-5xl lg:text-6xl">
-              Start with the conversation that makes the next step clearer.
+    <main className="min-h-screen bg-[#FAF9F6] text-charcoal">
+      {/* Editorial Header */}
+      <section className="border-b border-sage/50 bg-white/70 backdrop-blur-sm py-12 sm:py-16 lg:py-20">
+        <div className="container-shell mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-deepEmerald">
+              Direct Enquiry
+            </span>
+            <h1 className="mt-3 font-serif text-3xl sm:text-5xl font-bold tracking-tight text-charcoal leading-[1.15] text-balance">
+              Start with the conversation that brings strategic clarity.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-charcoal/72">
-              I'm here to help you navigate your journey and provide the support you need.
+            <p className="mt-4 text-base sm:text-lg leading-relaxed text-charcoal/70 max-w-2xl">
+              Whether you are uncovering your core credibility narrative, aligning your brand, or exploring advisory work, reach out below.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={openForm}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-deepEmerald bg-deepEmerald px-5 py-3 text-sm font-extrabold text-mistWhite shadow-[0_12px_28px_rgba(11,110,79,0.18)] transition hover:border-charcoal hover:bg-charcoal"
-              >
-                Write a message
-                <ArrowRight size={17} aria-hidden="true" />
-              </button>
-              <SiteButton to="/assessment" variant="lightSecondary" className="w-full sm:w-auto">
-                Start the assessment first
-              </SiteButton>
-            </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+          {/* Value Micro-Cards */}
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
             {contactNotes.map((note) => {
               const Icon = note.icon;
               return (
-                <article key={note.title} className="border border-sage bg-mistWhite p-5 shadow-[0_14px_30px_rgba(34,34,34,0.04)]">
-                  <Icon className="text-deepEmerald" size={22} aria-hidden="true" />
-                  <h2 className="mt-4 font-serif text-2xl leading-tight">{note.title}</h2>
-                  <p className="mt-2 text-sm leading-6 text-charcoal/68">{note.text}</p>
-                </article>
+                <div
+                  key={note.title}
+                  className="rounded-2xl border border-sage/60 bg-white/60 p-5 backdrop-blur-sm shadow-sm"
+                >
+                  <Icon className="text-deepEmerald" size={20} aria-hidden="true" />
+                  <h3 className="mt-3 font-serif text-lg font-bold text-charcoal">{note.title}</h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-charcoal/65">{note.text}</p>
+                </div>
               );
             })}
           </div>
         </div>
       </section>
 
-      <section className="py-14 sm:py-20 lg:py-24">
-        <div className="container-shell grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
-          <aside className="border border-charcoal bg-charcoal p-6 text-mistWhite shadow-[0_24px_58px_rgba(34,34,34,0.16)]">
-            <Sparkles className="text-mutedMint" size={24} aria-hidden="true" />
-            <h2 className="mt-5 font-serif text-3xl leading-tight">Before you send</h2>
-            <p className="mt-4 text-sm leading-7 text-mistWhite/70">
-              The most useful messages name where you are now, what you are trying to become known
-              for, and what feels unclear about how people currently understand your value.
-            </p>
-            <div className="mt-7 space-y-4 border-t border-mistWhite/14 pt-6">
-              {[
-                "What kind of work do you do?",
-                "What credibility challenge are you noticing?",
-                "What would a helpful next step look like?"
-              ].map((prompt) => (
-                <p key={prompt} className="flex gap-3 text-sm leading-6 text-mistWhite/76">
-                  <CheckCircle2 className="mt-0.5 shrink-0 text-mutedMint" size={17} aria-hidden="true" />
-                  <span>{prompt}</span>
-                </p>
-              ))}
-            </div>
-          </aside>
-
-          <div className="border border-sage bg-white p-6 shadow-[0_22px_50px_rgba(34,34,34,0.06)] sm:p-8">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">
-              Send an enquiry
-            </p>
-            <h2 className="mt-3 max-w-xl font-serif text-4xl leading-tight text-charcoal text-balance">
-              Tell me what you are building when you are ready.
-            </h2>
+      {/* Main Form & Guidance Split View */}
+      <section className="py-12 sm:py-16 lg:py-20">
+        <div className="container-shell mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px] items-start">
             
-            <div className="mt-7 grid gap-3 sm:grid-cols-2">
-              {["Assessment questions", "Offer enquiries", "Booking requests", "Collaborations"].map((item) => (
-                <p key={item} className="flex gap-3 border border-sage bg-mistWhite px-4 py-3 text-sm font-semibold text-charcoal/72">
-                  <CheckCircle2 className="mt-0.5 shrink-0 text-deepEmerald" size={17} aria-hidden="true" />
-                  <span>{item}</span>
-                </p>
-              ))}
+            {/* Direct Form Surface */}
+            <div className="rounded-3xl border border-sage/70 bg-white p-6 sm:p-10 shadow-[0_20px_60px_rgba(26,26,26,0.04)]">
+              <div className="border-b border-sage/40 pb-6 mb-8">
+                <span className="text-xs font-bold uppercase tracking-wider text-deepEmerald">
+                  Send a Message
+                </span>
+                <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-charcoal">
+                  Tell me what you are working to clarify.
+                </h2>
+              </div>
+
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <Field label="Your Name" error={errors.name?.message} required>
+                    <input
+                      className="input w-full rounded-xl border-sage/80 focus:border-deepEmerald focus:ring-1 focus:ring-deepEmerald text-sm py-3"
+                      type="text"
+                      autoComplete="name"
+                      placeholder="e.g. Eleanor Vance"
+                      {...register("name")}
+                    />
+                  </Field>
+
+                  <Field label="Email Address" error={errors.email?.message} required>
+                    <input
+                      className="input w-full rounded-xl border-sage/80 focus:border-deepEmerald focus:ring-1 focus:ring-deepEmerald text-sm py-3"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="eleanor@domain.com"
+                      {...register("email")}
+                    />
+                  </Field>
+
+                  <Field label="Role or Profession" error={errors.profession?.message}>
+                    <input
+                      className="input w-full rounded-xl border-sage/80 focus:border-deepEmerald focus:ring-1 focus:ring-deepEmerald text-sm py-3"
+                      type="text"
+                      autoComplete="organization-title"
+                      placeholder="Founder, advisory partner, clinician..."
+                      {...register("profession")}
+                    />
+                  </Field>
+
+                  <Field label="Focus of Conversation" error={errors.reason?.message}>
+                    <select
+                      className="input w-full rounded-xl border-sage/80 focus:border-deepEmerald focus:ring-1 focus:ring-deepEmerald text-sm py-3"
+                      {...register("reason")}
+                    >
+                      <option value="">Select an area</option>
+                      {reasons.map((reason) => (
+                        <option key={reason.value} value={reason.value}>
+                          {reason.label}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                </div>
+
+                <Field label="Context & Objectives" error={errors.message?.message} required>
+                  <textarea
+                    className="input w-full min-h-[160px] rounded-xl border-sage/80 focus:border-deepEmerald focus:ring-1 focus:ring-deepEmerald text-sm p-4 resize-y leading-relaxed"
+                    placeholder="Where are you in your positioning? What feels unclear about how your authority is perceived?"
+                    {...register("message")}
+                  />
+                </Field>
+
+                {/* Consent Checkbox */}
+                <div className="space-y-1 pt-1">
+                  <label className="flex items-start gap-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      className="mt-1 size-4 rounded border-sage text-deepEmerald focus:ring-0 cursor-pointer"
+                      {...register("consent")}
+                    />
+                    <span className="text-xs text-charcoal/70 leading-relaxed">
+                      I consent to receiving a direct response regarding this enquiry.
+                    </span>
+                  </label>
+                  {errors.consent?.message && (
+                    <p className="text-xs font-semibold text-red-600 pl-7">{errors.consent.message}</p>
+                  )}
+                </div>
+
+                {/* Status Messages */}
+                {status.type === "success" && (
+                  <div className="flex items-start gap-3 rounded-xl bg-mutedMint/50 border border-mutedMint p-4 text-xs font-semibold text-charcoal">
+                    <CheckCircle2 className="mt-0.5 shrink-0 text-deepEmerald" size={17} />
+                    <span>{status.message}</span>
+                  </div>
+                )}
+
+                {status.type === "error" && (
+                  <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-xs font-semibold text-red-700">
+                    <AlertCircle className="mt-0.5 shrink-0 text-red-600" size={17} />
+                    <span>{status.message}</span>
+                  </div>
+                )}
+
+                {/* Submission CTA */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-deepEmerald px-8 py-3.5 text-xs font-bold text-mistWhite transition-all hover:bg-charcoal hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Send size={15} aria-hidden="true" />
+                  {isSubmitting ? "Delivering..." : "Send Message"}
+                </button>
+              </form>
             </div>
-            <button
-              type="button"
-              onClick={openForm}
-              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full border border-deepEmerald bg-deepEmerald px-5 py-3 text-sm font-extrabold text-mistWhite shadow-[0_12px_28px_rgba(11,110,79,0.18)] transition hover:border-charcoal hover:bg-charcoal sm:w-auto"
-            >
-              Write a message
-              <ArrowRight size={17} aria-hidden="true" />
-            </button>
+
+            {/* Strategic Sidebar */}
+            <aside className="space-y-6 lg:sticky lg:top-8">
+              <div className="rounded-3xl border border-sage/80 bg-white p-7 shadow-sm space-y-5">
+                <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-deepEmerald">
+                  <Sparkles size={15} />
+                  <span>Guidance</span>
+                </div>
+                <h3 className="font-serif text-xl font-bold text-charcoal leading-snug">
+                  What makes an enquiry productive?
+                </h3>
+                <p className="text-xs leading-relaxed text-charcoal/65">
+                  The clearest positioning work begins by identifying current misalignments:
+                </p>
+
+                <ul className="space-y-3 pt-2 text-xs text-charcoal/75 leading-relaxed">
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 size={15} className="mt-0.5 text-deepEmerald shrink-0" />
+                    <span>What you want to be sought out for vs. what you are hired for now.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 size={15} className="mt-0.5 text-deepEmerald shrink-0" />
+                    <span>Where your credibility feels obscured or misunderstood.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 size={15} className="mt-0.5 text-deepEmerald shrink-0" />
+                    <span>Whether you need high-touch advisory or strategic asset review.</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Assessment Alternate Path */}
+              <div className="rounded-3xl border border-charcoal/10 bg-white p-7 shadow-sm">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-charcoal/45">
+                  Prefer a Structured Baseline?
+                </span>
+                <h4 className="mt-1.5 font-serif text-lg font-bold text-charcoal">
+                  Take the Earned Credibility Diagnostic
+                </h4>
+                <p className="mt-2 text-xs leading-relaxed text-charcoal/60">
+                  Assess your positioning signals across visibility, message clarity, and authority before reaching out.
+                </p>
+                <div className="mt-5">
+                  <SiteButton
+                    to="/assessment"
+                    variant="lightSecondary"
+                    className="w-full justify-between text-xs py-2.5"
+                  >
+                    <span>Start Diagnostic</span>
+                    <ArrowRight size={14} />
+                  </SiteButton>
+                </div>
+              </div>
+            </aside>
+
           </div>
         </div>
       </section>
-
-      {formOpen && (
-        <ContactFormModal
-          errors={errors}
-          handleSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-          onClose={() => setFormOpen(false)}
-          onSubmit={onSubmit}
-          register={register}
-          status={status}
-        />
-      )}
     </main>
   );
 }
 
-function ContactFormModal({
-  errors,
-  handleSubmit,
-  isSubmitting,
-  onClose,
-  onSubmit,
-  register,
-  status
-}) {
+function Field({ label, error, required = false, children, className = "" }) {
   return (
-    <div className="fixed inset-0 z-50 grid min-h-dvh place-items-center overflow-y-auto bg-charcoal/72 px-4 py-6 backdrop-blur-sm">
-      <button
-        type="button"
-        className="absolute inset-0 cursor-default"
-        onClick={onClose}
-        aria-label="Close contact form"
-      />
-
-      <section
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="contact-modal-title"
-        className="relative w-full max-w-3xl overflow-hidden border border-sage bg-white shadow-[0_30px_80px_rgba(0,0,0,0.3)]"
-      >
-        <div className="flex items-start justify-between gap-4 border-b border-sage bg-mistWhite px-5 py-5 sm:px-7">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">
-              Send an enquiry
-            </p>
-            <h2 id="contact-modal-title" className="mt-2 font-serif text-3xl leading-tight text-charcoal">
-              Tell me what you are building.
-            </h2>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-charcoal/62">
-              A confirmation email will be sent after submission.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-sage bg-white text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald"
-            aria-label="Close contact form"
-          >
-            <X size={19} aria-hidden="true" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="max-h-[calc(100dvh-170px)] overflow-y-auto p-5 sm:p-7">
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Name" error={errors.name?.message}>
-              <input
-                className="input"
-                type="text"
-                autoComplete="name"
-                placeholder="Your name"
-                {...register("name")}
-              />
-            </Field>
-            <Field label="Email" error={errors.email?.message}>
-              <input
-                className="input"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                {...register("email")}
-              />
-            </Field>
-            <Field label="Profession" error={errors.profession?.message}>
-              <input
-                className="input"
-                type="text"
-                autoComplete="organization-title"
-                placeholder="Coach, clinician, founder..."
-                {...register("profession")}
-              />
-            </Field>
-            <Field label="Reason for enquiry" error={errors.reason?.message}>
-              <select className="input" {...register("reason")}>
-                <option value="">Select one</option>
-                {reasons.map((reason) => (
-                  <option key={reason.value} value={reason.value}>
-                    {reason.label}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Message" error={errors.message?.message} className="sm:col-span-2">
-              <textarea
-                className="input min-h-44 resize-y"
-                placeholder="Tell me what prompted you to reach out, what you need clarity on, or what kind of support you are considering."
-                {...register("message")}
-              />
-            </Field>
-          </div>
-
-          <div className="mt-6 space-y-4">
-            <label className="flex gap-3 border border-sage bg-mistWhite px-4 py-3 text-sm leading-6 text-charcoal/75">
-              <input
-                type="checkbox"
-                className="mt-1 size-4 accent-deepEmerald"
-                {...register("consent")}
-              />
-              <span>I consent to being contacted about this enquiry.</span>
-            </label>
-            {errors.consent?.message && (
-              <p className="text-sm font-semibold text-charcoal">{errors.consent.message}</p>
-            )}
-
-            {status.type === "success" && (
-              <p className="flex items-start gap-3 rounded bg-mutedMint px-4 py-3 text-sm font-semibold text-charcoal">
-                <CheckCircle2 className="mt-0.5 shrink-0 text-deepEmerald" size={18} aria-hidden="true" />
-                <span>{status.message}</span>
-              </p>
-            )}
-
-            {status.type === "error" && (
-              <p className="rounded border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-                {status.message}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-deepEmerald bg-deepEmerald px-5 py-3 text-sm font-extrabold text-mistWhite shadow-[0_12px_28px_rgba(11,110,79,0.18)] transition hover:border-charcoal hover:bg-charcoal disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-            >
-              <Send size={18} aria-hidden="true" />
-              {isSubmitting ? "Sending..." : "Send message"}
-            </button>
-          </div>
-        </form>
-      </section>
-    </div>
-  );
-}
-
-function Field({ label, error, children, className = "" }) {
-  return (
-    <label className={`grid gap-2 ${className}`}>
-      <span className="text-sm font-extrabold text-charcoal">{label}</span>
+    <label className={`block space-y-2 ${className}`}>
+      <span className="flex items-center gap-1 text-xs font-bold text-charcoal/80">
+        {label}
+        {required && <span className="text-deepEmerald">*</span>}
+      </span>
       {children}
-      {error && <span className="text-sm font-semibold text-charcoal">{error}</span>}
+      {error && <span className="block text-xs font-medium text-red-600">{error}</span>}
     </label>
   );
 }

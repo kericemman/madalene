@@ -1,35 +1,34 @@
-import { useEffect, useMemo, useState } from "react";
-import { Mark, mergeAttributes, Node } from "@tiptap/core";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Mark, Node, mergeAttributes } from "@tiptap/core";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
   AlertCircle,
-  ArrowLeft,
   ArrowRight,
   Bold,
   BookOpenText,
   CheckCircle2,
-  Edit3,
+  Clock,
   Eye,
+  FileCheck2,
   FileText,
   Heading2,
   Heading3,
   Image as ImageIcon,
   Italic,
-  Link2,
   Layers3,
+  Link2,
   List,
   ListOrdered,
+  Loader2,
+  MessageSquareQuote,
   Plus,
   Quote,
-  Redo2,
-  RotateCcw,
   Save,
   Search,
   Sparkles,
   Star,
   Trash2,
-  Undo2,
   UploadCloud,
   Video,
   X
@@ -41,6 +40,7 @@ import {
   updateCodeOfResonanceEntry,
   uploadMediaAsset
 } from "../../services/api.js";
+import { imageUrl } from "../../utils/cloudinaryImage.js";
 
 const LinkMark = Mark.create({
   name: "link",
@@ -60,7 +60,8 @@ const LinkMark = Mark.create({
       "a",
       mergeAttributes(HTMLAttributes, {
         target: "_blank",
-        rel: "noopener noreferrer"
+        rel: "noopener noreferrer",
+        class: "font-bold text-deepEmerald underline underline-offset-4"
       }),
       0
     ];
@@ -75,15 +76,22 @@ const ContentImage = Node.create({
   addAttributes() {
     return {
       src: { default: null },
-      alt: { default: "" },
-      title: { default: "" }
+      alt: { default: "" }
     };
   },
   parseHTML() {
     return [{ tag: "img[src]" }];
   },
   renderHTML({ HTMLAttributes }) {
-    return ["img", mergeAttributes({ class: "content-editor-image" }, HTMLAttributes)];
+    return [
+      "img",
+      mergeAttributes(
+        {
+          class: "my-5 block w-full max-w-[620px] rounded border border-sage object-cover shadow-sm"
+        },
+        HTMLAttributes
+      )
+    ];
   }
 });
 
@@ -103,149 +111,115 @@ const IframeVideo = Node.create({
   },
   renderHTML({ HTMLAttributes }) {
     return [
-      "iframe",
-      mergeAttributes(
-        {
-          class: "content-editor-video",
-          loading: "lazy",
-          allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
-          allowfullscreen: "true",
-          referrerpolicy: "strict-origin-when-cross-origin"
-        },
-        HTMLAttributes
-      )
+      "div",
+      { class: "my-5 aspect-video overflow-hidden rounded border border-sage bg-charcoal shadow-sm" },
+      [
+        "iframe",
+        mergeAttributes(
+          {
+            class: "h-full w-full",
+            loading: "lazy",
+            allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+            allowfullscreen: "true"
+          },
+          HTMLAttributes
+        )
+      ]
     ];
   }
 });
 
 const contentTypes = [
   {
-    value: "guide",
-    label: "Credibility Shift Guide",
-    section: "Featured Resource",
-    goal: "Convert curiosity into a guided lead-capture moment.",
-    readerShift: "I already have credibility; I need to uncover it.",
-    metric: "Guide downloads and assessment starts",
-    icon: FileText
+    value: "essay",
+    label: "Essay",
+    section: "Latest Essays",
+    description: "A point-of-view article that shifts how the reader thinks.",
+    starter:
+      "<p>Open with the tension your reader already feels.</p><p>Make the belief shift clear, then support it with proof, story, or observation.</p>",
+    icon: BookOpenText
   },
   {
     value: "trust_resonance",
     label: "Trust & Resonance",
-    section: "The Code of Resonance",
-    goal: "Build Magdalene's worldview and make the trust philosophy memorable.",
-    readerShift: "Resonance is earned clarity, not louder visibility.",
-    metric: "Subscribers and repeat readers",
+    section: "Trust & Resonance",
+    description: "A focused note on trust signals, resonance, and earned authority.",
+    starter:
+      "<p>Name the trust signal or pattern you want the reader to notice.</p><p>Explain why it matters and how it changes the way people choose.</p>",
     icon: Sparkles
   },
   {
-    value: "essay",
-    label: "Latest Essay",
-    section: "Latest Essays",
-    goal: "Challenge conventional thinking and open a new belief.",
-    readerShift: "Visibility alone is not enough to become the trusted choice.",
-    metric: "Essay reads and assessment clicks",
-    icon: BookOpenText
+    value: "guide",
+    label: "Guide",
+    section: "Practical Guides",
+    description: "A practical resource that helps the reader apply one idea.",
+    starter:
+      "<p>Start with the outcome this guide helps the reader create.</p><h2>Steps</h2><ol><li>First practical step.</li><li>Second practical step.</li><li>Next clear action.</li></ol>",
+    icon: FileText
   },
   {
     value: "reading_list",
     label: "Recommended Reading",
     section: "Recommended Reading",
-    goal: "Show the intellectual depth behind the Earned Credibility framework.",
-    readerShift: "This work is grounded, ethical, and deeply thought through.",
-    metric: "Saved resources and return visits",
+    description: "A book, article, or reference note with Magdalene's takeaways.",
+    starter:
+      "<p>Explain why this resource belongs inside The Code of Resonance.</p><p>Pull out the idea that matters most for credibility, trust, or positioning.</p>",
     icon: Layers3
   },
   {
     value: "case_study",
     label: "Case Study",
     section: "Case Studies",
-    goal: "Turn transformation into proof that reduces hesitation.",
-    readerShift: "This can work for someone like me.",
-    metric: "Application starts and enquiry clicks",
-    icon: Eye
+    description: "A proof-led client or project story built around challenge, work, and result.",
+    starter:
+      "<h2>What changed</h2><p>Describe the shift in language, positioning, trust, or visibility.</p><h2>The work</h2><p>Explain the decisions that created the result.</p>",
+    icon: FileCheck2
   },
   {
     value: "testimonial",
     label: "Transformation Story",
     section: "Stories of Transformation",
-    goal: "Make client trust visible through before-and-after language.",
-    readerShift: "Other practitioners have felt this same gap and moved through it.",
-    metric: "Offer-page clicks and trust lift",
-    icon: Star
+    description: "A before-and-after story in the client's or reader's words.",
+    starter:
+      "<p>Frame the transformation with context, then let the before-and-after carry the proof.</p>",
+    icon: MessageSquareQuote
   }
 ];
 
-const statusWorkflow = ["idea", "outline", "draft", "review", "ready"];
-const activeWorkflow = statusWorkflow;
+const statusOptions = [
+  { value: "idea", label: "Idea" },
+  { value: "outline", label: "Outline" },
+  { value: "draft", label: "Draft" },
+  { value: "review", label: "Review" },
+  { value: "ready", label: "Live" },
+  { value: "archived", label: "Archived" }
+];
 
 const journeyStages = [
   { value: "awareness", label: "Awareness" },
-  { value: "belief_shift", label: "Belief Shift" },
-  { value: "trust_building", label: "Trust Building" },
+  { value: "belief_shift", label: "Belief shift" },
+  { value: "trust_building", label: "Trust building" },
   { value: "proof", label: "Proof" },
   { value: "conversion", label: "Conversion" },
   { value: "retention", label: "Retention" }
 ];
 
-const qualityChecks = [
-  { key: "clearPromise", label: "Clear promise" },
-  { key: "readerRelevance", label: "Reader relevance" },
-  { key: "trustSignal", label: "Trust signal" },
-  { key: "emotionalResonance", label: "Emotional resonance" },
-  { key: "specificProof", label: "Specific proof" },
-  { key: "clearNextStep", label: "Clear next step" }
-];
-
-const editorTabs = [
-  {
-    key: "brief",
-    label: "Brief",
-    shortLabel: "Brief",
-    description: "Choose the resonance type, name the asset, and set the reader journey."
-  },
-  {
-    key: "intent",
-    label: "Intent",
-    shortLabel: "Intent",
-    description: "Shape the strategic purpose and section-specific fields."
-  },
-  {
-    key: "draft",
-    label: "Draft",
-    shortLabel: "Draft",
-    description: "Write the main content and add links, images, or embedded video."
-  },
-  {
-    key: "proof",
-    label: "Proof",
-    shortLabel: "Proof",
-    description: "Run the credibility checks before this moves forward."
-  },
-  {
-    key: "seo",
-    label: "SEO & CTA",
-    shortLabel: "SEO",
-    description: "Prepare the call-to-action, search snippet, order, and feature state."
-  }
-];
-
-const emptyChecks = qualityChecks.reduce((checks, item) => ({ ...checks, [item.key]: false }), {});
-
 const emptyForm = {
   title: "",
-  contentType: "trust_resonance",
-  status: "idea",
+  contentType: "essay",
+  status: "draft",
   excerpt: "",
-  body: "<p></p>",
-  coverImage: "",
-  coverImagePreview: null,
+  body: contentTypes[0].starter,
   ctaText: "",
   ctaUrl: "",
   category: "",
   tags: "",
+  coverImage: "",
+  coverImagePreview: "",
+  authorName: "Magdalene Wambui",
+  featured: false,
   displayOrder: 0,
   readingTimeMinutes: "",
-  featured: false,
   journeyStage: "belief_shift",
   audience: "",
   objective: "",
@@ -257,7 +231,6 @@ const emptyForm = {
   coreQuestion: "",
   thesis: "",
   proofPoints: "",
-  qualityChecks: emptyChecks,
   sourceTitle: "",
   sourceAuthor: "",
   sourceUrl: "",
@@ -269,84 +242,55 @@ const emptyForm = {
   testimonialName: "",
   testimonialRole: "",
   seoTitle: "",
-  seoDescription: ""
+  seoDescription: "",
+  seoCanonicalUrl: ""
 };
 
-const typeFor = (type) => contentTypes.find((item) => item.value === type) || contentTypes[1];
-const countFor = (items, key) => items?.find((item) => item._id === key)?.count || 0;
-const normalizeWorkflowStatus = (status) => (statusWorkflow.includes(status) ? status : "draft");
+const typeFor = (contentType) => contentTypes.find((type) => type.value === contentType) || contentTypes[0];
+const normalizeStatus = (status) => {
+  if (status === "published") return "ready";
+  return statusOptions.some((option) => option.value === status) ? status : "draft";
+};
 
-const toTags = (value) =>
-  String(value || "")
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
+const escapeHtml = (value) =>
+  String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
-const compactObject = (value) =>
-  Object.fromEntries(
-    Object.entries(value).filter(([, item]) => {
-      if (Array.isArray(item)) return item.length > 0;
-      return item !== "" && item !== undefined && item !== null;
-    })
-  );
-
-const stripHtml = (value = "") =>
-  value
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+const stripHtml = (value = "") => value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 
 const wordCount = (value = "") => {
   const text = stripHtml(value);
   return text ? text.split(/\s+/).length : 0;
 };
 
-const formatDate = (value) => {
-  if (!value) return "Not scheduled";
-  return new Intl.DateTimeFormat(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  }).format(new Date(value));
-};
-
 const mediaAssetUrl = (media) => media?.optimizedUrl || media?.secureUrl || media?.thumbnailUrl || "";
-
-const extractIframeSrc = (value = "") => {
-  const match = String(value).match(/src=["']([^"']+)["']/i);
-  return match?.[1] || "";
-};
-
-const escapeHtml = (value = "") =>
-  String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 
 const embedUrlFrom = (value = "") => {
   const candidate = String(value).trim();
-  const rawUrl = candidate.startsWith("<iframe") ? extractIframeSrc(candidate) : candidate;
+  const rawUrl = candidate.startsWith("<iframe") ? candidate.match(/src=["']([^"']+)["']/i)?.[1] || "" : candidate;
   if (!rawUrl) return "";
 
   try {
     const url = new URL(rawUrl);
     const host = url.hostname.replace(/^www\./, "");
 
-    if (host === "youtube.com" || host === "m.youtube.com") {
-      const videoId = url.searchParams.get("v");
-      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+    if (host.includes("youtube.com")) {
+      const id = url.searchParams.get("v");
+      return id ? `https://www.youtube.com/embed/${id}` : "";
     }
 
     if (host === "youtu.be") {
-      const videoId = url.pathname.split("/").filter(Boolean)[0];
-      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+      const id = url.pathname.slice(1);
+      return id ? `https://www.youtube.com/embed/${id}` : "";
     }
 
     if (host === "vimeo.com") {
-      const videoId = url.pathname.split("/").filter(Boolean)[0];
-      if (videoId) return `https://player.vimeo.com/video/${videoId}`;
+      const id = url.pathname.slice(1);
+      return id ? `https://player.vimeo.com/video/${id}` : "";
     }
 
     return rawUrl;
@@ -355,98 +299,38 @@ const embedUrlFrom = (value = "") => {
   }
 };
 
-const nextStatus = (status) => {
-  const index = activeWorkflow.indexOf(status);
-  return activeWorkflow[Math.min(index + 1, activeWorkflow.length - 1)] || "idea";
-};
+const parseTags = (value = "") =>
+  String(value)
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
 
-const readinessFor = (entry) => {
-  const checks = entry.qualityChecks || {};
-  const qualityScore = qualityChecks.filter((item) => checks[item.key]).length;
-  const fields = [
-    entry.title,
-    entry.excerpt,
-    stripHtml(entry.body),
-    entry.strategicGoal?.objective,
-    entry.strategicGoal?.readerShift,
-    entry.strategicGoal?.successMetric,
-    entry.editorialPlan?.thesis,
-    entry.editorialPlan?.coreQuestion,
-    entry.ctaText,
-    entry.seo?.description
-  ].filter(Boolean).length;
+const parseLines = (value = "") =>
+  String(value)
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
 
-  return Math.round(((fields + qualityScore) / (10 + qualityChecks.length)) * 100);
-};
+const countSummary = (items = []) =>
+  Object.fromEntries(items.map((item) => [item._id || "unknown", item.count || 0]));
 
-const toPayload = (form) => ({
-  title: form.title,
-  contentType: form.contentType,
-  status: form.status,
-  excerpt: form.excerpt,
-  body: form.body,
-  coverImage: form.coverImage || undefined,
-  ctaText: form.ctaText,
-  ctaUrl: form.ctaUrl,
-  category: form.category,
-  tags: toTags(form.tags),
-  displayOrder: Number(form.displayOrder || 0),
-  readingTimeMinutes: form.readingTimeMinutes === "" ? undefined : Number(form.readingTimeMinutes),
-  featured: form.featured,
-  strategicGoal: compactObject({
-    journeyStage: form.journeyStage,
-    audience: form.audience,
-    objective: form.objective,
-    readerShift: form.readerShift,
-    primaryCta: form.primaryCta,
-    successMetric: form.successMetric
-  }),
-  editorialPlan: compactObject({
-    pillar: form.pillar,
-    angle: form.angle,
-    coreQuestion: form.coreQuestion,
-    thesis: form.thesis,
-    proofPoints: toTags(form.proofPoints)
-  }),
-  qualityChecks: form.qualityChecks,
-  source: compactObject({
-    title: form.sourceTitle,
-    author: form.sourceAuthor,
-    url: form.sourceUrl
-  }),
-  caseStudy: compactObject({
-    clientName: form.clientName,
-    challenge: form.challenge,
-    result: form.result
-  }),
-  testimonial: compactObject({
-    before: form.testimonialBefore,
-    after: form.testimonialAfter,
-    name: form.testimonialName,
-    role: form.testimonialRole
-  }),
-  seo: compactObject({
-    title: form.seoTitle,
-    description: form.seoDescription
-  })
-});
-
-const fromEntry = (entry) => ({
+const formFromEntry = (entry = {}) => ({
   ...emptyForm,
   title: entry.title || "",
-  contentType: entry.contentType || "trust_resonance",
-  status: normalizeWorkflowStatus(entry.status),
+  contentType: entry.contentType || "essay",
+  status: normalizeStatus(entry.status),
   excerpt: entry.excerpt || "",
-  body: entry.body || "<p></p>",
-  coverImage: entry.coverImage?._id || entry.coverImage || "",
-  coverImagePreview: entry.coverImage || null,
+  body: entry.body || typeFor(entry.contentType).starter,
   ctaText: entry.ctaText || "",
   ctaUrl: entry.ctaUrl || "",
   category: entry.category || "",
   tags: (entry.tags || []).join(", "),
-  displayOrder: entry.displayOrder || 0,
-  readingTimeMinutes: entry.readingTimeMinutes ?? "",
+  coverImage: entry.coverImage?._id || entry.coverImage || "",
+  coverImagePreview: mediaAssetUrl(entry.coverImage),
+  authorName: entry.authorName || "Magdalene Wambui",
   featured: Boolean(entry.featured),
+  displayOrder: entry.displayOrder || 0,
+  readingTimeMinutes: entry.readingTimeMinutes || "",
   journeyStage: entry.strategicGoal?.journeyStage || "belief_shift",
   audience: entry.strategicGoal?.audience || "",
   objective: entry.strategicGoal?.objective || "",
@@ -457,8 +341,7 @@ const fromEntry = (entry) => ({
   angle: entry.editorialPlan?.angle || "",
   coreQuestion: entry.editorialPlan?.coreQuestion || "",
   thesis: entry.editorialPlan?.thesis || "",
-  proofPoints: (entry.editorialPlan?.proofPoints || []).join(", "),
-  qualityChecks: { ...emptyChecks, ...(entry.qualityChecks || {}) },
+  proofPoints: (entry.editorialPlan?.proofPoints || []).join("\n"),
   sourceTitle: entry.source?.title || "",
   sourceAuthor: entry.source?.author || "",
   sourceUrl: entry.source?.url || "",
@@ -470,42 +353,225 @@ const fromEntry = (entry) => ({
   testimonialName: entry.testimonial?.name || "",
   testimonialRole: entry.testimonial?.role || "",
   seoTitle: entry.seo?.title || "",
-  seoDescription: entry.seo?.description || ""
+  seoDescription: entry.seo?.description || "",
+  seoCanonicalUrl: entry.seo?.canonicalUrl || ""
 });
 
-function IconButton({ active = false, label, onClick, children }) {
+const payloadFromForm = (form) => ({
+  title: form.title.trim(),
+  contentType: form.contentType,
+  status: form.status,
+  excerpt: form.excerpt,
+  body: form.body,
+  ctaText: form.ctaText,
+  ctaUrl: form.ctaUrl,
+  category: form.category,
+  tags: parseTags(form.tags),
+  coverImage: form.coverImage,
+  authorName: form.authorName,
+  featured: Boolean(form.featured),
+  displayOrder: Number(form.displayOrder || 0),
+  readingTimeMinutes: form.readingTimeMinutes === "" ? undefined : Number(form.readingTimeMinutes),
+  strategicGoal: {
+    journeyStage: form.journeyStage,
+    audience: form.audience,
+    objective: form.objective,
+    readerShift: form.readerShift,
+    primaryCta: form.primaryCta,
+    successMetric: form.successMetric
+  },
+  editorialPlan: {
+    pillar: form.pillar,
+    angle: form.angle,
+    coreQuestion: form.coreQuestion,
+    thesis: form.thesis,
+    proofPoints: parseLines(form.proofPoints)
+  },
+  source: {
+    title: form.sourceTitle,
+    author: form.sourceAuthor,
+    url: form.sourceUrl
+  },
+  caseStudy: {
+    clientName: form.clientName,
+    challenge: form.challenge,
+    result: form.result
+  },
+  testimonial: {
+    before: form.testimonialBefore,
+    after: form.testimonialAfter,
+    name: form.testimonialName,
+    role: form.testimonialRole
+  },
+  seo: {
+    title: form.seoTitle,
+    description: form.seoDescription,
+    canonicalUrl: form.seoCanonicalUrl
+  }
+});
+
+function Field({ label, help, children, className = "" }) {
   return (
+    <label className={`grid gap-2 ${className}`}>
+      <span className="text-sm font-extrabold text-charcoal">{label}</span>
+      {children}
+      {help ? <span className="text-xs leading-5 text-charcoal/52">{help}</span> : null}
+    </label>
+  );
+}
+
+function TypePickerModal({ open, onClose, onSelect, counts }) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-charcoal/58 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-4xl rounded border border-sage bg-mistWhite p-4 shadow-2xl sm:p-6">
+        <div className="flex items-start justify-between gap-4 border-b border-sage pb-4">
+          <div>
+            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">Create entry</p>
+            <h2 className="mt-2 font-serif text-3xl leading-tight text-charcoal">Choose the format</h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-charcoal/62">
+              Pick what you are creating. The editor will only show the fields that fit that format.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-sage text-charcoal/62 transition hover:border-charcoal hover:text-charcoal"
+            aria-label="Close format picker"
+          >
+            <X size={18} aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {contentTypes.map((type) => {
+            const Icon = type.icon;
+            return (
+              <button
+                key={type.value}
+                type="button"
+                onClick={() => onSelect(type.value)}
+                className="group grid min-h-[168px] content-between rounded border border-sage bg-white p-4 text-left shadow-[0_14px_30px_rgba(26,26,26,0.035)] transition hover:border-deepEmerald hover:shadow-[0_18px_38px_rgba(26,26,26,0.08)]"
+              >
+                <span className="flex items-start justify-between gap-3">
+                  <span className="grid h-10 w-10 place-items-center rounded bg-mutedMint text-deepEmerald transition group-hover:bg-deepEmerald group-hover:text-mistWhite">
+                    <Icon size={18} aria-hidden="true" />
+                  </span>
+                  <ArrowRight size={17} className="mt-2 text-charcoal/34 transition group-hover:translate-x-1 group-hover:text-deepEmerald" aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block font-serif text-xl leading-tight text-charcoal">{type.label}</span>
+                  <span className="mt-2 block text-sm leading-6 text-charcoal/62">{type.description}</span>
+                  <span className="mt-3 inline-flex rounded-full border border-sage px-3 py-1 text-xs font-bold text-charcoal/56">
+                    {counts[type.value] || 0} saved
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EditorToolbar({ editor, onUploadMedia }) {
+  const insertLink = () => {
+    const href = window.prompt("Paste the link URL");
+    if (!href) return;
+    const { from, to } = editor.state.selection;
+    const selectedText = editor.state.doc.textBetween(from, to, " ").trim();
+    editor
+      .chain()
+      .focus()
+      .insertContent(`<a href="${escapeHtml(href.trim())}">${escapeHtml(selectedText || href.trim())}</a>`)
+      .run();
+  };
+
+  const insertImage = () => {
+    const src = window.prompt("Paste the image URL");
+    if (!src) return;
+    editor.chain().focus().insertContent({ type: "contentImage", attrs: { src: src.trim() } }).run();
+  };
+
+  const insertVideo = () => {
+    const src = window.prompt("Paste a YouTube or Vimeo URL");
+    const embed = embedUrlFrom(src);
+    if (!embed) return;
+    editor.chain().focus().insertContent({ type: "iframeVideo", attrs: { src: embed } }).run();
+  };
+
+  const handleInlineImage = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    const response = await onUploadMedia({
+      file,
+      usage: "code-entry-inline",
+      relatedModel: "CodeOfResonanceEntry"
+    });
+    const media = response.data?.media || response.media;
+    const src = mediaAssetUrl(media);
+    if (src) {
+      editor.chain().focus().insertContent({ type: "contentImage", attrs: { src, alt: media?.altText || "" } }).run();
+    }
+  };
+
+  const toolbarButton = (label, icon, onClick, active = false) => (
     <button
       type="button"
-      title={label}
-      aria-label={label}
       onClick={onClick}
-      className={`inline-grid size-9 place-items-center rounded border text-sm transition ${
+      className={`grid h-9 w-9 place-items-center rounded border transition ${
         active
           ? "border-deepEmerald bg-deepEmerald text-mistWhite"
-          : "border-sage bg-mistWhite text-charcoal hover:border-deepEmerald hover:text-deepEmerald"
+          : "border-transparent text-charcoal/66 hover:border-sage hover:bg-mutedMint/35 hover:text-charcoal"
       }`}
+      aria-label={label}
+      title={label}
     >
-      {children}
+      {icon}
     </button>
+  );
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-sage bg-white px-3 py-2">
+      <div className="flex flex-wrap items-center gap-1">
+        {toolbarButton("Heading 2", <Heading2 size={16} aria-hidden="true" />, () => editor.chain().focus().toggleHeading({ level: 2 }).run(), editor.isActive("heading", { level: 2 }))}
+        {toolbarButton("Heading 3", <Heading3 size={16} aria-hidden="true" />, () => editor.chain().focus().toggleHeading({ level: 3 }).run(), editor.isActive("heading", { level: 3 }))}
+        {toolbarButton("Bold", <Bold size={16} aria-hidden="true" />, () => editor.chain().focus().toggleBold().run(), editor.isActive("bold"))}
+        {toolbarButton("Italic", <Italic size={16} aria-hidden="true" />, () => editor.chain().focus().toggleItalic().run(), editor.isActive("italic"))}
+        {toolbarButton("Quote", <Quote size={16} aria-hidden="true" />, () => editor.chain().focus().toggleBlockquote().run(), editor.isActive("blockquote"))}
+        {toolbarButton("Bulleted list", <List size={16} aria-hidden="true" />, () => editor.chain().focus().toggleBulletList().run(), editor.isActive("bulletList"))}
+        {toolbarButton("Numbered list", <ListOrdered size={16} aria-hidden="true" />, () => editor.chain().focus().toggleOrderedList().run(), editor.isActive("orderedList"))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-1">
+        {toolbarButton("Insert link", <Link2 size={16} aria-hidden="true" />, insertLink)}
+        {toolbarButton("Insert image URL", <ImageIcon size={16} aria-hidden="true" />, insertImage)}
+        <label
+          className="grid h-9 w-9 cursor-pointer place-items-center rounded border border-transparent text-charcoal/66 transition hover:border-sage hover:bg-mutedMint/35 hover:text-charcoal"
+          title="Upload image"
+          aria-label="Upload image"
+        >
+          <UploadCloud size={16} aria-hidden="true" />
+          <input type="file" accept="image/*" className="sr-only" onChange={handleInlineImage} />
+        </label>
+        {toolbarButton("Embed video", <Video size={16} aria-hidden="true" />, insertVideo)}
+      </div>
+    </div>
   );
 }
 
 function RichTextEditor({ value, onChange, onUploadMedia }) {
-  const [linkUrl, setLinkUrl] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [imageAlt, setImageAlt] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [activeMediaTool, setActiveMediaTool] = useState(null);
-  const [uploadingInline, setUploadingInline] = useState(false);
-  const [mediaError, setMediaError] = useState("");
-
   const editor = useEditor({
     extensions: [StarterKit, LinkMark, ContentImage, IframeVideo],
     content: value || "<p></p>",
     editorProps: {
       attributes: {
-        class: "tiptap-editor-body min-h-[280px] px-4 py-4 focus:outline-none sm:min-h-[380px]"
+        class:
+          "ProseMirror min-h-[360px] max-w-none p-4 font-serif text-lg leading-8 text-charcoal focus:outline-none sm:p-6"
       }
     },
     onUpdate({ editor: activeEditor }) {
@@ -514,431 +580,61 @@ function RichTextEditor({ value, onChange, onUploadMedia }) {
   });
 
   useEffect(() => {
-    if (!editor) return;
-    const nextContent = value || "<p></p>";
-    if (nextContent !== editor.getHTML()) {
-      editor.commands.setContent(nextContent, false);
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value || "<p></p>", false);
     }
   }, [editor, value]);
 
   if (!editor) {
-    return <div className="min-h-[280px] rounded border border-sage bg-sage/30 sm:min-h-[380px]" />;
+    return <div className="min-h-[420px] animate-pulse rounded border border-sage bg-sage/20" />;
   }
 
-  const insertLink = () => {
-    const href = linkUrl.trim();
-    if (!href) return;
-    editor
-      .chain()
-      .focus()
-      .insertContent(`<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(href)}</a>`)
-      .run();
-    setLinkUrl("");
-    setActiveMediaTool(null);
-  };
-
-  const insertImage = (src = imageUrl, alt = imageAlt) => {
-    const imageSrc = String(src || "").trim();
-    if (!imageSrc) return;
-    editor.chain().focus().insertContent({ type: "contentImage", attrs: { src: imageSrc, alt } }).run();
-    setImageUrl("");
-    setImageAlt("");
-    setActiveMediaTool(null);
-  };
-
-  const insertVideo = () => {
-    const src = embedUrlFrom(videoUrl);
-    if (!src) {
-      setMediaError("Paste a valid YouTube, Vimeo, or iframe URL.");
-      return;
-    }
-    editor.chain().focus().insertContent({ type: "iframeVideo", attrs: { src, title: "Embedded video" } }).run();
-    setVideoUrl("");
-    setActiveMediaTool(null);
-    setMediaError("");
-  };
-
-  const uploadInlineImage = async (event) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file || !onUploadMedia) return;
-
-    setUploadingInline(true);
-    setMediaError("");
-    try {
-      const media = await onUploadMedia(file, {
-        altText: imageAlt,
-        usage: "code-inline-image",
-        tags: "code-of-resonance,inline-image"
-      });
-      insertImage(mediaAssetUrl(media), media.altText || imageAlt);
-    } catch {
-      setMediaError("Could not upload that image.");
-    } finally {
-      setUploadingInline(false);
-    }
-  };
-
   return (
-    <div className="overflow-hidden rounded border border-sage bg-mistWhite">
-      <div className="flex flex-wrap gap-2 border-b border-sage bg-sage/35 p-2">
-        <IconButton label="Heading 2" active={editor.isActive("heading", { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
-          <Heading2 size={16} aria-hidden="true" />
-        </IconButton>
-        <IconButton label="Heading 3" active={editor.isActive("heading", { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
-          <Heading3 size={16} aria-hidden="true" />
-        </IconButton>
-        <IconButton label="Bold" active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}>
-          <Bold size={16} aria-hidden="true" />
-        </IconButton>
-        <IconButton label="Italic" active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()}>
-          <Italic size={16} aria-hidden="true" />
-        </IconButton>
-        <IconButton label="Bullet list" active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()}>
-          <List size={16} aria-hidden="true" />
-        </IconButton>
-        <IconButton label="Numbered list" active={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
-          <ListOrdered size={16} aria-hidden="true" />
-        </IconButton>
-        <IconButton label="Quote" active={editor.isActive("blockquote")} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
-          <Quote size={16} aria-hidden="true" />
-        </IconButton>
-        <IconButton label="Undo" onClick={() => editor.chain().focus().undo().run()}>
-          <Undo2 size={16} aria-hidden="true" />
-        </IconButton>
-        <IconButton label="Redo" onClick={() => editor.chain().focus().redo().run()}>
-          <Redo2 size={16} aria-hidden="true" />
-        </IconButton>
-      </div>
-      <div className="border-b border-sage bg-mistWhite p-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <IconButton
-            label="Add link"
-            active={activeMediaTool === "link"}
-            onClick={() => setActiveMediaTool((tool) => (tool === "link" ? null : "link"))}
-          >
-            <Link2 size={16} aria-hidden="true" />
-          </IconButton>
-          <IconButton
-            label="Add image URL"
-            active={activeMediaTool === "image"}
-            onClick={() => setActiveMediaTool((tool) => (tool === "image" ? null : "image"))}
-          >
-            <ImageIcon size={16} aria-hidden="true" />
-          </IconButton>
-          <label
-            title="Upload image"
-            className="inline-grid size-9 cursor-pointer place-items-center rounded border border-sage bg-mistWhite text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald"
-          >
-            <UploadCloud size={16} aria-hidden="true" />
-            <input type="file" accept="image/*" className="sr-only" onChange={uploadInlineImage} disabled={uploadingInline} />
-          </label>
-          <IconButton
-            label="Add video"
-            active={activeMediaTool === "video"}
-            onClick={() => setActiveMediaTool((tool) => (tool === "video" ? null : "video"))}
-          >
-            <Video size={16} aria-hidden="true" />
-          </IconButton>
-          {uploadingInline && <p className="text-xs font-bold text-deepEmerald">Uploading image...</p>}
-        </div>
-
-        {activeMediaTool === "link" && (
-          <div className="mt-3 flex gap-2 rounded border border-sage bg-sage/25 p-2">
-            <input
-              className="input min-w-0"
-              value={linkUrl}
-              onChange={(event) => setLinkUrl(event.target.value)}
-              placeholder="https://..."
-            />
-            <button
-              type="button"
-              onClick={insertLink}
-              className="inline-grid size-12 shrink-0 place-items-center rounded border border-deepEmerald bg-deepEmerald text-mistWhite transition hover:bg-charcoal"
-              aria-label="Insert link"
-            >
-              <Link2 size={17} aria-hidden="true" />
-            </button>
-          </div>
-        )}
-
-        {activeMediaTool === "image" && (
-          <div className="mt-3 grid gap-2 rounded border border-sage bg-sage/25 p-2 sm:grid-cols-[1fr_1fr_auto_auto] xl:grid-cols-[1fr_auto_auto]">
-            <input
-              className="input min-w-0 sm:col-span-2 xl:col-span-1"
-              value={imageUrl}
-              onChange={(event) => setImageUrl(event.target.value)}
-              placeholder="Image URL"
-            />
-            <input
-              className="input min-w-0"
-              value={imageAlt}
-              onChange={(event) => setImageAlt(event.target.value)}
-              placeholder="Alt text"
-            />
-            <button
-              type="button"
-              onClick={() => insertImage()}
-              className="inline-grid size-12 place-items-center rounded border border-deepEmerald bg-deepEmerald text-mistWhite transition hover:bg-charcoal"
-              aria-label="Insert image URL"
-            >
-              <ImageIcon size={17} aria-hidden="true" />
-            </button>
-            <label
-              title="Upload image"
-              className="inline-grid size-12 cursor-pointer place-items-center rounded border border-charcoal/15 bg-mistWhite text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald"
-            >
-              <UploadCloud size={17} aria-hidden="true" />
-              <input type="file" accept="image/*" className="sr-only" onChange={uploadInlineImage} disabled={uploadingInline} />
-            </label>
-          </div>
-        )}
-
-        {activeMediaTool === "video" && (
-          <div className="mt-3 flex gap-2 rounded border border-sage bg-sage/25 p-2">
-            <input
-              className="input min-w-0"
-              value={videoUrl}
-              onChange={(event) => setVideoUrl(event.target.value)}
-              placeholder="YouTube, Vimeo, or iframe"
-            />
-            <button
-              type="button"
-              onClick={insertVideo}
-              className="inline-grid size-12 shrink-0 place-items-center rounded border border-deepEmerald bg-deepEmerald text-mistWhite transition hover:bg-charcoal"
-              aria-label="Insert video"
-            >
-              <Video size={17} aria-hidden="true" />
-            </button>
-          </div>
-        )}
-      </div>
-      {mediaError && <p className="border-b border-sage bg-red-50 px-4 py-2 text-xs font-bold text-red-700">{mediaError}</p>}
-      <EditorContent editor={editor} className="tiptap-editor" />
+    <div className="tiptap-editor overflow-hidden rounded border border-sage bg-mistWhite shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
+      <EditorToolbar editor={editor} onUploadMedia={onUploadMedia} />
+      <EditorContent editor={editor} />
     </div>
   );
 }
 
-function Field({ label, children, wide = false }) {
+function CoverUploader({ form, uploading, onUpload }) {
   return (
-    <label className={`grid gap-2 ${wide ? "sm:col-span-2" : ""}`}>
-      <span className="text-sm font-bold text-charcoal/76">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-function StatCard({ label, value, detail, tone = "light" }) {
-  return (
-    <article
-      className={`rounded border p-5 shadow-[0_12px_28px_rgba(34,34,34,0.035)] ${
-        tone === "dark" ? "border-charcoal bg-charcoal text-mistWhite" : "border-sage bg-mistWhite text-charcoal"
-      }`}
-    >
-      <p className={`text-xs font-extrabold uppercase tracking-[0.16em] ${tone === "dark" ? "text-mutedMint" : "text-deepEmerald"}`}>{label}</p>
-      <p className="mt-3 text-3xl font-extrabold">{value}</p>
-      <p className={`mt-2 text-sm ${tone === "dark" ? "text-mistWhite/62" : "text-charcoal/62"}`}>{detail}</p>
-    </article>
-  );
-}
-
-function StatusPill({ status }) {
-  const classes = {
-    idea: "border-mutedMint bg-mutedMint/50 text-charcoal",
-    outline: "border-sage bg-sage text-charcoal",
-    draft: "border-deepEmerald/20 bg-deepEmerald/[0.08] text-deepEmerald",
-    review: "border-charcoal/20 bg-charcoal/[0.08] text-charcoal",
-    ready: "border-deepEmerald bg-deepEmerald text-mistWhite",
-    fallback: "border-mutedMint bg-mutedMint/50 text-charcoal"
-  };
-
-  return (
-    <span className={`rounded-full border px-3 py-1 text-xs font-bold capitalize ${classes[status] || classes.fallback}`}>
-      {status}
-    </span>
-  );
-}
-
-function EditorModal({ title, eyebrow, onClose, children }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6">
-      <button
-        type="button"
-        className="absolute inset-0 bg-charcoal/55"
-        aria-label="Close panel"
-        onClick={onClose}
-      />
-      <section
-        role="dialog"
-        aria-modal="true"
-        className="relative flex h-[calc(100dvh-1rem)] w-full max-w-6xl flex-col overflow-hidden rounded border border-sage bg-mistWhite text-charcoal shadow-[0_24px_70px_rgba(34,34,34,0.32)] sm:h-auto sm:max-h-[92vh]"
-      >
-        <header className="flex shrink-0 items-start justify-between gap-4 border-b border-sage bg-charcoal px-4 py-4 text-mistWhite sm:px-5 sm:py-5">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-mutedMint">{eyebrow}</p>
-            <h2 className="mt-2 font-serif text-2xl leading-tight sm:text-3xl">{title}</h2>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-grid size-10 shrink-0 place-items-center rounded-full border border-mistWhite/20 text-mistWhite transition hover:border-mutedMint hover:text-mutedMint"
-            aria-label="Close panel"
-          >
-            <X size={18} aria-hidden="true" />
-          </button>
-        </header>
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-5">{children}</div>
-      </section>
-    </div>
-  );
-}
-
-function GoalButton({ item, count, onClick }) {
-  const Icon = item.icon;
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="grid min-h-36 gap-4 rounded border border-sage bg-mistWhite p-5 text-left shadow-[0_12px_28px_rgba(34,34,34,0.035)] transition hover:border-deepEmerald hover:shadow-[0_18px_36px_rgba(34,34,34,0.08)]"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <span className="inline-grid size-10 place-items-center rounded bg-deepEmerald text-mistWhite">
-          <Icon size={18} aria-hidden="true" />
-        </span>
-        <span className="rounded-full bg-sage px-3 py-1 text-xs font-bold text-deepEmerald">{count} items</span>
-      </div>
-      <div>
-        <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">{item.section}</p>
-        <h3 className="mt-2 font-serif text-2xl leading-tight">{item.label}</h3>
-        <p className="mt-3 text-sm leading-6 text-charcoal/64">{item.goal}</p>
-      </div>
-      <span className="mt-auto inline-flex items-center gap-2 text-sm font-extrabold text-deepEmerald">
-        Start structured entry
-        <ArrowRight size={15} aria-hidden="true" />
-      </span>
-    </button>
-  );
-}
-
-function WorkflowStrip({ entries }) {
-  return (
-    <div className="grid gap-3 md:grid-cols-5">
-      {activeWorkflow.map((status) => {
-        const total = entries.filter((entry) => entry.status === status).length;
-        return (
-          <article key={status} className="rounded border border-sage bg-mistWhite p-4">
-            <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">{status}</p>
-            <p className="mt-3 text-2xl font-extrabold">{total}</p>
-          </article>
-        );
-      })}
-    </div>
-  );
-}
-
-function CoverImagePicker({ form, onUploadCover }) {
-  const [uploadingCover, setUploadingCover] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const previewUrl = mediaAssetUrl(form.coverImagePreview);
-
-  const uploadCover = async (event) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file || !onUploadCover) return;
-
-    setUploadingCover(true);
-    setUploadError("");
-    try {
-      await onUploadCover(file);
-    } catch {
-      setUploadError("Could not upload that cover image.");
-    } finally {
-      setUploadingCover(false);
-    }
-  };
-
-  return (
-    <div className="grid gap-3 rounded border border-sage bg-sage/25 p-4 sm:col-span-2">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="text-sm font-bold text-charcoal">Cover image</p>
-          <p className="mt-1 text-xs leading-5 text-charcoal/62">Uploads are optimized through Cloudinary.</p>
-        </div>
-        <label className="inline-flex w-max cursor-pointer items-center gap-2 rounded-full border border-deepEmerald bg-deepEmerald px-4 py-2 text-sm font-bold text-mistWhite transition hover:bg-charcoal">
-          <UploadCloud size={16} aria-hidden="true" />
-          {uploadingCover ? "Uploading..." : "Upload cover"}
-          <input type="file" accept="image/*" className="sr-only" onChange={uploadCover} disabled={uploadingCover} />
-        </label>
-      </div>
-      {previewUrl ? (
+    <div className="rounded border border-sage bg-white p-3">
+      {form.coverImagePreview ? (
         <img
-          src={previewUrl}
-          alt={form.coverImagePreview?.altText || form.title || "Cover image preview"}
-          className="aspect-[16/7] w-full rounded object-cover"
+          src={form.coverImagePreview}
+          alt=""
+          className="h-44 w-full rounded border border-sage object-cover"
         />
       ) : (
-        <div className="grid aspect-[16/7] place-items-center rounded border border-dashed border-deepEmerald/35 bg-mistWhite text-sm font-bold text-deepEmerald">
-          No cover selected
+        <div className="grid h-44 place-items-center rounded border border-dashed border-sage bg-mutedMint/25 text-center text-sm font-semibold text-charcoal/56">
+          No cover image
         </div>
       )}
-      {uploadError && <p className="text-xs font-bold text-red-700">{uploadError}</p>}
+      <label className="mt-3 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-charcoal bg-charcoal px-4 py-2.5 text-sm font-extrabold text-mutedMint transition hover:bg-deepEmerald hover:text-mistWhite">
+        {uploading ? <Loader2 className="animate-spin" size={16} aria-hidden="true" /> : <UploadCloud size={16} aria-hidden="true" />}
+        {uploading ? "Uploading..." : "Upload cover"}
+        <input type="file" accept="image/*" className="sr-only" disabled={uploading} onChange={onUpload} />
+      </label>
     </div>
   );
 }
 
-function SectionSpecificFields({ form, onChange }) {
-  if (form.contentType === "guide") {
+function FormatFields({ form, onChange }) {
+  if (form.contentType === "case_study") {
     return (
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Guide Promise" wide>
-          <textarea className="input min-h-24 resize-y" name="objective" value={form.objective} onChange={onChange} />
+      <div className="grid gap-4">
+        <Field label="Client or project">
+          <input className="input bg-mistWhite" name="clientName" value={form.clientName} onChange={onChange} placeholder="Client name, project, or anonymized label" />
         </Field>
-        <Field label="What They Unlock" wide>
-          <textarea className="input min-h-24 resize-y" name="readerShift" value={form.readerShift} onChange={onChange} />
+        <Field label="Challenge">
+          <textarea className="input min-h-28 bg-mistWhite" name="challenge" value={form.challenge} onChange={onChange} placeholder="What was unclear, stuck, invisible, or costing trust?" />
         </Field>
-        <Field label="Guide Format">
-          <input className="input" name="pillar" value={form.pillar} onChange={onChange} placeholder="Workbook, checklist, field guide..." />
+        <Field label="Result">
+          <textarea className="input min-h-28 bg-mistWhite" name="result" value={form.result} onChange={onChange} placeholder="What changed after the work?" />
         </Field>
-        <Field label="Download CTA">
-          <input className="input" name="primaryCta" value={form.primaryCta} onChange={onChange} />
-        </Field>
-      </div>
-    );
-  }
-
-  if (form.contentType === "trust_resonance") {
-    return (
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Resonance Pillar">
-          <input className="input" name="pillar" value={form.pillar} onChange={onChange} placeholder="Trust, credibility, clarity..." />
-        </Field>
-        <Field label="Reader Tension">
-          <input className="input" name="coreQuestion" value={form.coreQuestion} onChange={onChange} />
-        </Field>
-        <Field label="Core Belief" wide>
-          <textarea className="input min-h-28 resize-y" name="thesis" value={form.thesis} onChange={onChange} />
-        </Field>
-        <Field label="Shift You Want To Create" wide>
-          <textarea className="input min-h-24 resize-y" name="readerShift" value={form.readerShift} onChange={onChange} />
-        </Field>
-      </div>
-    );
-  }
-
-  if (form.contentType === "essay") {
-    return (
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Essay Question" wide>
-          <textarea className="input min-h-24 resize-y" name="coreQuestion" value={form.coreQuestion} onChange={onChange} />
-        </Field>
-        <Field label="Contrarian Angle" wide>
-          <textarea className="input min-h-24 resize-y" name="angle" value={form.angle} onChange={onChange} />
-        </Field>
-        <Field label="Thesis" wide>
-          <textarea className="input min-h-28 resize-y" name="thesis" value={form.thesis} onChange={onChange} />
-        </Field>
-        <Field label="Proof Points" wide>
-          <input className="input" name="proofPoints" value={form.proofPoints} onChange={onChange} placeholder="observation, client proof, framework, story" />
+        <Field label="Outcome highlights" help="One highlight per line. These appear as the case study proof strip.">
+          <textarea className="input min-h-28 bg-mistWhite" name="proofPoints" value={form.proofPoints} onChange={onChange} placeholder={"Clearer offer language\nStronger trust signals\nMore confident buyer conversations"} />
         </Field>
       </div>
     );
@@ -946,589 +642,348 @@ function SectionSpecificFields({ form, onChange }) {
 
   if (form.contentType === "reading_list") {
     return (
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Source Title">
-          <input className="input" name="sourceTitle" value={form.sourceTitle} onChange={onChange} />
+      <div className="grid gap-4">
+        <Field label="Source title">
+          <input className="input bg-mistWhite" name="sourceTitle" value={form.sourceTitle} onChange={onChange} placeholder="Book, article, podcast, or resource" />
         </Field>
-        <Field label="Source Author">
-          <input className="input" name="sourceAuthor" value={form.sourceAuthor} onChange={onChange} />
+        <Field label="Author or creator">
+          <input className="input bg-mistWhite" name="sourceAuthor" value={form.sourceAuthor} onChange={onChange} />
         </Field>
-        <Field label="Source URL" wide>
-          <input className="input" name="sourceUrl" value={form.sourceUrl} onChange={onChange} placeholder="https://..." />
+        <Field label="Source link">
+          <input className="input bg-mistWhite" name="sourceUrl" value={form.sourceUrl} onChange={onChange} placeholder="https://..." />
         </Field>
-        <Field label="Why It Belongs In The Code" wide>
-          <textarea className="input min-h-28 resize-y" name="readerShift" value={form.readerShift} onChange={onChange} />
+        <Field label="Why it matters">
+          <textarea className="input min-h-28 bg-mistWhite" name="thesis" value={form.thesis} onChange={onChange} placeholder="What idea should the reader take from it?" />
         </Field>
       </div>
     );
   }
 
-  if (form.contentType === "case_study") {
+  if (form.contentType === "testimonial") {
     return (
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Client Name">
-          <input className="input" name="clientName" value={form.clientName} onChange={onChange} />
+      <div className="grid gap-4">
+        <Field label="Person">
+          <input className="input bg-mistWhite" name="testimonialName" value={form.testimonialName} onChange={onChange} placeholder="Name or anonymized label" />
         </Field>
-        <Field label="Audience">
-          <input className="input" name="audience" value={form.audience} onChange={onChange} />
+        <Field label="Role">
+          <input className="input bg-mistWhite" name="testimonialRole" value={form.testimonialRole} onChange={onChange} placeholder="Practitioner, founder, coach..." />
         </Field>
-        <Field label="Challenge" wide>
-          <textarea className="input min-h-28 resize-y" name="challenge" value={form.challenge} onChange={onChange} />
+        <Field label="Before">
+          <textarea className="input min-h-28 bg-mistWhite" name="testimonialBefore" value={form.testimonialBefore} onChange={onChange} placeholder="Where were they before?" />
         </Field>
-        <Field label="Result" wide>
-          <textarea className="input min-h-28 resize-y" name="result" value={form.result} onChange={onChange} />
+        <Field label="After">
+          <textarea className="input min-h-28 bg-mistWhite" name="testimonialAfter" value={form.testimonialAfter} onChange={onChange} placeholder="What shifted after the work?" />
+        </Field>
+      </div>
+    );
+  }
+
+  if (form.contentType === "guide") {
+    return (
+      <div className="grid gap-4">
+        <Field label="Guide promise">
+          <textarea className="input min-h-24 bg-mistWhite" name="objective" value={form.objective} onChange={onChange} placeholder="What will this guide help the reader do?" />
+        </Field>
+        <Field label="Reader shift">
+          <textarea className="input min-h-24 bg-mistWhite" name="readerShift" value={form.readerShift} onChange={onChange} placeholder="What should they understand or do differently after reading?" />
         </Field>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <Field label="Before" wide>
-        <textarea className="input min-h-24 resize-y" name="testimonialBefore" value={form.testimonialBefore} onChange={onChange} />
+    <div className="grid gap-4">
+      <Field label={form.contentType === "trust_resonance" ? "Trust idea" : "Core idea"}>
+        <textarea className="input min-h-24 bg-mistWhite" name="thesis" value={form.thesis} onChange={onChange} placeholder="The main point this piece wants to make." />
       </Field>
-      <Field label="After" wide>
-        <textarea className="input min-h-24 resize-y" name="testimonialAfter" value={form.testimonialAfter} onChange={onChange} />
+      <Field label="Reader question">
+        <input className="input bg-mistWhite" name="coreQuestion" value={form.coreQuestion} onChange={onChange} placeholder="What question is this answering for the reader?" />
       </Field>
-      <Field label="Name">
-        <input className="input" name="testimonialName" value={form.testimonialName} onChange={onChange} />
-      </Field>
-      <Field label="Role">
-        <input className="input" name="testimonialRole" value={form.testimonialRole} onChange={onChange} />
+      <Field label="Reader shift">
+        <textarea className="input min-h-24 bg-mistWhite" name="readerShift" value={form.readerShift} onChange={onChange} placeholder="The before-to-after belief shift." />
       </Field>
     </div>
   );
 }
 
-function StepNavigator({ activeStep, onStepChange, completedSteps }) {
-  return (
-    <nav aria-label="Entry creation steps" className="rounded border border-sage bg-sage/25 p-3">
-      <div className="flex gap-2 overflow-x-auto lg:grid lg:overflow-visible">
-        {editorTabs.map((step, index) => {
-          const isActive = activeStep === step.key;
-          const isComplete = completedSteps.includes(step.key);
-          return (
-            <button
-              key={step.key}
-              type="button"
-              onClick={() => onStepChange(step.key)}
-              className={`flex min-w-[170px] items-start gap-3 rounded border p-3 text-left transition lg:min-w-0 ${
-                isActive
-                  ? "border-deepEmerald bg-deepEmerald text-mistWhite"
-                  : "border-sage bg-mistWhite text-charcoal hover:border-deepEmerald"
-              }`}
-            >
-              <span
-                className={`inline-grid size-8 shrink-0 place-items-center rounded-full border text-xs font-extrabold ${
-                  isActive
-                    ? "border-mutedMint bg-mutedMint text-charcoal"
-                    : isComplete
-                      ? "border-deepEmerald bg-deepEmerald text-mistWhite"
-                      : "border-sage bg-sage text-charcoal"
-                }`}
-              >
-                {isComplete && !isActive ? <CheckCircle2 size={15} aria-hidden="true" /> : index + 1}
-              </span>
-              <span className="min-w-0">
-                <span className="block text-sm font-extrabold">{step.label}</span>
-                <span className={`mt-1 hidden text-xs leading-5 lg:block ${isActive ? "text-mistWhite/72" : "text-charcoal/60"}`}>
-                  {step.description}
-                </span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    </nav>
-  );
-}
-
-function EditorForm({
+function EntryEditorModal({
   form,
   editingId,
   saving,
-  deleting,
-  activeTab,
-  selectedType,
-  onTabChange,
+  uploadingCover,
   onChange,
-  onQualityChange,
   onBodyChange,
-  onSubmit,
-  onReset,
-  onUploadCover,
-  onUploadMedia,
-  onDelete
+  onClose,
+  onSave,
+  onDelete,
+  onCoverUpload,
+  onUploadMedia
 }) {
-  const TypeIcon = selectedType.icon;
-  const activeStepIndex = Math.max(editorTabs.findIndex((step) => step.key === activeTab), 0);
-  const activeStep = editorTabs[activeStepIndex] || editorTabs[0];
-  const completedSteps = editorTabs.slice(0, activeStepIndex).map((step) => step.key);
-  const canSubmit = form.title.trim().length >= 2;
-  const canMoveForward = activeTab !== "brief" || canSubmit;
-  const progress = Math.round(((activeStepIndex + 1) / editorTabs.length) * 100);
-  const isFirstStep = activeStepIndex === 0;
-  const isLastStep = activeStepIndex === editorTabs.length - 1;
-
-  const goToStep = (key) => {
-    if (!canMoveForward && editorTabs.findIndex((step) => step.key === key) > activeStepIndex) return;
-    onTabChange(key);
-  };
-
-  const goPrevious = () => {
-    const previousStep = editorTabs[Math.max(activeStepIndex - 1, 0)];
-    onTabChange(previousStep.key);
-  };
-
-  const goNext = () => {
-    if (!canMoveForward) return;
-    const nextStep = editorTabs[Math.min(activeStepIndex + 1, editorTabs.length - 1)];
-    onTabChange(nextStep.key);
-  };
-
-  return (
-    <form onSubmit={onSubmit} className="flex min-h-full flex-col">
-      <div className="grid gap-5 border-b border-sage pb-5 xl:grid-cols-[1fr_340px]">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <StatusPill status={form.status} />
-            <span className="rounded-full border border-sage bg-sage/45 px-3 py-1 text-xs font-bold text-charcoal">
-              {wordCount(form.body)} words
-            </span>
-          </div>
-          <h3 className="mt-4 font-serif text-3xl leading-tight">{editingId ? form.title || "Untitled entry" : "New Code asset"}</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-charcoal/66">{selectedType.goal}</p>
-        </div>
-        <div className="rounded border border-sage bg-sage/30 p-4">
-          <label className="grid gap-2">
-            <span className="text-sm font-bold text-charcoal/76">Type of Resonance</span>
-            <select className="input" name="contentType" value={form.contentType} onChange={onChange}>
-              {contentTypes.map((type) => (
-                <option key={type.value} value={type.value}>{type.section}</option>
-              ))}
-            </select>
-          </label>
-          <div className="mt-4 flex items-start gap-3">
-            <span className="inline-grid size-10 shrink-0 place-items-center rounded bg-deepEmerald text-mistWhite">
-              <TypeIcon size={18} aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-sm font-extrabold text-charcoal">{selectedType.label}</p>
-              <p className="mt-1 text-xs leading-5 text-charcoal/62">{selectedType.readerShift}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-5 rounded border border-sage bg-mistWhite p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">
-              Step {activeStepIndex + 1} of {editorTabs.length}
-            </p>
-            <h4 className="mt-1 font-serif text-2xl leading-tight">{activeStep.label}</h4>
-          </div>
-          <span className="rounded-full border border-sage bg-sage/40 px-3 py-1 text-xs font-bold text-charcoal">
-            {progress}% complete
-          </span>
-        </div>
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-sage">
-          <div className="h-full rounded-full bg-deepEmerald transition-all" style={{ width: `${progress}%` }} />
-        </div>
-      </div>
-
-      <div className="mt-5 grid gap-5 lg:grid-cols-[270px_1fr]">
-        <StepNavigator activeStep={activeTab} completedSteps={completedSteps} onStepChange={goToStep} />
-        <section className="rounded border border-sage bg-mistWhite p-4 shadow-[0_12px_28px_rgba(34,34,34,0.035)] sm:p-5">
-          <div className="border-b border-sage pb-4">
-            <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">{activeStep.shortLabel}</p>
-            <p className="mt-2 text-sm leading-6 text-charcoal/64">{activeStep.description}</p>
-            {!canSubmit && activeTab === "brief" && (
-              <p className="mt-3 rounded border border-mutedMint bg-mutedMint/35 px-3 py-2 text-xs font-bold text-charcoal">
-                Add a title to continue through the workflow.
-              </p>
-            )}
-          </div>
-          <div className="mt-5">
-        {activeTab === "brief" && (
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Title" wide>
-              <input className="input" name="title" value={form.title} onChange={onChange} required />
-            </Field>
-            <Field label="Workflow Stage">
-              <select className="input" name="status" value={form.status} onChange={onChange}>
-                {statusWorkflow.map((item) => (
-                  <option key={item} value={item}>{item}</option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Reader Journey">
-              <select className="input" name="journeyStage" value={form.journeyStage} onChange={onChange}>
-                {journeyStages.map((stage) => (
-                  <option key={stage.value} value={stage.value}>{stage.label}</option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Audience">
-              <input className="input" name="audience" value={form.audience} onChange={onChange} />
-            </Field>
-            <Field label="Category">
-              <input className="input" name="category" value={form.category} onChange={onChange} />
-            </Field>
-            <Field label="Success Metric">
-              <input className="input" name="successMetric" value={form.successMetric} onChange={onChange} />
-            </Field>
-            <Field label="Primary CTA">
-              <input className="input" name="primaryCta" value={form.primaryCta} onChange={onChange} />
-            </Field>
-            <CoverImagePicker form={form} onUploadCover={onUploadCover} />
-          </div>
-        )}
-
-        {activeTab === "intent" && (
-          <div className="grid gap-5">
-            <SectionSpecificFields form={form} onChange={onChange} />
-            <div className="grid gap-4 border-t border-sage pt-5 sm:grid-cols-2">
-              <Field label="General Proof Points" wide>
-                <input className="input" name="proofPoints" value={form.proofPoints} onChange={onChange} placeholder="framework, example, client proof, lived insight" />
-              </Field>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "draft" && (
-          <div className="grid gap-4">
-            <Field label="Excerpt">
-              <textarea className="input min-h-24 resize-y" name="excerpt" value={form.excerpt} onChange={onChange} />
-            </Field>
-            <div className="grid gap-2">
-              <span className="text-sm font-bold text-charcoal/76">Body</span>
-              <RichTextEditor value={form.body} onChange={onBodyChange} onUploadMedia={onUploadMedia} />
-            </div>
-          </div>
-        )}
-
-        {activeTab === "proof" && (
-          <div className="grid gap-5">
-            <div className="grid gap-3 sm:grid-cols-2">
-              {qualityChecks.map((item) => (
-                <label key={item.key} className="flex items-center gap-3 rounded border border-sage bg-sage/25 px-3 py-3 text-sm font-bold">
-                  <input
-                    type="checkbox"
-                    checked={Boolean(form.qualityChecks[item.key])}
-                    onChange={() => onQualityChange(item.key)}
-                    className="size-4"
-                  />
-                  {item.label}
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === "seo" && (
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="CTA Text">
-              <input className="input" name="ctaText" value={form.ctaText} onChange={onChange} placeholder="Read Now" />
-            </Field>
-            <Field label="CTA URL">
-              <input className="input" name="ctaUrl" value={form.ctaUrl} onChange={onChange} placeholder="https://..." />
-            </Field>
-            <Field label="Tags">
-              <input className="input" name="tags" value={form.tags} onChange={onChange} placeholder="trust, identity, positioning" />
-            </Field>
-            <Field label="Display Order">
-              <input className="input" type="number" name="displayOrder" value={form.displayOrder} onChange={onChange} />
-            </Field>
-            <Field label="Reading Time">
-              <input className="input" type="number" name="readingTimeMinutes" value={form.readingTimeMinutes} onChange={onChange} placeholder="7" />
-            </Field>
-            <Field label="SEO Title">
-              <input className="input" name="seoTitle" value={form.seoTitle} onChange={onChange} />
-            </Field>
-            <Field label="SEO Description" wide>
-              <textarea className="input min-h-24 resize-y" name="seoDescription" value={form.seoDescription} onChange={onChange} />
-            </Field>
-            <label className="flex items-center gap-3 rounded border border-sage bg-sage/35 px-4 py-3 text-sm font-bold sm:col-span-2">
-              <input type="checkbox" name="featured" checked={form.featured} onChange={onChange} className="size-4" />
-              Feature this entry when the public section connects
-            </label>
-          </div>
-        )}
-          </div>
-        </section>
-      </div>
-
-      <div className="sticky bottom-0 -mx-4 mt-6 flex flex-col-reverse gap-3 border-t border-sage bg-mistWhite/95 px-4 py-4 backdrop-blur sm:-mx-5 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-        <div className="flex flex-wrap gap-2">
-          {editingId && (
-            <button
-              type="button"
-              onClick={onDelete}
-              disabled={deleting}
-              className="inline-flex items-center gap-2 rounded-full border border-red-200 px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <Trash2 size={15} aria-hidden="true" />
-              {deleting ? "Deleting..." : "Delete permanently"}
-            </button>
-          )}
-          {editingId && (
-            <button
-              type="button"
-              onClick={onReset}
-              className="inline-flex items-center gap-2 rounded-full border border-charcoal/15 px-4 py-2 text-sm font-bold text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald"
-            >
-              <RotateCcw size={15} aria-hidden="true" />
-              Clear
-            </button>
-          )}
-        </div>
-        <div className="grid gap-2 sm:flex sm:items-center">
-          <button
-            type="button"
-            onClick={goPrevious}
-            disabled={isFirstStep}
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-sage px-4 py-2 text-sm font-bold text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            <ArrowLeft size={15} aria-hidden="true" />
-            Back
-          </button>
-          {!isLastStep && (
-            <button
-              type="button"
-              onClick={goNext}
-              disabled={!canMoveForward}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-charcoal bg-charcoal px-4 py-2 text-sm font-bold text-mistWhite transition hover:border-deepEmerald hover:bg-deepEmerald disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              Next
-              <ArrowRight size={15} aria-hidden="true" />
-            </button>
-          )}
-          <button
-            type="submit"
-            disabled={saving || deleting || !canSubmit}
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-deepEmerald bg-deepEmerald px-5 py-3 text-sm font-bold text-mistWhite transition hover:border-charcoal hover:bg-charcoal disabled:cursor-not-allowed disabled:opacity-65"
-          >
-            <Save size={16} aria-hidden="true" />
-            {saving ? "Saving..." : editingId ? "Save changes" : isLastStep ? "Create entry" : "Save draft"}
-          </button>
-        </div>
-      </div>
-    </form>
-  );
-}
-
-function EntryCard({ entry, onOpen, onNext, onFeature, onDelete }) {
-  const type = typeFor(entry.contentType);
+  const type = typeFor(form.contentType);
   const Icon = type.icon;
-  const readiness = readinessFor(entry);
-  const bodyPreview = entry.excerpt || stripHtml(entry.body) || "No excerpt yet.";
+  const words = wordCount(form.body);
 
   return (
-    <article className="rounded border border-sage bg-mistWhite p-5 shadow-[0_12px_28px_rgba(34,34,34,0.035)] transition hover:border-deepEmerald">
-      <button type="button" onClick={onOpen} className="block w-full text-left">
-        <div className="flex flex-wrap items-center gap-2">
-          <StatusPill status={entry.status} />
-          {entry.featured && (
-            <span className="rounded-full border border-mutedMint bg-mutedMint/55 px-3 py-1 text-xs font-bold text-charcoal">
-              Featured
-            </span>
-          )}
-          <span className="rounded-full border border-sage bg-sage/40 px-3 py-1 text-xs font-bold text-charcoal">
-            {readiness}% ready
-          </span>
-        </div>
-        <p className="mt-4 flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">
-          <Icon size={16} aria-hidden="true" />
-          {type.section}
-        </p>
-        <h2 className="mt-3 font-serif text-3xl leading-tight">{entry.title}</h2>
-        <p className="mt-3 line-clamp-2 text-sm leading-6 text-charcoal/70">{bodyPreview}</p>
-        <div className="mt-4 flex flex-wrap gap-2 text-xs font-bold text-charcoal/62">
-          <span>{type.label}</span>
-          <span>{entry.strategicGoal?.journeyStage || "belief_shift"}</span>
-          <span>Updated: {formatDate(entry.updatedAt)}</span>
-        </div>
-      </button>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-charcoal/58 p-0 backdrop-blur-sm sm:p-4">
+      <div className="mx-auto min-h-screen w-full bg-mistWhite shadow-2xl sm:min-h-0 sm:max-w-7xl sm:rounded sm:border sm:border-sage">
+        <header className="sticky top-0 z-10 border-b border-sage bg-mistWhite/95 px-4 py-3 backdrop-blur sm:px-6">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex min-w-0 items-center gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-sage text-charcoal/62 transition hover:border-charcoal hover:text-charcoal"
+                aria-label="Close editor"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded bg-mutedMint text-deepEmerald">
+                <Icon size={18} aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">{type.section}</p>
+                <h2 className="truncate font-serif text-xl leading-tight text-charcoal sm:text-2xl">
+                  {form.title || `New ${type.label}`}
+                </h2>
+              </div>
+            </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <button
-          type="button"
-          onClick={onOpen}
-          className="inline-flex items-center justify-center gap-2 rounded border border-sage px-3 py-2 text-xs font-bold text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald"
-        >
-          <Edit3 size={14} aria-hidden="true" />
-          Open
-        </button>
-        <button
-          type="button"
-          disabled={entry.status === "ready"}
-          onClick={onNext}
-          className="inline-flex items-center justify-center gap-2 rounded border border-sage px-3 py-2 text-xs font-bold text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald disabled:cursor-not-allowed disabled:opacity-45"
-        >
-          <Eye size={14} aria-hidden="true" />
-          Next
-        </button>
-        <button
-          type="button"
-          onClick={onFeature}
-          className="inline-flex items-center justify-center gap-2 rounded border border-sage px-3 py-2 text-xs font-bold text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald"
-        >
-          <Star size={14} aria-hidden="true" />
-          {entry.featured ? "Unpin" : "Feature"}
-        </button>
-        <button
-          type="button"
-          onClick={onDelete}
-          className="inline-flex items-center justify-center gap-2 rounded border border-red-200 px-3 py-2 text-xs font-bold text-red-700 transition hover:bg-red-50"
-        >
-          <Trash2 size={14} aria-hidden="true" />
-          Delete
-        </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full border border-sage px-3 py-2 text-xs font-bold text-charcoal/58">
+                <Clock size={14} aria-hidden="true" />
+                {words} words
+              </span>
+              <select className="input w-auto min-w-32 bg-white px-3 py-2 text-sm font-bold" name="status" value={form.status} onChange={onChange}>
+                {statusOptions.map((status) => (
+                  <option key={status.value} value={status.value}>
+                    {status.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={onSave}
+                disabled={saving || !form.title.trim()}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-deepEmerald px-5 py-3 text-sm font-extrabold text-mistWhite transition hover:bg-charcoal disabled:cursor-not-allowed disabled:opacity-55"
+              >
+                {saving ? <Loader2 className="animate-spin" size={16} aria-hidden="true" /> : <Save size={16} aria-hidden="true" />}
+                {saving ? "Saving..." : editingId ? "Update" : "Save"}
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <div className="grid gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <main className="grid min-w-0 gap-5">
+            <section className="grid gap-4 rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.035)] sm:p-5">
+              <Field label="Format">
+                <select className="input bg-mistWhite" name="contentType" value={form.contentType} onChange={onChange}>
+                  {contentTypes.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Title">
+                <input className="input bg-mistWhite text-lg font-bold sm:text-xl" name="title" value={form.title} onChange={onChange} placeholder="Write the title" />
+              </Field>
+              <Field label="Short summary" help="This appears on the library cards and near the article title.">
+                <textarea className="input min-h-24 bg-mistWhite" name="excerpt" value={form.excerpt} onChange={onChange} placeholder="A clean preview of what this piece is about." />
+              </Field>
+            </section>
+
+            <section>
+              <div className="mb-2 flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-sm font-extrabold text-charcoal">Main content</p>
+                  <p className="mt-1 text-xs text-charcoal/52">Write the piece itself. Use the side panel only for details that support this format.</p>
+                </div>
+              </div>
+              <RichTextEditor value={form.body} onChange={onBodyChange} onUploadMedia={onUploadMedia} />
+            </section>
+          </main>
+
+          <aside className="grid h-max gap-4 lg:sticky lg:top-24">
+            <section className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.035)]">
+              <h3 className="font-serif text-xl text-charcoal">{type.label} details</h3>
+              <p className="mt-1 text-sm leading-6 text-charcoal/58">{type.description}</p>
+              <div className="mt-4">
+                <FormatFields form={form} onChange={onChange} />
+              </div>
+            </section>
+
+            <section className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.035)]">
+              <h3 className="font-serif text-xl text-charcoal">Cover image</h3>
+              <p className="mt-1 text-sm leading-6 text-charcoal/58">Optional, but helpful for the public library.</p>
+              <div className="mt-4">
+                <CoverUploader form={form} uploading={uploadingCover} onUpload={onCoverUpload} />
+              </div>
+            </section>
+
+            <section className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.035)]">
+              <h3 className="font-serif text-xl text-charcoal">Publishing</h3>
+              <div className="mt-4 grid gap-4">
+                <Field label="Tags" help="Separate tags with commas.">
+                  <input className="input bg-mistWhite" name="tags" value={form.tags} onChange={onChange} placeholder="trust, positioning, proof" />
+                </Field>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                  <Field label="Category">
+                    <input className="input bg-mistWhite" name="category" value={form.category} onChange={onChange} />
+                  </Field>
+                  <Field label="Read time">
+                    <input className="input bg-mistWhite" type="number" min="0" name="readingTimeMinutes" value={form.readingTimeMinutes} onChange={onChange} placeholder="5" />
+                  </Field>
+                </div>
+                <Field label="CTA text">
+                  <input className="input bg-mistWhite" name="ctaText" value={form.ctaText} onChange={onChange} placeholder="Book the Earned Credibility offer" />
+                </Field>
+                <Field label="CTA link">
+                  <input className="input bg-mistWhite" name="ctaUrl" value={form.ctaUrl} onChange={onChange} placeholder="https://... or /offers/..." />
+                </Field>
+                <label className="flex items-center gap-3 rounded border border-sage bg-mutedMint/20 p-3 text-sm font-bold text-charcoal">
+                  <input className="h-4 w-4 rounded border-sage text-deepEmerald" type="checkbox" name="featured" checked={form.featured} onChange={onChange} />
+                  Feature this entry
+                </label>
+              </div>
+            </section>
+
+            <details className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.035)]">
+              <summary className="cursor-pointer font-serif text-xl text-charcoal">SEO and order</summary>
+              <div className="mt-4 grid gap-4">
+                <Field label="SEO title">
+                  <input className="input bg-mistWhite" name="seoTitle" value={form.seoTitle} onChange={onChange} />
+                </Field>
+                <Field label="SEO description">
+                  <textarea className="input min-h-24 bg-mistWhite" name="seoDescription" value={form.seoDescription} onChange={onChange} />
+                </Field>
+                <Field label="Canonical URL">
+                  <input className="input bg-mistWhite" name="seoCanonicalUrl" value={form.seoCanonicalUrl} onChange={onChange} placeholder="https://..." />
+                </Field>
+                <Field label="Display order">
+                  <input className="input bg-mistWhite" type="number" name="displayOrder" value={form.displayOrder} onChange={onChange} />
+                </Field>
+                <Field label="Journey stage">
+                  <select className="input bg-mistWhite" name="journeyStage" value={form.journeyStage} onChange={onChange}>
+                    {journeyStages.map((stage) => (
+                      <option key={stage.value} value={stage.value}>
+                        {stage.label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+            </details>
+
+            {editingId ? (
+              <button
+                type="button"
+                onClick={onDelete}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-red-200 bg-white px-5 py-3 text-sm font-extrabold text-red-700 transition hover:bg-red-50"
+              >
+                <Trash2 size={16} aria-hidden="true" />
+                Delete entry
+              </button>
+            ) : null}
+          </aside>
+        </div>
       </div>
-    </article>
+    </div>
   );
 }
 
 export default function AdminCodeOfResonancePage() {
   const [entries, setEntries] = useState([]);
   const [summary, setSummary] = useState({ byStatus: [], byType: [], featuredCount: 0, subscriberCount: 0 });
-  const [pagination, setPagination] = useState({ total: 0 });
   const [filters, setFilters] = useState({ contentType: "", status: "", search: "" });
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState("");
-  const [activeTab, setActiveTab] = useState("brief");
-  const [panel, setPanel] = useState(null);
-  const [status, setStatus] = useState("loading");
+  const [typePickerOpen, setTypePickerOpen] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
 
-  const query = useMemo(
-    () => ({
-      contentType: filters.contentType || undefined,
-      status: filters.status || undefined,
-      search: filters.search || undefined,
-      limit: 80
-    }),
-    [filters]
-  );
+  const typeCounts = useMemo(() => countSummary(summary.byType), [summary.byType]);
+  const filteredStatusOptions = useMemo(() => statusOptions.filter((status) => status.value !== "archived"), []);
 
-  const readyCount = countFor(summary.byStatus, "ready");
-  const inProgressCount = ["idea", "outline", "draft", "review"].reduce(
-    (total, item) => total + countFor(summary.byStatus, item),
-    0
-  );
-  const selectedType = typeFor(form.contentType);
-
-  const loadEntries = async () => {
-    setStatus("loading");
+  const loadData = useCallback(async () => {
+    setLoading(true);
     setError("");
     try {
-      const response = await listCodeOfResonanceEntries(query);
-      const items = response.data.items || [];
-      setEntries(items.map((entry) => ({ ...entry, status: normalizeWorkflowStatus(entry.status) })));
+      const response = await listCodeOfResonanceEntries({ ...filters, limit: 100 });
+      setEntries(response.data.items || []);
       setSummary(response.data.summary || { byStatus: [], byType: [], featuredCount: 0, subscriberCount: 0 });
-      setPagination(response.data.pagination || { total: 0 });
-      setStatus("ready");
     } catch (requestError) {
       setError(requestError.response?.data?.message || "Could not load Code of Resonance entries.");
-      setStatus("error");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [filters]);
 
   useEffect(() => {
-    loadEntries();
-  }, [query]);
+    loadData();
+  }, [loadData]);
 
-  const changeForm = (event) => {
-    const { name, type, value, checked } = event.target;
-    setForm((current) => ({ ...current, [name]: type === "checkbox" ? checked : value }));
-  };
+  const updateForm = (event) => {
+    const { name, value, type, checked } = event.target;
 
-  const changeQuality = (key) => {
-    setForm((current) => ({
-      ...current,
-      qualityChecks: {
-        ...current.qualityChecks,
-        [key]: !current.qualityChecks[key]
+    setForm((current) => {
+      if (name === "contentType") {
+        const nextType = typeFor(value);
+        const isBodyEmpty = !stripHtml(current.body);
+        return {
+          ...current,
+          contentType: value,
+          body: isBodyEmpty ? nextType.starter : current.body
+        };
       }
-    }));
-  };
 
-  const closePanel = () => setPanel(null);
-
-  const resetForm = () => {
-    setForm(emptyForm);
-    setEditingId("");
-    setActiveTab("brief");
-  };
-
-  const openNewEntry = (contentType = "trust_resonance") => {
-    setForm({ ...emptyForm, contentType });
-    setEditingId("");
-    setActiveTab("brief");
-    setNotice("");
-    setPanel("editor");
-  };
-
-  const openEntry = (entry) => {
-    setEditingId(entry._id);
-    setForm(fromEntry(entry));
-    setActiveTab("brief");
-    setNotice("");
-    setPanel("editor");
-  };
-
-  const uploadCodeMedia = async (file, options = {}) => {
-    setError("");
-    try {
-      const response = await uploadMediaAsset({
-        file,
-        folder: "code-of-resonance",
-        relatedModel: "CodeOfResonanceEntry",
-        ...options
-      });
-      return response.data.media;
-    } catch (requestError) {
-      setError(requestError.response?.data?.message || "Could not upload this media file.");
-      throw requestError;
-    }
-  };
-
-  const uploadCoverImage = async (file) => {
-    const media = await uploadCodeMedia(file, {
-      altText: form.title,
-      usage: "code-cover-image",
-      tags: "code-of-resonance,cover"
+      return {
+        ...current,
+        [name]: type === "checkbox" ? checked : value
+      };
     });
-    setForm((current) => ({
-      ...current,
-      coverImage: media._id,
-      coverImagePreview: media
-    }));
-    return media;
   };
 
-  const submitForm = async (event) => {
-    event.preventDefault();
+  const openNewEntry = (contentType) => {
+    const type = typeFor(contentType);
+    setForm({
+      ...emptyForm,
+      contentType,
+      body: type.starter,
+      category: type.section,
+      status: "draft"
+    });
+    setEditingId("");
+    setTypePickerOpen(false);
+    setEditorOpen(true);
+  };
+
+  const openExistingEntry = (entry) => {
+    setForm(formFromEntry(entry));
+    setEditingId(entry._id);
+    setEditorOpen(true);
+  };
+
+  const saveEntry = async () => {
     setSaving(true);
     setError("");
     setNotice("");
 
     try {
-      const payload = toPayload(form);
+      const payload = payloadFromForm(form);
       if (editingId) {
         await updateCodeOfResonanceEntry(editingId, payload);
-        setNotice("Entry updated.");
       } else {
         await createCodeOfResonanceEntry(payload);
-        setNotice("Entry created.");
       }
-      resetForm();
-      setPanel(null);
-      await loadEntries();
+
+      setEditorOpen(false);
+      setNotice(editingId ? "Entry updated." : "Entry saved.");
+      await loadData();
     } catch (requestError) {
       setError(requestError.response?.data?.message || "Could not save this entry.");
     } finally {
@@ -1536,195 +991,250 @@ export default function AdminCodeOfResonancePage() {
     }
   };
 
-  const quickUpdate = async (entry, payload) => {
+  const uploadCover = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setUploadingCover(true);
     setError("");
-    setNotice("");
+
     try {
-      await updateCodeOfResonanceEntry(entry._id, payload);
-      setNotice("Entry updated.");
-      await loadEntries();
+      const response = await uploadMediaAsset({
+        file,
+        usage: "code-entry-cover",
+        relatedModel: "CodeOfResonanceEntry"
+      });
+      const media = response.data?.media || response.media;
+      setForm((current) => ({
+        ...current,
+        coverImage: media?._id || "",
+        coverImagePreview: mediaAssetUrl(media)
+      }));
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Could not update this entry.");
+      setError(requestError.response?.data?.message || "Could not upload cover image.");
+    } finally {
+      setUploadingCover(false);
     }
   };
 
-  const deleteEntry = async (entry) => {
-    const id = entry?._id || editingId;
-    const title = entry?.title || form.title || "this entry";
-    if (!id) return;
-    if (!window.confirm(`Permanently delete "${title}"? This cannot be undone.`)) return;
+  const removeEntry = async () => {
+    if (!editingId) return;
+    const confirmed = window.confirm("Delete this Code of Resonance entry?");
+    if (!confirmed) return;
 
+    setSaving(true);
     setError("");
-    setNotice("");
-    setDeleting(true);
+
     try {
-      await deleteCodeOfResonanceEntry(id);
-      setNotice("Entry permanently deleted.");
-      if (id === editingId) {
-        resetForm();
-        setPanel(null);
-      }
-      await loadEntries();
+      await deleteCodeOfResonanceEntry(editingId);
+      setEditorOpen(false);
+      setNotice("Entry deleted.");
+      await loadData();
     } catch (requestError) {
       setError(requestError.response?.data?.message || "Could not delete this entry.");
     } finally {
-      setDeleting(false);
+      setSaving(false);
     }
   };
 
-  const goalCounts = useMemo(
-    () =>
-      Object.fromEntries(
-        contentTypes.map((item) => [
-          item.value,
-          entries.filter((entry) => entry.contentType === item.value).length
-        ])
-      ),
-    [entries]
-  );
+  const totalEntries = entries.length;
+  const liveEntries = entries.filter((entry) => entry.status === "ready").length;
+  const draftEntries = entries.filter((entry) => ["idea", "outline", "draft", "review"].includes(entry.status)).length;
 
   return (
-    <section>
-      <div className="flex flex-col gap-4 border-b border-sage pb-7 xl:flex-row xl:items-end xl:justify-between">
-        <div>
-          <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">Content Operating System</p>
-          <h1 className="mt-3 font-serif text-4xl leading-tight sm:text-5xl">The Code of Resonance Dashboard</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-charcoal/65">
-            Create each entry through a focused step-by-step workflow, from strategy to draft, proof, and CTA.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => openNewEntry()}
-          className="inline-flex w-max items-center gap-2 rounded-full border border-deepEmerald bg-deepEmerald px-5 py-3 text-sm font-bold text-mistWhite transition hover:border-charcoal hover:bg-charcoal"
-        >
-          <Plus size={16} aria-hidden="true" />
-          New entry
-        </button>
-      </div>
-
-      <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <StatCard label="Workspace Items" value={pagination.total || 0} detail="All planned Code assets" tone="dark" />
-        <StatCard label="In Progress" value={inProgressCount} detail="Idea, outline, draft, or review" />
-        <StatCard label="Ready" value={readyCount} detail="Prepared for future publishing" />
-        <StatCard label="Featured" value={summary.featuredCount || 0} detail="Pinned for later public sections" />
-        <StatCard label="Subscribers" value={summary.subscriberCount || 0} detail="Code newsletter contacts" />
-      </div>
-
-      <div className="mt-6">
-        <WorkflowStrip entries={entries} />
-      </div>
-
-      <div className="mt-8">
-        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+    <section className="min-h-screen bg-mistWhite text-charcoal">
+      <header className="border-b border-sage bg-white px-4 py-8 sm:px-6 lg:px-10">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">Goal Architecture</p>
-            <h2 className="mt-2 font-serif text-3xl">Choose a section to start a guided entry</h2>
+            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">Editorial library</p>
+            <h1 className="mt-3 font-serif text-4xl leading-tight text-charcoal sm:text-5xl">The Code of Resonance</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-charcoal/64">
+              Write and publish essays, guides, reading notes, case studies, and transformation stories without extra workflow noise.
+            </p>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setTypePickerOpen(true)}
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-deepEmerald px-5 py-3 text-sm font-extrabold text-mistWhite transition hover:bg-charcoal"
+          >
+            <Plus size={16} aria-hidden="true" />
+            New entry
+          </button>
         </div>
-        <div className="mt-5 grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-          {contentTypes.map((item) => (
-            <GoalButton
-              key={item.value}
-              item={item}
-              count={goalCounts[item.value] || 0}
-              onClick={() => openNewEntry(item.value)}
+
+        <div className="mx-auto mt-8 grid max-w-7xl grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            ["Total", totalEntries],
+            ["Drafts", draftEntries],
+            ["Live", liveEntries],
+            ["Featured", summary.featuredCount || 0]
+          ].map(([label, value]) => (
+            <div key={label} className="rounded border border-sage bg-mistWhite p-4">
+              <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-charcoal/46">{label}</p>
+              <p className="mt-1 text-3xl font-black text-charcoal">{value}</p>
+            </div>
+          ))}
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
+        {(notice || error) && (
+          <div
+            className={`mb-5 flex gap-3 rounded border p-4 text-sm font-semibold ${
+              error ? "border-red-200 bg-red-50 text-red-700" : "border-deepEmerald/20 bg-mutedMint text-deepEmerald"
+            }`}
+            role={error ? "alert" : "status"}
+          >
+            {error ? <AlertCircle className="mt-0.5 shrink-0" size={18} aria-hidden="true" /> : <CheckCircle2 className="mt-0.5 shrink-0" size={18} aria-hidden="true" />}
+            <p>{error || notice}</p>
+          </div>
+        )}
+
+        <div className="grid gap-3 rounded border border-sage bg-white p-3 shadow-[0_16px_34px_rgba(26,26,26,0.04)] lg:grid-cols-[1fr_auto_auto] lg:items-center">
+          <label className="relative block min-w-0">
+            <span className="sr-only">Search entries</span>
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/42" aria-hidden="true" />
+            <input
+              className="input bg-mistWhite py-2 pl-10 text-sm"
+              value={filters.search}
+              onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))}
+              placeholder="Search titles, tags, or themes"
             />
-          ))}
+          </label>
+          <label>
+            <span className="sr-only">Filter by format</span>
+            <select
+              className="input bg-mistWhite py-2 text-sm font-bold lg:w-56"
+              value={filters.contentType}
+              onChange={(event) => setFilters((current) => ({ ...current, contentType: event.target.value }))}
+            >
+              <option value="">All formats</option>
+              {contentTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <span className="sr-only">Filter by status</span>
+            <select
+              className="input bg-mistWhite py-2 text-sm font-bold lg:w-44"
+              value={filters.status}
+              onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value }))}
+            >
+              <option value="">All statuses</option>
+              {filteredStatusOptions.map((status) => (
+                <option key={status.value} value={status.value}>
+                  {status.label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
-      </div>
 
-      <div className="mt-8 grid gap-3 rounded border border-sage bg-mistWhite p-4 shadow-[0_12px_28px_rgba(34,34,34,0.035)] lg:grid-cols-[1fr_240px_180px]">
-        <label className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-deepEmerald" size={18} aria-hidden="true" />
-          <input
-            className="input pl-10"
-            type="search"
-            placeholder="Search title, category, tag, goal, or body"
-            value={filters.search}
-            onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))}
-          />
-        </label>
-        <select
-          className="input"
-          value={filters.contentType}
-          onChange={(event) => setFilters((current) => ({ ...current, contentType: event.target.value }))}
-        >
-          <option value="">All sections</option>
-          {contentTypes.map((type) => (
-            <option key={type.value} value={type.value}>{type.section}</option>
-          ))}
-        </select>
-        <select
-          className="input"
-          value={filters.status}
-          onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value }))}
-        >
-          <option value="">All stages</option>
-          {statusWorkflow.map((item) => (
-            <option key={item} value={item}>{item}</option>
-          ))}
-        </select>
-      </div>
+        <div className="mt-6 grid gap-4">
+          {loading ? (
+            [1, 2, 3].map((item) => (
+              <div key={item} className="h-32 animate-pulse rounded border border-sage bg-white" />
+            ))
+          ) : entries.length === 0 ? (
+            <div className="rounded border border-dashed border-sage bg-white p-10 text-center">
+              <Eye className="mx-auto text-deepEmerald" size={28} aria-hidden="true" />
+              <h2 className="mt-3 font-serif text-3xl text-charcoal">No entries yet</h2>
+              <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-charcoal/60">
+                Create the first Code of Resonance entry. Choose the format, write the piece, save it as draft or make it live.
+              </p>
+              <button
+                type="button"
+                onClick={() => setTypePickerOpen(true)}
+                className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-deepEmerald px-5 py-3 text-sm font-extrabold text-mistWhite transition hover:bg-charcoal"
+              >
+                <Plus size={16} aria-hidden="true" />
+                New entry
+              </button>
+            </div>
+          ) : (
+            entries.map((entry) => {
+              const type = typeFor(entry.contentType);
+              const Icon = type.icon;
+              const coverSrc = imageUrl(entry.coverImage, "");
+              const statusLabel = statusOptions.find((status) => status.value === normalizeStatus(entry.status))?.label || entry.status;
 
-      {error && (
-        <div className="mt-6 flex gap-3 rounded border border-red-200 bg-red-50 p-4 text-red-700">
-          <AlertCircle className="mt-0.5 shrink-0" size={20} aria-hidden="true" />
-          <p className="text-sm">{error}</p>
+              return (
+                <button
+                  key={entry._id}
+                  type="button"
+                  onClick={() => openExistingEntry(entry)}
+                  className="group grid w-full gap-4 rounded border border-sage bg-white p-4 text-left shadow-[0_16px_34px_rgba(26,26,26,0.04)] transition hover:border-deepEmerald hover:shadow-[0_18px_38px_rgba(26,26,26,0.075)] md:grid-cols-[96px_minmax(0,1fr)_auto] md:items-center"
+                >
+                  <span className="block h-24 overflow-hidden rounded border border-sage bg-mutedMint/35 md:h-20">
+                    {coverSrc ? (
+                      <img src={coverSrc} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <span className="grid h-full w-full place-items-center text-deepEmerald">
+                        <Icon size={22} aria-hidden="true" />
+                      </span>
+                    )}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-mutedMint px-3 py-1 text-xs font-extrabold text-deepEmerald">
+                        <Icon size={13} aria-hidden="true" />
+                        {type.label}
+                      </span>
+                      <span className="rounded-full border border-sage px-3 py-1 text-xs font-bold capitalize text-charcoal/56">
+                        {statusLabel}
+                      </span>
+                      {entry.featured ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-sage px-3 py-1 text-xs font-bold text-charcoal/56">
+                          <Star size={12} aria-hidden="true" />
+                          Featured
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className="mt-3 block truncate font-serif text-2xl leading-tight text-charcoal transition group-hover:text-deepEmerald">
+                      {entry.title || "Untitled entry"}
+                    </span>
+                    <span className="mt-2 block line-clamp-2 text-sm leading-6 text-charcoal/60">
+                      {entry.excerpt || entry.caseStudy?.result || entry.testimonial?.after || stripHtml(entry.body) || "No summary yet."}
+                    </span>
+                  </span>
+                  <span className="flex items-center justify-between gap-4 text-sm font-bold text-charcoal/46 md:justify-end">
+                    <span>{wordCount(entry.body)} words</span>
+                    <ArrowRight size={18} className="transition group-hover:translate-x-1 group-hover:text-deepEmerald" aria-hidden="true" />
+                  </span>
+                </button>
+              );
+            })
+          )}
         </div>
-      )}
+      </main>
 
-      {notice && (
-        <div className="mt-6 flex gap-3 rounded border border-mutedMint bg-mutedMint/45 p-4 text-charcoal">
-          <CheckCircle2 className="mt-0.5 shrink-0 text-deepEmerald" size={20} aria-hidden="true" />
-          <p className="text-sm font-semibold">{notice}</p>
-        </div>
-      )}
+      <TypePickerModal
+        open={typePickerOpen}
+        onClose={() => setTypePickerOpen(false)}
+        onSelect={openNewEntry}
+        counts={typeCounts}
+      />
 
-      <div className="mt-8 grid gap-4">
-        {status === "loading" && (
-          <div className="rounded border border-sage bg-mistWhite p-6 text-sm text-charcoal/65">Loading content...</div>
-        )}
-
-        {status !== "loading" && entries.length === 0 && (
-          <div className="rounded border border-sage bg-mistWhite p-6 text-sm text-charcoal/65">
-            No Code of Resonance entries match this view yet.
-          </div>
-        )}
-
-        {entries.map((entry) => (
-          <EntryCard
-            key={entry._id}
-            entry={entry}
-            onOpen={() => openEntry(entry)}
-            onNext={() => quickUpdate(entry, { status: nextStatus(entry.status) })}
-            onFeature={() => quickUpdate(entry, { featured: !entry.featured })}
-            onDelete={() => deleteEntry(entry)}
-          />
-        ))}
-      </div>
-
-      {panel === "editor" && (
-        <EditorModal title={editingId ? "Edit Code Asset" : selectedType.section} eyebrow="Editorial Workspace" onClose={closePanel}>
-          <EditorForm
-            form={form}
-            editingId={editingId}
-            saving={saving}
-            deleting={deleting}
-            activeTab={activeTab}
-            selectedType={selectedType}
-            onTabChange={setActiveTab}
-            onChange={changeForm}
-            onQualityChange={changeQuality}
-            onBodyChange={(body) => setForm((current) => ({ ...current, body }))}
-            onSubmit={submitForm}
-            onReset={resetForm}
-            onUploadCover={uploadCoverImage}
-            onUploadMedia={uploadCodeMedia}
-            onDelete={() => deleteEntry()}
-          />
-        </EditorModal>
-      )}
+      {editorOpen ? (
+        <EntryEditorModal
+          form={form}
+          editingId={editingId}
+          saving={saving}
+          uploadingCover={uploadingCover}
+          onChange={updateForm}
+          onBodyChange={(body) => setForm((current) => ({ ...current, body }))}
+          onClose={() => setEditorOpen(false)}
+          onSave={saveEntry}
+          onDelete={removeEntry}
+          onCoverUpload={uploadCover}
+          onUploadMedia={uploadMediaAsset}
+        />
+      ) : null}
     </section>
   );
 }

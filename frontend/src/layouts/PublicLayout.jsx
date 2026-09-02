@@ -4,11 +4,14 @@ import { ArrowRight, ChevronDown, Mail, Menu, X } from "lucide-react";
 import BrandLogo from "../components/BrandLogo.jsx";
 import Seo from "../components/Seo.jsx";
 import SiteButton from "../components/SiteButton.jsx";
-import seoImage from "../assets/home/maggy-gardens-00330.jpg";
+
+const seoImage =
+  "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00348?_a=BAMAPqM50";
 
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
+  { href: "/offers", label: "Services" },
   { href: "/assessment", label: "Assessment" },
   { href: "/contact", label: "Contact" }
 ];
@@ -314,7 +317,7 @@ export default function PublicLayout() {
         </div>
 
         {mobileOpen && (
-          <div className="border-t border-sage bg-mistWhite text-charcoal shadow-[0_18px_34px_rgba(34,34,34,0.12)] xl:hidden">
+          <div className="border-t border-sage bg-mistWhite text-charcoal shadow-[0_18px_34px_rgba(26,26,26,0.12)] xl:hidden">
             <div className="container-shell grid gap-4 py-5">
               <nav className="grid gap-1 text-base font-semibold text-charcoal" aria-label="Mobile navigation">
                 {navItems.map((item) => (

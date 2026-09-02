@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="grid min-h-screen bg-[linear-gradient(120deg,#222222_0%,#222222_52%,#0B6E4F_100%)] text-mistWhite lg:grid-cols-[0.92fr_1.08fr]">
+    <main className="grid min-h-screen bg-[linear-gradient(120deg,#1A1A1A_0%,#1A1A1A_52%,#0F4D3E_100%)] text-mistWhite lg:grid-cols-[0.92fr_1.08fr]">
       <section className="relative hidden overflow-hidden border-r border-mistWhite/10 p-10 lg:block">
         <div className="absolute bottom-0 right-0 h-80 w-80 border border-mutedMint/10 bg-deepEmerald/25" aria-hidden="true" />
         <div className="relative">
@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full border border-deepEmerald bg-deepEmerald px-5 py-3 text-center text-sm font-bold leading-5 text-mistWhite shadow-[0_12px_28px_rgba(11,110,79,0.18)] transition hover:border-charcoal hover:bg-charcoal disabled:cursor-not-allowed disabled:opacity-65"
+            className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full border border-deepEmerald bg-deepEmerald px-5 py-3 text-center text-sm font-bold leading-5 text-mistWhite shadow-[0_12px_28px_rgba(15,77,62,0.18)] transition hover:border-charcoal hover:bg-charcoal disabled:cursor-not-allowed disabled:opacity-65"
           >
             {loading ? "Signing in..." : "Sign in to admin"}
             <ArrowRight size={16} aria-hidden="true" />

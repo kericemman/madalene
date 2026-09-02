@@ -2,7 +2,7 @@ const oneToOneBookingUrl = "https://calendly.com/wambui-magdalene/content-that-c
 
 const paragraph = (value) => `<p style="margin:0 0 16px;">${value}</p>`;
 const heading = (value) =>
-  `<h2 style="margin:26px 0 12px;color:#0B6E4F;font-size:20px;line-height:1.25;">${value}</h2>`;
+  `<h2 style="margin:26px 0 12px;color:#0F4D3E;font-size:20px;line-height:1.25;">${value}</h2>`;
 const bulletList = (items) =>
   `<ul style="margin:0 0 20px;padding-left:22px;">${items.map((item) => `<li style="margin:0 0 8px;">${item}</li>`).join("")}</ul>`;
 const checklist = (items) =>
@@ -446,7 +446,7 @@ export const scoreRanges = [
         "Add visible proof of the results you create.",
         "Define what makes your approach distinctive."
       ],
-      recommendedResourceTitle: "Story Clarity Workbook",
+      recommendedResourceTitle: "Story Clarity Workbook™",
       finalNote:
         "Your Resonance Quotient is a snapshot of how your earned credibility is showing up today. Every improvement brings you closer to becoming the practitioner people choose with confidence."
     },
@@ -472,7 +472,7 @@ export const scoreRanges = [
         "Make your trust signals easier to find.",
         "Share client outcomes more consistently."
       ],
-      recommendedResourceTitle: "Trust Signals Checklist",
+      recommendedResourceTitle: "Trust Signals Checklist™",
       finalNote:
         "Credibility is not something you have to manufacture. You have already earned it. The opportunity is to make it visible, memorable, and impossible to overlook."
     },
@@ -498,7 +498,7 @@ export const scoreRanges = [
         "Develop one signature message or framework.",
         "Align your content with the transformation you want to be known for."
       ],
-      recommendedResourceTitle: "Positioning Canvas",
+      recommendedResourceTitle: "Positioning Canvas™",
       finalNote:
         "The question that moves you forward is simple: if someone had to describe why they should choose you instead of another practitioner, could they do it in one sentence?"
     },
@@ -524,14 +524,14 @@ export const scoreRanges = [
         "Develop signature ideas that reinforce your positioning.",
         "Build a reputation that extends beyond your existing network."
       ],
-      recommendedResourceTitle: "Resonance Playbook",
+      recommendedResourceTitle: "Resonance Playbook™",
       finalNote:
         "This is where trust becomes emotional rather than transactional. Your perspective is beginning to shape how others think and feel."
     },
     displayOrder: 4
   },
   {
-    name: "Trusted Choice",
+    name: "Trusted Choice™",
     minScore: 21,
     maxScore: 25,
     description:
@@ -550,7 +550,7 @@ export const scoreRanges = [
         "Document your frameworks and intellectual property.",
         "Mentor, teach, and create resources that expand your impact."
       ],
-      recommendedResourceTitle: "Legacy Influence Blueprint",
+      recommendedResourceTitle: "Legacy Influence Blueprint™",
       finalNote:
         "You have become memorable because people understand not only what you do, but why it matters. That is what it means to become the Trusted Choice."
     },
@@ -645,7 +645,7 @@ export const offers = [
 
 export const resources = [
   {
-    title: "Story Clarity Workbook",
+    title: "Story Clarity Workbook™",
     slug: "story-clarity-workbook",
     description: "Discover the story that helps people understand why they can trust you.",
     resourceType: "workbook",
@@ -658,7 +658,7 @@ export const resources = [
     emailDelivery: resourceEmail({
       subject: "Your Story Clarity Workbook",
       preheader: "Discover the story that helps people understand why they can trust you.",
-      title: "Story Clarity Workbook",
+      title: "Story Clarity Workbook™",
       focus: "Story",
       sections: [
         { type: "paragraph", value: "Every experienced practitioner has a story. Not a story to impress people, but a story that explains why they care so deeply about the work they do." },
@@ -675,7 +675,7 @@ export const resources = [
     })
   },
   {
-    title: "Trust Signals Checklist",
+    title: "Trust Signals Checklist™",
     slug: "trust-signals-checklist",
     description: "Help potential clients trust you before they ever contact you.",
     resourceType: "checklist",
@@ -688,7 +688,7 @@ export const resources = [
     emailDelivery: resourceEmail({
       subject: "Your Trust Signals Checklist",
       preheader: "Review the visible evidence that helps people trust you before they contact you.",
-      title: "Trust Signals Checklist",
+      title: "Trust Signals Checklist™",
       focus: "Trust",
       sections: [
         { type: "paragraph", value: "Your goal is to help potential clients trust you before they ever contact you." },
@@ -703,7 +703,7 @@ export const resources = [
     })
   },
   {
-    title: "Positioning Canvas",
+    title: "Positioning Canvas™",
     slug: "positioning-canvas",
     description: "Define what makes you the practitioner people remember and choose.",
     resourceType: "workbook",
@@ -716,7 +716,7 @@ export const resources = [
     emailDelivery: resourceEmail({
       subject: "Your Positioning Canvas",
       preheader: "Define what makes your approach different and memorable.",
-      title: "Positioning Canvas",
+      title: "Positioning Canvas™",
       focus: "Positioning",
       sections: [
         { type: "paragraph", value: "Many practitioners struggle to explain what makes them different. People do not choose you because you do what others do. They choose you because they understand what makes your approach different." },
@@ -760,7 +760,7 @@ export const resources = [
     })
   },
   {
-    title: "Resonance Playbook",
+    title: "Resonance Playbook™",
     slug: "resonance-playbook",
     description: "Create content that people do not just consume. They remember it.",
     resourceType: "playbook",
@@ -773,7 +773,7 @@ export const resources = [
     emailDelivery: resourceEmail({
       subject: "Your Resonance Playbook",
       preheader: "Create content that people do not just consume. They remember it.",
-      title: "Resonance Playbook",
+      title: "Resonance Playbook™",
       focus: "Resonance",
       sections: [
         { type: "paragraph", value: "Visibility gets you noticed. Resonance makes you remembered." },
@@ -789,19 +789,19 @@ export const resources = [
     })
   },
   {
-    title: "Legacy Influence Blueprint",
+    title: "Legacy Influence Blueprint™",
     slug: "legacy-influence-blueprint",
     description: "Document the frameworks, ideas and resources that multiply your influence.",
     resourceType: "blueprint",
     free: true,
     emailGated: false,
     category: "Earned Credibility",
-    relatedAssessmentScoreRange: "Trusted Choice",
+    relatedAssessmentScoreRange: "Trusted Choice™",
     active: true,
     emailDelivery: resourceEmail({
       subject: "Your Legacy Influence Blueprint",
       preheader: "Your next chapter is multiplying the credibility you have already earned.",
-      title: "Legacy Influence Blueprint",
+      title: "Legacy Influence Blueprint™",
       focus: "Trusted Choice",
       sections: [
         { type: "paragraph", value: "At this stage, your next chapter is not about building credibility. It is about multiplying your influence." },

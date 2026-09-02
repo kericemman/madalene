@@ -50,7 +50,7 @@ const statusLabel = {
 function SystemCard({ icon: Icon, check }) {
   const status = check?.state || "needs_attention";
   return (
-    <article className="rounded border border-sage bg-mistWhite p-5 shadow-[0_12px_28px_rgba(34,34,34,0.035)]">
+    <article className="rounded border border-sage bg-mistWhite p-5 shadow-[0_12px_28px_rgba(26,26,26,0.035)]">
       <div className="flex items-start justify-between gap-4">
         <Icon className="text-deepEmerald" size={22} aria-hidden="true" />
         <span className={`rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-[0.1em] ${statusStyle[status]}`}>
@@ -185,7 +185,7 @@ export default function AdminSettingsPage() {
         />
       </div>
 
-      <article className="mt-8 grid gap-5 border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)] lg:grid-cols-[1fr_auto] lg:items-center">
+      <article className="mt-8 grid gap-5 border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)] lg:grid-cols-[1fr_auto] lg:items-center">
         <div>
           <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">Launch catalogue</p>
           <h2 className="mt-2 font-serif text-3xl leading-tight text-charcoal">Three ways to build credibility</h2>
@@ -202,7 +202,7 @@ export default function AdminSettingsPage() {
       </article>
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <form onSubmit={createUser} className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <form onSubmit={createUser} className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           <div className="flex items-center gap-3">
             <Users className="text-deepEmerald" size={21} aria-hidden="true" />
             <div>
@@ -249,7 +249,7 @@ export default function AdminSettingsPage() {
           </button>
         </form>
 
-        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">Team</p>

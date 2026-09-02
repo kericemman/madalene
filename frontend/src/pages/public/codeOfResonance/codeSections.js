@@ -1,4 +1,12 @@
-import { BookOpenText, FileText, Layers3, Quote, Sparkles } from "lucide-react";
+import {
+  BookOpenText,
+  Compass,
+  FileCheck2,
+  FileText,
+  Layers3,
+  MessageSquareQuote,
+  Sparkles
+} from "lucide-react";
 import { magnificImages } from "../home/homeContent.js";
 
 export const codeSectionList = [
@@ -11,7 +19,8 @@ export const codeSectionList = [
     description:
       "Essays, guides, reading notes, and proof-led stories for becoming the trusted choice.",
     contentType: "",
-    icon: Sparkles,
+    icon: Compass,
+    accent: "deepEmerald",
     fallbackImage: magnificImages.proof
   },
   {
@@ -24,10 +33,11 @@ export const codeSectionList = [
       "Long-form notes on earned credibility, message clarity, trust, resonance, and positioning.",
     contentType: "essay",
     icon: BookOpenText,
+    accent: "deepEmerald",
     fallbackImage: magnificImages.assessment
   },
   {
-    key: "trust-resonance",
+    key: "trust_resonance",
     path: "/code-of-resonance/trust-resonance",
     label: "Trust & Resonance",
     title: "Trust & Resonance",
@@ -36,10 +46,11 @@ export const codeSectionList = [
       "Strategic reflections on the emotional and practical signals that make expertise feel safe to choose.",
     contentType: "trust_resonance",
     icon: Sparkles,
+    accent: "mutedMint",
     fallbackImage: magnificImages.proof
   },
   {
-    key: "recommended-reading",
+    key: "reading_list",
     path: "/code-of-resonance/recommended-reading",
     label: "Recommended Reading",
     title: "Recommended Reading",
@@ -48,22 +59,24 @@ export const codeSectionList = [
       "Books, frameworks, and reference notes that sharpen credibility, story, and authority.",
     contentType: "reading_list",
     icon: Layers3,
+    accent: "sage",
     fallbackImage: magnificImages.problem
   },
   {
-    key: "case-studies",
+    key: "case_study",
     path: "/code-of-resonance/case-studies",
     label: "Case Studies",
     title: "Case Studies",
     eyebrow: "Credibility in Practice",
     description:
-      "Proof-led stories showing how clearer positioning, trust signals, and resonance change the way people choose.",
+      "Proof-led stories showing how clearer positioning, trust signals, and resonance change how people choose.",
     contentType: "case_study",
-    icon: Quote,
+    icon: FileCheck2,
+    accent: "deepEmerald",
     fallbackImage: magnificImages.finalCta
   },
   {
-    key: "guides",
+    key: "guide",
     path: "/code-of-resonance/guides",
     label: "Guides",
     title: "Practical Guides",
@@ -72,10 +85,11 @@ export const codeSectionList = [
       "Actionable resources for making your earned credibility more visible and usable.",
     contentType: "guide",
     icon: FileText,
+    accent: "sage",
     fallbackImage: magnificImages.problem
   },
   {
-    key: "stories",
+    key: "testimonial",
     path: "/code-of-resonance/stories",
     label: "Transformation Stories",
     title: "Transformation Stories",
@@ -83,21 +97,34 @@ export const codeSectionList = [
     description:
       "Client and reader reflections that show the human shift behind stronger trust and clearer positioning.",
     contentType: "testimonial",
-    icon: Quote,
+    icon: MessageSquareQuote,
+    accent: "mutedMint",
     fallbackImage: magnificImages.hero
   }
 ];
 
-export const codeSections = Object.fromEntries(codeSectionList.map((section) => [section.key, section]));
+// O(1) Quick Access Map by Route Key
+export const codeSections = Object.fromEntries(
+  codeSectionList.map((section) => [section.key, section])
+);
 
+// O(1) Quick Access Map by Database ContentType
+export const sectionsByContentType = Object.fromEntries(
+  codeSectionList
+    .filter((section) => Boolean(section.contentType))
+    .map((section) => [section.contentType, section])
+);
+
+// Human-readable Badge Labels
 export const typeLabels = {
-  guide: "Guide",
   essay: "Essay",
   trust_resonance: "Trust & Resonance",
   reading_list: "Recommended Reading",
   case_study: "Case Study",
+  guide: "Guide",
   testimonial: "Transformation Story"
 };
 
+// Constant-time resolver with fallback to the root library
 export const sectionForType = (contentType) =>
-  codeSectionList.find((section) => section.contentType === contentType) || codeSections.all;
+  sectionsByContentType[contentType] || codeSections.all;

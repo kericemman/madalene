@@ -127,7 +127,7 @@ export default function AdminEmailsPage() {
       )}
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[0.78fr_1.22fr]">
-        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">Templates</p>
@@ -170,7 +170,7 @@ export default function AdminEmailsPage() {
           </div>
         </article>
 
-        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           <div className="flex items-center gap-3">
             <Mail className="text-deepEmerald" size={22} aria-hidden="true" />
             <div>

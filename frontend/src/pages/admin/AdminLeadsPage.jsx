@@ -180,7 +180,7 @@ export default function AdminLeadsPage() {
       )}
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
-        <div className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <div className="rounded border border-sage bg-white p-4 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           <div className="grid gap-3 sm:grid-cols-[1fr_210px]">
             <label className="relative block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/42" size={17} aria-hidden="true" />
@@ -244,7 +244,7 @@ export default function AdminLeadsPage() {
           )}
         </div>
 
-        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(34,34,34,0.045)]">
+        <article className="rounded border border-sage bg-white p-5 shadow-[0_16px_34px_rgba(26,26,26,0.045)]">
           {detailLoading ? (
             <div className="grid min-h-[420px] place-items-center text-sm font-bold text-deepEmerald">
               Loading lead profile...

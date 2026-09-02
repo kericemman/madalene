@@ -30,7 +30,7 @@ const emptyDashboard = {
 
 function StatCard({ label, value, icon: Icon, tone = "light" }) {
   return (
-    <article className={`rounded border p-5 shadow-[0_12px_28px_rgba(34,34,34,0.035)] ${
+    <article className={`rounded border p-5 shadow-[0_12px_28px_rgba(26,26,26,0.035)] ${
       tone === "dark" ? "border-charcoal bg-charcoal text-mistWhite" : "border-sage bg-mistWhite text-charcoal"
     }`}>
       <Icon className={tone === "dark" ? "text-mutedMint" : "text-deepEmerald"} size={23} aria-hidden="true" />
@@ -42,7 +42,7 @@ function StatCard({ label, value, icon: Icon, tone = "light" }) {
 
 function StatusList({ title, items }) {
   return (
-    <article className="rounded border border-sage bg-mistWhite p-5 shadow-[0_12px_28px_rgba(34,34,34,0.035)]">
+    <article className="rounded border border-sage bg-mistWhite p-5 shadow-[0_12px_28px_rgba(26,26,26,0.035)]">
       <h3 className="font-serif text-2xl">{title}</h3>
       <div className="mt-5 grid gap-3">
         {items.length ? (
@@ -135,7 +135,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="mt-8 grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
-        <article className="rounded border border-sage bg-mistWhite p-5 shadow-[0_12px_28px_rgba(34,34,34,0.035)]">
+        <article className="rounded border border-sage bg-mistWhite p-5 shadow-[0_12px_28px_rgba(26,26,26,0.035)]">
           <h2 className="font-serif text-3xl">Recent Leads</h2>
           <div className="mt-5 overflow-x-auto">
             <table className="w-full min-w-[720px] text-left text-sm">
@@ -176,7 +176,7 @@ export default function AdminDashboardPage() {
         </article>
 
         <div className="grid gap-5">
-          <article className="rounded border border-sage bg-mistWhite p-5 shadow-[0_12px_28px_rgba(34,34,34,0.035)]">
+          <article className="rounded border border-sage bg-mistWhite p-5 shadow-[0_12px_28px_rgba(26,26,26,0.035)]">
             <h2 className="font-serif text-3xl">Recent Results</h2>
             <div className="mt-5 grid gap-4">
               {recent.assessmentResults?.length ? (
@@ -196,7 +196,7 @@ export default function AdminDashboardPage() {
             </div>
           </article>
 
-          <article className="rounded border border-sage bg-charcoal p-5 text-mistWhite shadow-[0_12px_28px_rgba(34,34,34,0.08)]">
+          <article className="rounded border border-sage bg-charcoal p-5 text-mistWhite shadow-[0_12px_28px_rgba(26,26,26,0.08)]">
             <h2 className="font-serif text-3xl">New Messages</h2>
             <div className="mt-5 grid gap-4">
               {recent.contactMessages?.length ? (
