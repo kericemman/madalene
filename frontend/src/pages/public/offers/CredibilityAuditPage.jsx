@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, CircleAlert, Quote, Search, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CircleAlert, Quote, Search, ShieldCheck, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import SiteButton from "../../../components/SiteButton.jsx";
 import { listPublicReviews } from "../../../services/api.js";
@@ -87,7 +87,7 @@ function CheckList({ items, dark = false, className = "" }) {
   return (
     <ul className={`space-y-4 ${className}`}>
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-3 text-base leading-7">
+        <li key={item} className="flex items-start gap-3 text-sm sm:text-base leading-relaxed">
           <Check className={`mt-1 shrink-0 ${dark ? "text-mutedMint" : "text-deepEmerald"}`} size={17} aria-hidden="true" />
           <span>{item}</span>
         </li>
@@ -98,7 +98,7 @@ function CheckList({ items, dark = false, className = "" }) {
 
 function EditorialImage({ image, className = "", priority = false }) {
   return (
-    <figure className={`overflow-hidden border border-sage bg-sage ${className}`}>
+    <figure className={`overflow-hidden rounded-3xl border border-sage/80 bg-sage shadow-md ${className}`}>
       <img
         src={image.src}
         alt={image.alt}
@@ -142,42 +142,47 @@ export default function CredibilityAuditPage({ actionPath, loading, offer }) {
   }, [offer?.price]);
 
   return (
-    <main className="bg-mistWhite text-charcoal">
-      <section className="border-b border-sage bg-mistWhite">
-        <div className="container-shell py-8 sm:py-10 lg:py-14">
-          <Link to="/offers" className="inline-flex items-center gap-2 text-sm font-bold text-charcoal/72 transition hover:text-deepEmerald">
-            <ArrowLeft size={16} aria-hidden="true" />
-            All offers
+    <main className="bg-[#FAF9F6] text-charcoal">
+      
+      {/* Hero Section */}
+      <section className="border-b border-sage/60 bg-[#FAF9F6] py-12 sm:py-16 lg:py-24">
+        <div className="container-shell mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Link to="/offers" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-charcoal/70 transition hover:text-deepEmerald">
+            <ArrowLeft size={15} aria-hidden="true" />
+            <span>All offers</span>
           </Link>
 
-          <div className="mt-10 grid gap-10 lg:mt-14 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.72fr)] lg:items-center lg:gap-16">
+          <div className="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 border-y border-sage py-2 text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">
-                <Search size={15} aria-hidden="true" />
-                Credibility Clarity Audit™
-              </div>
-              <h1 className="mt-6 font-serif text-2xl font-bold leading-[1.04] text-balance sm:text-6xl lg:text-4xl">
-                Something isn&apos;t landing. Let&apos;s find out <span className="text-deepEmerald">what.</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-mutedMint/60 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-deepEmerald">
+                <Search size={14} aria-hidden="true" />
+                <span>Credibility Clarity Audit™</span>
+              </span>
+              <h1 className="mt-4 font-serif text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-charcoal leading-[1.1]">
+                Something isn't landing. Let's find out <span className="text-deepEmerald">what.</span>
               </h1>
-              <div className="mt-7 max-w-2xl space-y-5 text-lg leading-8 text-charcoal/72 sm:text-xl sm:leading-9">
-                <p>You&apos;ve built real expertise.</p>
-                <p>
-                  But somewhere between what you know, how you&apos;re positioned, and what people see online, some of that value may be getting lost.
+
+              <div className="mt-6 space-y-4 font-serif text-base sm:text-lg text-charcoal/80 leading-relaxed">
+                <p>You've built real expertise.</p>
+                <p className="font-sans text-sm sm:text-base text-charcoal/70 leading-relaxed">
+                  But somewhere between what you know, how you're positioned, and what people see online, some of that value may be getting lost. The Credibility Clarity Audit™ is a private diagnostic designed to identify where your brand is weakening trust, why it's happening, and what deserves your attention first.
                 </p>
-                <p>The Credibility Clarity Audit™ is a private diagnostic designed to identify where your brand is weakening trust, why it&apos;s happening, and what deserves your attention first.</p>
               </div>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <SiteButton to={actionPath} variant="blackGreen" className="w-full sm:w-auto">
-                  Book Your Credibility Clarity Audit™
-                  <ArrowRight size={16} aria-hidden="true" />
+
+              <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <SiteButton to={actionPath} variant="lightPrimary" className="justify-center px-6 py-3.5 text-xs font-bold shadow-md">
+                  <span>Book Your Credibility Clarity Audit™</span>
+                  <ArrowRight size={15} aria-hidden="true" />
                 </SiteButton>
-                <p className="text-sm leading-6 text-charcoal/58">$99 USD · Private 1:1 Audit</p>
+                <p className="text-xs font-semibold text-charcoal/60 text-center sm:text-left">
+                  $99 USD · Private 1:1 Audit
+                </p>
               </div>
             </div>
 
             <div className="mx-auto w-full max-w-md lg:max-w-none">
               <EditorialImage image={magnificImages.assessment} priority className="aspect-[4/5]" />
-              <p className="mt-3 border-l-2 border-deepEmerald pl-3 text-sm leading-6 text-charcoal/62">
+              <p className="mt-3 border-l-2 border-deepEmerald pl-3 text-xs sm:text-sm leading-relaxed text-charcoal/70">
                 Your expertise deserves a brand people can understand, trust and choose.
               </p>
             </div>
@@ -185,247 +190,332 @@ export default function CredibilityAuditPage({ actionPath, loading, offer }) {
         </div>
       </section>
 
-      <section className="bg-white py-8 sm:py-10 lg:py-15">
-        <div className="container-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">02. Recognition</p>
-            <h2 className="mt-5 max-w-md font-serif text-4xl leading-tight text-balance sm:text-5xl">You know the quality of your work. But something about the way it is being perceived feels off.</h2>
-          </div>
-          <div>
-            <CheckList items={recognitionPoints} className="border-y border-sage py-6 text-charcoal/76" />
-            <div className="mt-7 max-w-2xl space-y-5 text-lg leading-8 text-charcoal/72">
-              <p>So you start changing things. Your headline. Your content. Your offer. Maybe the whole brand.</p>
-              <p>But if you don&apos;t know what is weakening perception, you can spend months fixing things that were never the problem.</p>
-              <p className="font-serif text-3xl leading-tight text-charcoal">That is where the Credibility Clarity Audit™ begins.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-charcoal py-8 text-mistWhite sm:py-10 lg:py-15">
-        <div className="container-shell grid gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:gap-16">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">The cost</p>
-            <h2 className="mt-5 max-w-lg font-serif text-4xl leading-tight text-balance sm:text-5xl">When you don&apos;t know what&apos;s weakening trust, you fix the wrong things.</h2>
-          </div>
-          <div>
-            <ul className="grid gap-x-8 border-y border-mistWhite/20 py-6 sm:grid-cols-2">
-              {wrongFixes.map((item) => (
-                <li key={item} className="flex items-center gap-3 py-4 text-base text-mistWhite/78 last:border-b-0">
-                  <CircleAlert className="shrink-0 text-mutedMint" size={17} aria-hidden="true" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-deepEmerald py-8 text-mistWhite sm:py-10 lg:py-15">
-        <div className="container-shell text-center">
-          <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">03. The Problem We Are Diagnosing</p>
-          <h2 className="mx-auto mt-5 max-w-4xl font-serif text-3xl leading-tight text-balance sm:text-4xl">
-            Your expertise and the perception of it are not always the same thing.
-          </h2>
-          <div className="mx-auto mt-10 max-w-2xl border-y border-mistWhite/25 py-6">
-            <p className="font-serif text-3xl leading-tight sm:text-4xl">The Credibility Gap&trade;</p>
-            <p className="mt-3 text-base leading-7 text-mistWhite/80">The distance between the credibility you&apos;ve earned and the credibility other people can perceive.</p>
-          </div>
-          <p className="mx-auto mt-7 max-w-3xl text-lg leading-8 text-mistWhite/78">
-            The Audit looks at your brand from the outside in, through the same signals people encounter when deciding whether to understand you, trust you, and take the next step. Then I identify where that gap is showing up and what is contributing to it.
-          </p>
-          <div className="mt-8">
-            <Link to="/offers/earned-credibility-intensive" className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-mutedMint hover:text-white transition">
-              <span>Learn About the Credibility Gap™</span>
-              <ArrowRight size={15} aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white py-8 sm:py-10 lg:py-15">
-        <div className="container-shell grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-16">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">04. What I Diagnose</p>
-            <h2 className="mt-5 max-w-md font-serif text-4xl leading-tight text-balance sm:text-5xl">We&apos;ll find where your credibility is getting lost in translation.</h2>
-            <p className="mt-6 max-w-sm text-lg leading-8 text-charcoal/68">I review five areas of your brand:</p>
-
+      {/* Recognition Section */}
+      <section className="py-8 sm:py-10 lg:py-15 bg-white">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
             <div>
-              <img src="/src/assets/home/diag.jpg" alt="Magnific Credibility Audit Diagnosis" className="mt-6 w-full max-w-lg rounded-md border border-sage shadow-[0_16px_36px_rgba(26,26,26,0.06)]" />
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">02. Recognition</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-charcoal leading-snug text-balance">
+                You know the quality of your work. But something about the way it is being perceived feels off.
+              </h2>
             </div>
-          </div>
-          
-          <ol className="divide-y divide-sage border-y border-sage">
-            {diagnosisAreas.map((area, index) => (
-              <li key={area.title} className="grid gap-4 py-6 sm:grid-cols-[62px_minmax(0,1fr)] sm:gap-6">
-                <p className="font-serif text-3xl leading-none text-deepEmerald">0{index + 1}</p>
-                <div>
-                  <h3 className="font-serif text-2xl leading-tight">{area.title}</h3>
-                  <p className="mt-2 max-w-2xl text-base leading-7 text-charcoal/70">{area.text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="border-y border-sage bg-mistWhite py-8 sm:py-10 lg:py-15">
-        <div className="container-shell">
-          <div className="max-w-2xl">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">05. What You Walk Away Knowing</p>
-            <h2 className="mt-5 font-serif text-2xl leading-tight text-balance sm:text-4xl">You won&apos;t leave with more things to think about. You&apos;ll know what deserves your attention.</h2>
-          </div>
-          <div className="mt-12 grid gap-x-10 gap-y-0 border-y border-sage lg:grid-cols-2">
-            {deliverables.map((item, index) => (
-              <article key={item.title} className="border-b border-sage py-6 last:border-b-0">
-                <div className="flex gap-4">
-                  <p className="pt-0.5 text-sm font-extrabold text-deepEmerald">0{index + 1}</p>
-                  <div>
-                    <h3 className="font-serif text-2xl leading-tight">{item.title}</h3>
-                    <p className="mt-2 max-w-md text-base leading-7 text-charcoal/68">{item.text}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-          <div className="mt-10">
-            <SiteButton to={actionPath} variant="blackGreen" className="w-full sm:w-auto">
-              Book My Audit
-              <ArrowRight size={16} aria-hidden="true" />
-            </SiteButton>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white py-8 sm:py-10 lg:py-15">
-        <div className="container-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">06. Free Assessment vs Paid Audit</p>
-            <h2 className="mt-5 font-serif text-3xl leading-tight text-balance sm:text-4xl">Already taken the Earned Credibility™ Assessment? This goes deeper.</h2>
-          </div>
-          <div className="grid gap-6 rounded-2xl border border-sage bg-mistWhite p-6 sm:p-8">
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-widest text-deepEmerald">Assessment</p>
-              <p className="mt-1 font-serif text-xl">Where might my credibility gap be?</p>
-            </div>
-            <div className="border-t border-sage pt-4">
-              <p className="text-xs font-extrabold uppercase tracking-widest text-deepEmerald">Audit</p>
-              <p className="mt-1 font-serif text-xl">What is causing it in my brand, and what should I do about it?</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-mistWhite py-16 sm:py-20 lg:py-28">
-        <div className="container-shell grid gap-10 lg:grid-cols-[minmax(290px,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:gap-16">
-          <EditorialImage image={magnificImages.proof} className="aspect-[4/5] max-w-md" />
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">08. Who This Is For</p>
-            <h2 className="mt-5 max-w-2xl font-serif text-4xl leading-tight text-balance sm:text-5xl">This is for you if your expertise is established, but your brand feels behind it.</h2>
-            <CheckList items={whoItsFor} className="mt-8 max-w-2xl text-charcoal/74" />
-            <div className="mt-8 space-y-3 border-l-2 border-deepEmerald pl-4 text-base leading-7 text-charcoal/82 font-medium">
-              <p>This is not a brand makeover.</p>
-              <p>And it is not for someone looking for a few quick LinkedIn tips.</p>
-              <p className="font-serif text-lg text-charcoal">It is a strategic diagnosis for someone who wants to understand the problem before deciding how deeply to solve it.</p>
+              <div className="rounded-3xl border border-sage/80 bg-[#FAF9F6] p-6 sm:p-8 shadow-sm">
+                <CheckList items={recognitionPoints} className="text-charcoal/80" />
+              </div>
+              <div className="mt-8 space-y-4 font-serif text-base sm:text-lg text-charcoal/75 leading-relaxed">
+                <p>So you start changing things. Your headline. Your content. Your offer. Maybe the whole brand.</p>
+                <p>But if you don't know what is weakening perception, you can spend months fixing things that were never the problem.</p>
+                <p className="font-serif text-lg sm:text-xl font-bold text-charcoal pt-2">
+                  That is where the Credibility Clarity Audit™ begins.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-charcoal py-16 text-mistWhite sm:py-20 lg:py-24">
-        <div className="container-shell grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
-          <EditorialImage image={magnificImages.offers} className="aspect-[16/10] max-w-xl border-mistWhite/20" />
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-mutedMint">09. Why Magdalene</p>
-            <h2 className="mt-5 max-w-2xl font-serif text-4xl leading-tight text-balance sm:text-5xl">I look for what your brand is failing to reveal.</h2>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-mistWhite/76">
-              My work sits at the intersection of personal brand positioning and authority. I pay particular attention to the expertise people have earned through experience, the judgement behind their work, and whether any of that is visible in the way they are positioned.
-            </p>
-            <p className="mt-4 max-w-2xl text-lg leading-8 text-mistWhite/76">
-              Because sometimes the problem isn&apos;t that you need a stronger brand. The brand simply hasn&apos;t caught up with the expert behind it.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 border-y border-mistWhite/18 py-5 text-sm font-bold text-mutedMint">
-              <span>33K+ LinkedIn Audience</span>
-              <span>#1 Globally Wellness Personal Brand · Favikon</span>
-              <span>Favikon Top 20 Most Influential Personal Brands · LinkedIn Kenya</span>
-              <span>Top 1% Personal Branding &amp; Thought Leadership</span>
-              <span>Favikon Ambassador</span>
+      {/* The Cost Section (Dark Theme) */}
+      <section className="bg-charcoal py-8 sm:py-10 lg:py-15 text-mistWhite">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-mutedMint">The Cost</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-3xl font-bold text-white leading-snug text-balance">
+                When you don't know what's weakening trust, you fix the wrong things.
+              </h2>
             </div>
-            {testimonial && (
-              <blockquote className="mt-8 border-l-2 border-mutedMint pl-5">
-                <Quote className="text-mutedMint" size={20} aria-hidden="true" />
-                <p className="mt-3 max-w-2xl font-serif text-2xl leading-tight text-mistWhite">&ldquo;{testimonial.review}&rdquo;</p>
-                <cite className="mt-4 block text-sm not-italic text-mistWhite/62">{testimonial.name}{testimonial.role ? `, ${testimonial.role}` : ""}</cite>
-              </blockquote>
-            )}
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 sm:p-10 backdrop-blur-md">
+              <ul className="grid gap-4 sm:grid-cols-2">
+                {wrongFixes.map((item) => (
+                  <li key={item} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs sm:text-sm text-mistWhite/85">
+                    <CircleAlert className="shrink-0 text-mutedMint mt-0.5" size={16} aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem We Are Diagnosing (Deep Emerald Theme) */}
+      <section className="bg-deepEmerald py-8 sm:py-10 lg:py-15 text-mistWhite">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="text-xs font-bold uppercase tracking-widest text-mutedMint">03. The Problem We Are Diagnosing</span>
+            <h2 className="mt-3 font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-white leading-snug text-balance">
+              Your expertise and the perception of it are not always the same thing.
+            </h2>
+            
+            <div className="my-8 rounded-2xl border border-white/20 bg-white/10 p-6 sm:p-8 backdrop-blur-md">
+              <p className="font-serif text-xl sm:text-2xl font-bold text-white">The Credibility Gap™</p>
+              <p className="mt-2 text-xs sm:text-sm leading-relaxed text-mistWhite/80">
+                The distance between the credibility you've earned and the credibility other people can perceive.
+              </p>
+            </div>
+
+            <p className="text-sm sm:text-base leading-relaxed text-mistWhite/80">
+              The Audit looks at your brand from the outside in, through the same signals people encounter when deciding whether to understand you, trust you, and take the next step. Then I identify where that gap is showing up and what is contributing to it.
+            </p>
+
             <div className="mt-8">
-              <Link to="/about" className="inline-flex items-center gap-2 text-sm font-bold text-mutedMint hover:text-white transition">
-                <span>Read Magdalene&apos;s Story</span>
-                <ArrowRight size={15} aria-hidden="true" />
+              <Link to="/offers/earned-credibility-intensive" className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold uppercase tracking-wider text-mutedMint hover:text-white transition group">
+                <span>Learn About the Credibility Gap™</span>
+                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-white py-16 sm:py-20 lg:py-28">
-        <div className="container-shell grid gap-12 lg:grid-cols-[0.76fr_1.24fr] lg:gap-16">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">10. Investment</p>
-            <h2 className="mt-5 font-serif text-4xl leading-tight text-balance sm:text-5xl">Get clear before you change another thing.</h2>
-            <p className="mt-6 max-w-md text-lg leading-8 text-charcoal/68">
-              Before we meet, you&apos;ll complete a short intake so I can review your current brand and arrive ready to diagnose rather than spend the session gathering context.
-            </p>
-            <p className="mt-8 font-serif text-5xl leading-none text-deepEmerald">{investment}</p>
-            <p className="mt-2 text-sm text-charcoal/58">USD · 45-minute private 1:1 session</p>
-          </div>
-          <div className="border-y border-sage">
-            <div className="grid gap-5 border-b border-sage py-6 sm:grid-cols-[170px_1fr]">
-              <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-deepEmerald">What we do</p>
-              <p className="text-base leading-7 text-charcoal/74">Identify where perception is falling behind your expertise, examine what&apos;s contributing to it, and determine what deserves your attention first.</p>
-            </div>
-            <div className="grid gap-5 border-b border-sage py-6 sm:grid-cols-[170px_1fr]">
-              <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-deepEmerald">You leave knowing</p>
-              <p className="text-base leading-7 text-charcoal/74">What is actually wrong. What matters most. What to do next.</p>
-            </div>
-          </div>
-        </div>
+      {/* What I Diagnose Section */}
+      <section className="bg-white py-8 sm:py-10 lg:py-15">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">04. What I Diagnose</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-2xl font-bold text-charcoal leading-tight text-balance">
+                We'll find where your credibility is getting lost in translation.
+              </h2>
+              <p className="mt-4 font-serif text-base sm:text-lg text-charcoal/75">
+                I review five areas of your brand:
+              </p>
 
-        <div className="container-shell mt-12 grid gap-10 border-t border-sage pt-12 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <h3 className="font-serif text-3xl leading-tight">During our time together, we&apos;ll:</h3>
-            <CheckList items={sessionAgenda} className="mt-7 text-charcoal/74" />
-          </div>
-          <div>
-            <h3 className="font-serif text-3xl leading-tight">You leave knowing:</h3>
-            <CheckList items={sessionTakeaways} className="mt-7 text-charcoal/74" />
-            <div className="mt-9">
-              <SiteButton to={actionPath} variant="blackGreen" className="w-full sm:w-auto">
-                Book Your Credibility Clarity Audit™
-                {loading ? <ShieldCheck size={16} aria-hidden="true" /> : <ArrowRight size={16} aria-hidden="true" />}
-              </SiteButton>
-              <p className="mt-3 text-xs text-charcoal/60">Already taken the Assessment? Bring your results with you.</p>
+              <div className="mt-8 overflow-hidden rounded-3xl border border-sage/80 shadow-md">
+                <img src="/src/assets/home/diag.jpg" alt="Magnific Credibility Audit Diagnosis" className="w-full h-auto object-cover" />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {diagnosisAreas.map((area, index) => (
+                <article key={area.title} className="rounded-3xl border border-sage/80 bg-[#FAF9F6] p-6 sm:p-7 shadow-sm">
+                  <div className="flex items-center gap-4">
+                    <span className="font-serif text-2xl font-bold text-deepEmerald">0{index + 1}</span>
+                    <h3 className="font-serif text-xl font-bold text-charcoal">{area.title}</h3>
+                  </div>
+                  <p className="mt-3 text-xs sm:text-sm leading-relaxed text-charcoal/70 pl-10">
+                    {area.text}
+                  </p>
+                </article>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="border-t border-sage bg-mistWhite py-16 sm:py-20 lg:py-24 text-center">
-        <div className="container-shell max-w-4xl">
-          <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-deepEmerald">11. Final Close</p>
-          <h2 className="mt-5 font-serif text-3xl sm:text-5xl font-bold leading-tight text-balance">Before you rebuild your brand, diagnose the problem.</h2>
-          <p className="mt-6 text-lg sm:text-xl leading-relaxed text-charcoal/72 max-w-2xl mx-auto font-serif">
-            You may not need to change everything. You need to know which change will actually matter.
-          </p>
-          <div className="mt-9 flex flex-col items-center justify-center gap-3">
-            <SiteButton to={actionPath} variant="blackGreen" className="w-full sm:w-auto">
-              Book Your Credibility Clarity Audit™
-              <ArrowRight size={16} aria-hidden="true" />
+      {/* What You Walk Away Knowing Section */}
+      <section className="bg-[#FAF9F6] py-8 sm:py-10 lg:py-15">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="max-w-2xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">05. What You Walk Away Knowing</span>
+            <h2 className="mt-2 font-serif text-xl sm:text-2xl font-bold text-charcoal leading-tight">
+              You won't leave with more things to think about. You'll know what deserves your attention.
+            </h2>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {deliverables.map((item, index) => (
+              <article key={item.title} className="rounded-3xl border border-sage/80 bg-white p-7 sm:p-8 shadow-sm flex flex-col justify-between">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald block mb-2">
+                    0{index + 1}. {item.title}
+                  </span>
+                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-charcoal/70">
+                    {item.text}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <SiteButton to={actionPath} variant="lightPrimary" className="px-8 py-3.5 text-xs font-bold shadow-md">
+              <span>Book My Credibility Audit</span>
+              <ArrowRight size={15} aria-hidden="true" />
             </SiteButton>
-            <p className="text-xs text-charcoal/58">Already taken the Assessment? Bring your results with you.</p>
           </div>
         </div>
       </section>
+
+      {/* Assessment vs Audit Section */}
+      <section className="bg-white py-8 sm:py-10 lg:py-15">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">06. Free Assessment vs Paid Audit</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-2xl font-bold text-charcoal leading-tight text-balance">
+                Already taken the Earned Credibility™ Assessment? This goes deeper.
+              </h2>
+            </div>
+            
+            <div className="grid gap-6 rounded-3xl border border-sage/80 bg-[#FAF9F6] p-8 sm:p-10 shadow-sm">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">Assessment</span>
+                <p className="mt-1 font-serif text-lg sm:text-xl font-bold text-charcoal">Where might my credibility gap be?</p>
+              </div>
+              <div className="border-t border-sage/80 pt-6">
+                <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">Audit</span>
+                <p className="mt-1 font-serif text-lg sm:text-xl font-bold text-charcoal">What is causing it in my brand, and what should I do about it?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Who This Is For Section */}
+      <section className="bg-[#FAF9F6] py-8 sm:py-10 lg:py-15">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <EditorialImage image={magnificImages.proof} className="aspect-[4/5] max-w-md mx-auto w-full" />
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">08. Who This Is For</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-2xl font-bold text-charcoal leading-tight text-balance">
+                This is for you if your expertise is established, but your brand feels behind it.
+              </h2>
+
+              <div className="mt-8 rounded-3xl border border-sage/80 bg-white p-6 sm:p-8 shadow-sm">
+                <CheckList items={whoItsFor} className="text-charcoal/75" />
+              </div>
+
+              <div className="mt-8 space-y-3 rounded-3xl border border-deepEmerald/20 bg-deepEmerald/5 p-6 sm:p-8 text-xs sm:text-sm leading-relaxed text-charcoal/80 font-medium">
+                <p>This is not a brand makeover.</p>
+                <p>And it is not for someone looking for a few quick LinkedIn tips.</p>
+                <p className="font-serif text-base sm:text-lg font-bold text-charcoal pt-2">
+                  It is a strategic diagnosis for someone who wants to understand the problem before deciding how deeply to solve it.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Magdalene Section (Dark Theme) */}
+      <section className="bg-charcoal py-8 sm:py-10 lg:py-15 text-mistWhite">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <EditorialImage image={magnificImages.offers} className="aspect-[4/5] max-w-md mx-auto w-full border-white/20" />
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-mutedMint">09. Why Magdalene</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-2xl font-bold text-white leading-snug text-balance">
+                I look for what your brand is failing to reveal.
+              </h2>
+              
+              <div className="mt-6 space-y-4 font-serif text-base sm:text-lg text-mistWhite/80 leading-relaxed">
+                <p>My work sits at the intersection of personal brand positioning and authority. I pay particular attention to the expertise people have earned through experience, the judgement behind their work, and whether any of that is visible in the way they are positioned.</p>
+                <p className="font-sans text-xs sm:text-sm text-mistWhite/70 leading-relaxed">
+                  Because sometimes the problem isn't that you need a stronger brand. The brand simply hasn't caught up with the expert behind it.
+                </p>
+              </div>
+
+              <div className="mt-8 grid gap-2 border-y border-white/15 py-6 sm:grid-cols-2">
+                <p className="text-xs font-bold text-mutedMint">33K+ LinkedIn Audience</p>
+                <p className="text-xs font-bold text-mutedMint">#1 Globally Wellness Personal Brand · Favikon</p>
+                <p className="text-xs font-bold text-mutedMint">Favikon Top 20 Most Influential Personal Brands · LinkedIn Kenya</p>
+                <p className="text-xs font-bold text-mutedMint">Top 1% Personal Branding & Thought Leadership</p>
+                <p className="text-xs font-bold text-mutedMint sm:col-span-2">Favikon Ambassador</p>
+              </div>
+
+              {testimonial && (
+                <blockquote className="mt-8 border-l-2 border-mutedMint pl-4">
+                  <Quote className="text-mutedMint" size={18} aria-hidden="true" />
+                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-mistWhite/80">&ldquo;{testimonial.review}&rdquo;</p>
+                  <cite className="mt-3 block text-xs not-italic text-mistWhite/60">
+                    {testimonial.name}{testimonial.role ? `, ${testimonial.role}` : ""}
+                  </cite>
+                </blockquote>
+              )}
+
+              <div className="mt-8">
+                <Link to="/about" className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-mutedMint hover:text-white transition group">
+                  <span>Read Magdalene's Story</span>
+                  <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Investment & Session Details Section */}
+      <section className="bg-white py-8 sm:py-10 lg:py-15">
+        <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+          <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">10. Investment</span>
+              <h2 className="mt-2 font-serif text-xl sm:text-2xl font-bold text-charcoal leading-tight">
+                Get clear before you change another thing.
+              </h2>
+              <p className="mt-4 font-serif text-base sm:text-lg leading-relaxed text-charcoal/75">
+                Before we meet, you'll complete a short intake so I can review your current brand and arrive ready to diagnose rather than spend the session gathering context.
+              </p>
+              <div className="mt-8">
+                <p className="font-serif text-2xl sm:text-3xl font-bold text-deepEmerald">{investment}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-charcoal/60">USD · 45-minute private 1:1 session</p>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-sage/80 bg-[#FAF9F6] p-8 sm:p-10 shadow-sm space-y-8">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-deepEmerald mb-4">What we do</h3>
+                <p className="text-xs sm:text-sm leading-relaxed text-charcoal/75">
+                  Identify where perception is falling behind your expertise, examine what's contributing to it, and determine what deserves your attention first.
+                </p>
+              </div>
+              <div className="border-t border-sage/80 pt-6">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-deepEmerald mb-4">You leave knowing</h3>
+                <p className="text-xs sm:text-sm leading-relaxed text-charcoal/75">
+                  What is actually wrong. What matters most. What to do next.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 grid gap-12 border-t border-sage/80 pt-16 lg:grid-cols-2">
+            <div className="rounded-3xl border border-sage/80 bg-[#FAF9F6] p-8 sm:p-10 shadow-sm">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-charcoal mb-6">During our time together, we'll:</h3>
+              <CheckList items={sessionAgenda} className="text-charcoal/75" />
+            </div>
+            
+            <div className="rounded-3xl border border-sage/80 bg-[#FAF9F6] p-8 sm:p-10 shadow-sm flex flex-col justify-between">
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-charcoal mb-6">You leave knowing:</h3>
+                <CheckList items={sessionTakeaways} className="text-charcoal/75" />
+              </div>
+              <div className="mt-8 pt-6 border-t border-sage/80 text-center sm:text-left">
+                <SiteButton to={actionPath} variant="lightPrimary" className="px-8 py-3.5 text-xs font-bold shadow-md w-full sm:w-auto justify-center">
+                  <span>Book Your Credibility Clarity Audit™</span>
+                 
+                </SiteButton>
+                <p className="mt-3 text-xs text-charcoal/60">Already taken the Assessment? Bring your results with you.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final Close Section (Dark Theme Card) */}
+      <section className="bg-[#FAF9F6] py-8 sm:py-10 lg:py-15">
+        <div className="container-shell mx-auto max-w-4xl px-1 sm:px-3 lg:px-6 text-center">
+          <div className="rounded-3xl border border-charcoal bg-charcoal p-8 sm:p-12 text-mistWhite shadow-xl relative overflow-hidden">
+            <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-mutedMint/10 blur-2xl pointer-events-none" />
+            <span className="text-xs font-bold uppercase tracking-widest text-mutedMint block mb-2">11. Final Close</span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white">Before you rebuild your brand, diagnose the problem.</h2>
+            <p className="mt-4 font-serif text-base sm:text-lg leading-relaxed text-mistWhite/80 max-w-xl mx-auto">
+              You may not need to change everything. You need to know which change will actually matter.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3">
+              <SiteButton to={actionPath} variant="brandOnDark" className="px-8 py-3.5 text-xs font-bold shadow-md">
+                <span>Book Your Credibility Clarity Audit™</span>
+                
+              </SiteButton>
+              <p className="text-xs text-mistWhite/60">Already taken the Assessment? Bring your results with you.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   );
 }

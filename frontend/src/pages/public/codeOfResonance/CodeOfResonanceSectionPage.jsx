@@ -75,7 +75,7 @@ function FeaturedHeroCard({ entry }) {
               )}
             </div>
 
-            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight text-charcoal">
+            <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold leading-tight text-charcoal">
               <Link to={targetUrl} className="hover:text-deepEmerald transition-colors focus:outline-none">
                 <span className="absolute inset-0 z-10" aria-hidden="true" />
                 {entry.title}
@@ -134,7 +134,7 @@ function StandardCard({ entry }) {
             )}
           </div>
 
-          <h3 className="mt-3 font-serif text-lg sm:text-xl font-bold leading-snug text-charcoal group-hover:text-deepEmerald transition-colors">
+          <h3 className="mt-3 font-serif text-base sm:text-lg font-bold leading-snug text-charcoal group-hover:text-deepEmerald transition-colors">
             <Link to={targetUrl} className="focus:outline-none">
               <span className="absolute inset-0 z-10" aria-hidden="true" />
               {entry.title}
@@ -263,8 +263,8 @@ export default function CodeOfResonanceSectionPage({ sectionKey = "all" }) {
   }, [entries]);
 
   return (
-    <section className="min-h-screen bg-[#FAF9F6] py-12 sm:py-16 lg:py-20 text-charcoal">
-      <div className="container-shell mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="min-h-screen bg-[#FAF9F6] py-8 sm:py-10 lg:py-15 text-charcoal">
+      <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
         
         {/* Header Section */}
         <header className="border-b border-sage/60 pb-8">
@@ -274,7 +274,7 @@ export default function CodeOfResonanceSectionPage({ sectionKey = "all" }) {
                 <Icon size={14} aria-hidden="true" />
                 <span>{section.eyebrow}</span>
               </span>
-              <h1 className="mt-3 font-serif text-3xl sm:text-5xl font-bold tracking-tight text-charcoal text-balance">
+              <h1 className="mt-7 font-serif text-xl sm:text-3xl font-bold tracking-tight text-charcoal text-balance">
                 {section.title}
               </h1>
             </div>

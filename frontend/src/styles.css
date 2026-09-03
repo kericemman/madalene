@@ -163,8 +163,8 @@ select:focus-visible {
   }
 
   .code-entry-content p {
-    font-size: 1.125rem;
-    line-height: 1.82;
+    font-size: 0.875rem;
+    line-height: 1.7;
     margin: 0 0 1.35rem;
   }
 
@@ -178,25 +178,24 @@ select:focus-visible {
     font-family: "Newsreader", Georgia, "Times New Roman", serif;
     font-weight: 600;
     letter-spacing: 0;
+    scroll-margin-top: 7rem;
   }
 
-  .code-entry-content h1 {
-    font-size: 3.25rem;
-    line-height: 1.02;
-    margin: 2.8rem 0 1.1rem;
-  }
-
+  .code-entry-content h1,
   .code-entry-content h2 {
-    font-size: 2.35rem;
-    line-height: 1.08;
-    margin: 2.6rem 0 1rem;
+    font-size: 1.5rem;
+    line-height: 1.28;
+    color: #0F4D3E;
+    margin: 2.25rem 0 0.85rem;
   }
 
   .code-entry-content h3 {
-    font-size: 1.65rem;
-    line-height: 1.16;
-    margin: 2rem 0 0.8rem;
+    font-size: 1rem;
+    line-height: 1.28;
+    margin: 1.8rem 0 0.7rem;
   }
+
+  
 
   .code-entry-content h4,
   .code-entry-content h5,
@@ -361,23 +360,10 @@ select:focus-visible {
   }
 
   @media (max-width: 640px) {
-    .code-entry-content p,
     .code-entry-content ul,
     .code-entry-content ol {
       font-size: 1.0625rem;
       line-height: 1.75;
-    }
-
-    .code-entry-content h1 {
-      font-size: 2.15rem;
-    }
-
-    .code-entry-content h2 {
-      font-size: 1.75rem;
-    }
-
-    .code-entry-content h3 {
-      font-size: 1.35rem;
     }
 
     .code-entry-content blockquote {
@@ -391,6 +377,24 @@ select:focus-visible {
     .code-entry-content pre,
     .code-entry-content table {
       margin-block: 1.6rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .code-entry-content p {
+      font-size: 1.125rem;
+      line-height: 1.82;
+    }
+
+    .code-entry-content h1,
+    .code-entry-content h2 {
+      font-size: 1.5rem;
+      line-height: 1.24;
+    }
+
+    .code-entry-content h3 {
+      font-size: 1.5rem;
+      line-height: 1.24;
     }
   }
 }

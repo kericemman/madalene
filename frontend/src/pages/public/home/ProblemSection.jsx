@@ -72,7 +72,7 @@ export default function ProblemSection() {
               variant="brandOnLight"
               className="px-6 py-3.5 text-xs font-bold justify-center shadow-lg bg-deepEmerald hover:bg-deepEmerald/90 text-white"
             >
-              <span>Take the Earned Credibility™ Assessment</span>
+              <span>Take Earned Credibility™ Assessment</span>
               
             </SiteButton>
               
