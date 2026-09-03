@@ -27,6 +27,7 @@ const ReviewSchema = new mongoose.Schema(
     featured: { type: Boolean, default: false },
     source: { type: String, trim: true, default: "about_page_review_modal" },
     lead: { type: mongoose.Schema.Types.ObjectId, ref: "Lead" },
+    image: { type: mongoose.Schema.Types.ObjectId, ref: "MediaAsset" },
     metadata: { type: mongoose.Schema.Types.Mixed, default: {} },
     publishedAt: Date
   },

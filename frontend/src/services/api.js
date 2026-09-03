@@ -54,6 +54,25 @@ export const listPublicReviews = async (params = {}) => {
 };
 
 export const submitReview = async (payload) => {
+  const reviewImage = payload?.image;
+  const hasReviewImage = typeof Blob !== "undefined" && reviewImage instanceof Blob;
+
+  if (hasReviewImage) {
+    const formData = new FormData();
+    Object.entries(payload).forEach(([key, value]) => {
+      if (key === "image" || value === undefined || value === null) return;
+      formData.append(key, String(value));
+    });
+    formData.append("image", reviewImage);
+
+    const { data } = await api.post("/reviews", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+    return data;
+  }
+
   const { data } = await api.post("/reviews", payload);
   return data;
 };

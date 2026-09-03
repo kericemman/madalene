@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  ArrowLeft,
   ArrowRight,
   Award,
   Building2,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 import SiteButton from "../../components/SiteButton.jsx";
 import { listPublicMediaAssets, listPublicReviews } from "../../services/api.js";
-import { imageUrl } from "../../utils/cloudinaryImage.js";
+import { imageUrl, toSrcSet } from "../../utils/cloudinaryImage.js";
 import { magnificImages } from "./home/homeContent.js";
 import { MagnificImage } from "./home/HomeShared.jsx";
 
@@ -104,6 +105,15 @@ const workPillars = [
 const ratingStars = (rating = 5) =>
   Array.from({ length: Math.max(Math.min(Number(rating) || 5, 5), 1) });
 
+const initialsFor = (name = "") =>
+  name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "MW";
+
 const assetName = (asset = {}) =>
   asset.displayName || asset.altText || asset.originalFilename?.replace(/\.[^.]+$/, "") || "Featured Partner";
 
@@ -113,6 +123,7 @@ export default function AboutPage() {
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [brandAssets, setBrandAssets] = useState([]);
   const [eventAssets, setEventAssets] = useState([]);
+  const proofSliderRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -143,6 +154,14 @@ export default function AboutPage() {
   }, []);
 
   const currentChapter = chapters.find((c) => c.id === activeChapter) || chapters[0];
+  const slideProofCards = (direction) => {
+    const slider = proofSliderRef.current;
+    if (!slider) return;
+    slider.scrollBy({
+      left: direction * Math.max(slider.clientWidth * 0.82, 280),
+      behavior: "smooth"
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-charcoal selection:bg-mutedMint/60">
@@ -159,6 +178,21 @@ export default function AboutPage() {
         }
         .animate-marquee-infinite:hover {
           animation-play-state: paused;
+        }
+        .proof-card-slider {
+          scroll-behavior: smooth;
+          scrollbar-width: none;
+        }
+        .proof-card-slider::-webkit-scrollbar {
+          display: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-marquee-infinite {
+            animation: none;
+          }
+          .proof-card-slider {
+            scroll-behavior: auto;
+          }
         }
       `}</style>
 
@@ -478,11 +512,34 @@ export default function AboutPage() {
       {/* 7. Client Proof */}
       <section className="border-t border-sage/50 bg-[#FAF9F6] py-10 sm:py-18 lg:py-20">
         <div className="container-shell mx-auto max-w-7xl px-1 sm:px-6 lg:px-8">
-          <div className="mb-6 sm:mb-10">
-            <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">Earned Evidence</span>
-            <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-charcoal">
-              Reflections from practitioners who did the work.
-            </h2>
+          <div className="mb-6 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">Earned Evidence</span>
+              <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-charcoal">
+                Reflections from practitioners who did the work.
+              </h2>
+            </div>
+
+            {reviews.length > 1 && !reviewsLoading && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => slideProofCards(-1)}
+                  className="grid size-11 place-items-center rounded-full border border-sage bg-white text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald"
+                  aria-label="Show previous testimonial"
+                >
+                  <ArrowLeft size={17} aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => slideProofCards(1)}
+                  className="grid size-11 place-items-center rounded-full border border-charcoal bg-charcoal text-mutedMint transition hover:bg-deepEmerald hover:text-mistWhite"
+                  aria-label="Show next testimonial"
+                >
+                  <ArrowRight size={17} aria-hidden="true" />
+                </button>
+              </div>
+            )}
           </div>
 
           {reviewsLoading ? (
@@ -496,56 +553,64 @@ export default function AboutPage() {
               <p className="font-serif text-base font-bold text-charcoal">Endorsements loading shortly.</p>
             </div>
           ) : (
-            <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-              {reviews.map((rev) => (
-                <article
-                  key={rev._id || rev.name}
-                  className="rounded-2xl border border-sage/70 bg-white p-5 sm:p-7 shadow-sm flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <Quote className="text-deepEmerald opacity-60" size={20} />
-                      <div className="flex text-deepEmerald">
-                        {ratingStars(rev.rating).map((_, i) => (
-                          <Star key={i} size={12} fill="currentColor" />
-                        ))}
-                      </div>
-                    </div>
+            <div className="-mx-4 overflow-hidden px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+              <div
+                ref={proofSliderRef}
+                className="proof-card-slider flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:gap-6"
+                aria-label="Client proof testimonials"
+              >
+                {reviews.map((rev) => {
+                  const portraitSrc = imageUrl(rev.image);
 
-                    {rev.headline && (
-                      <h4 className="mt-3 font-serif text-base sm:text-lg font-bold text-charcoal leading-snug">
-                        {rev.headline}
-                      </h4>
-                    )}
-
-                    <p className="mt-2.5 font-serif text-xs sm:text-sm leading-relaxed text-charcoal/80 italic">
-                      "{rev.review}"
-                    </p>
-
-                    {(rev.before || rev.after) && (
-                      <div className="mt-4 grid grid-cols-2 gap-2 border-t border-sage/40 pt-3 text-[11px]">
-                        {rev.before && (
-                          <div className="bg-[#FAF9F6] p-2.5 rounded-lg">
-                            <span className="font-bold text-charcoal/50 uppercase tracking-wider text-[9px] block">Before</span>
-                            <span className="text-charcoal/75 mt-0.5 block">{rev.before}</span>
+                  return (
+                    <article
+                      key={rev._id || rev.name}
+                      className="flex min-h-[22rem] shrink-0 basis-[86%] snap-start flex-col justify-between rounded-2xl border border-sage/70 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(26,26,26,0.08)] sm:basis-[calc((100%-1.5rem)/2)] sm:p-7 lg:basis-[calc((100%-3rem)/3)]"
+                    >
+                      <div>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full border border-sage bg-mutedMint/35 text-sm font-extrabold text-deepEmerald">
+                              {portraitSrc ? (
+                                <img
+                                  src={portraitSrc}
+                                  srcSet={toSrcSet(rev.image)}
+                                  sizes="64px"
+                                  alt={rev.image?.altText || `${rev.name} testimonial image`}
+                                  className="h-full w-full object-cover"
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <span>{initialsFor(rev.name)}</span>
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-charcoal">{rev.name}</p>
+                              {rev.role && <p className="mt-0.5 text-xs text-charcoal/55">{rev.role}</p>}
+                            </div>
                           </div>
-                        )}
-                        {rev.after && (
-                          <div className="bg-mutedMint/30 p-2.5 rounded-lg border border-mutedMint/40">
-                            <span className="font-bold text-deepEmerald uppercase tracking-wider text-[9px] block">After</span>
-                            <span className="text-charcoal/80 mt-0.5 block font-medium">{rev.after}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                          <Quote className="shrink-0 text-deepEmerald opacity-60" size={20} aria-hidden="true" />
+                        </div>
 
-                  <div className="mt-4 border-t border-sage/40 pt-3">
-                    <p className="text-xs font-bold text-charcoal">{rev.name}</p>
-                    {rev.role && <p className="text-[10px] text-charcoal/55">{rev.role}</p>}
-                  </div>
-                </article>
-              ))}
+                        <p className="mt-5 font-serif text-sm leading-relaxed text-charcoal/80 italic sm:text-base">
+                          "{rev.review}"
+                        </p>
+                      </div>
+
+                      <div className="mt-5 flex items-center justify-between border-t border-sage/40 pt-4">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-deepEmerald">
+                          Client Proof
+                        </span>
+                        <div className="flex text-deepEmerald" aria-label={`${rev.rating || 5} star review`}>
+                          {ratingStars(rev.rating).map((_, i) => (
+                            <Star key={i} size={13} fill="currentColor" aria-hidden="true" />
+                          ))}
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

@@ -1051,7 +1051,10 @@ export const listReviews = asyncHandler((req, res) => {
     res,
     message: "Reviews loaded.",
     sort: { status: 1, featured: -1, createdAt: -1 },
-    populate: { path: "lead", select: "firstName lastName email status tags" }
+    populate: [
+      { path: "lead", select: "firstName lastName email status tags" },
+      { path: "image", select: "secureUrl optimizedUrl thumbnailUrl altText srcset" }
+    ]
   });
 });
 
@@ -1070,7 +1073,12 @@ export const updateReview = asyncHandler(async (req, res) => {
   }
 
   await review.save();
-  ok(res, "Review updated.", { review });
+  const updatedReview = await Review.findById(review._id)
+    .populate("lead", "firstName lastName email status tags")
+    .populate("image", "secureUrl optimizedUrl thumbnailUrl altText srcset")
+    .lean();
+
+  ok(res, "Review updated.", { review: updatedReview });
 });
 
 export const listEmailTemplates = asyncHandler((req, res) => {

@@ -1,4 +1,5 @@
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import slugify from "slugify";
 import { cloudinary } from "../config/cloudinary.js";
 import { env } from "../config/env.js";
@@ -27,6 +28,9 @@ const uploadStream = (buffer, options) =>
     stream.end(buffer);
   });
 
+export const isCloudinaryConfigured = () =>
+  Boolean(env.cloudinary.cloudName && env.cloudinary.apiKey && env.cloudinary.apiSecret);
+
 export const uploadBufferToCloudinary = async ({
   buffer,
   originalname,
@@ -37,10 +41,11 @@ export const uploadBufferToCloudinary = async ({
 }) => {
   const extension = path.extname(originalname || "");
   const baseName = path.basename(originalname || "upload", extension);
+  const safeBaseName = slugify(baseName, { lower: true, strict: true });
 
   const result = await uploadStream(buffer, {
     folder: safeFolder(folder),
-    public_id: slugify(baseName, { lower: true, strict: true }) || undefined,
+    public_id: safeBaseName ? `${safeBaseName}-${randomUUID().slice(0, 8)}` : undefined,
     resource_type: "auto",
     overwrite: false,
     use_filename: true,

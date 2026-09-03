@@ -18,6 +18,7 @@ const statusStyles = {
 };
 
 const ratingStars = (rating = 5) => Array.from({ length: Math.max(Math.min(Number(rating) || 5, 5), 1) });
+const reviewImageSrc = (image) => image?.thumbnailUrl || image?.optimizedUrl || image?.secureUrl || "";
 
 export default function AdminReviewsPage() {
   const [status, setStatus] = useState("pending");
@@ -170,35 +171,19 @@ export default function AdminReviewsPage() {
                   </div>
                 </div>
 
-                <h2 className="mt-4 font-serif text-3xl leading-tight text-charcoal">
-                  {review.headline || "Review submission"}
-                </h2>
-                <p className="mt-3 text-lg leading-8 text-charcoal">"{review.review}"</p>
-
-                {(review.before || review.after) && (
-                  <div className="mt-5 grid gap-4 border-t border-sage pt-5 md:grid-cols-2">
-                    {review.before && (
-                      <div>
-                        <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-charcoal/50">
-                          Before
-                        </p>
-                        <p className="mt-2 text-sm leading-6 text-charcoal/70">{review.before}</p>
-                      </div>
-                    )}
-                    {review.after && (
-                      <div>
-                        <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">
-                          After
-                        </p>
-                        <p className="mt-2 text-sm leading-6 text-charcoal/70">{review.after}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
+                <p className="mt-4 text-lg leading-8 text-charcoal">"{review.review}"</p>
               </div>
 
               <div className="grid content-between gap-5 border-t border-sage pt-5 xl:border-l xl:border-t-0 xl:pl-5 xl:pt-0">
                 <div>
+                  {reviewImageSrc(review.image) && (
+                    <img
+                      src={reviewImageSrc(review.image)}
+                      alt={review.image?.altText || `${review.name} testimonial image`}
+                      className="mb-4 aspect-[4/3] w-full border border-sage object-cover"
+                      loading="lazy"
+                    />
+                  )}
                   <p className="font-bold text-charcoal">{review.name}</p>
                   <p className="mt-1 text-sm text-charcoal/60">{review.email}</p>
                   {review.role && <p className="mt-1 text-sm text-charcoal/60">{review.role}</p>}

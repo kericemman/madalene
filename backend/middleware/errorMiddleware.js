@@ -7,7 +7,21 @@ export const notFound = (req, res, next) => {
 };
 
 export const errorHandler = (error, req, res, next) => {
-  const statusCode = error.statusCode || error.status || 500;
+  const isMulterError = error.name === "MulterError";
+  const isZodError = error.name === "ZodError" && Array.isArray(error.issues);
+  const statusCode = error.statusCode || error.status || (isMulterError ? 400 : isZodError ? 422 : 500);
+  const message =
+    isZodError
+      ? "Please check the form fields and try again."
+      : isMulterError && error.code === "LIMIT_FILE_SIZE"
+        ? "Uploaded file is too large."
+        : error.message;
+  const errors = isZodError
+    ? error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message
+      }))
+    : error.errors || [];
 
   // Log the real error on the server
   console.error("=================================");
@@ -15,7 +29,7 @@ export const errorHandler = (error, req, res, next) => {
   console.error("Method:", req.method);
   console.error("Route:", req.originalUrl);
   console.error("Status:", statusCode);
-  console.error("Message:", error.message);
+  console.error("Message:", message);
   console.error("Stack:", error.stack);
   console.error("=================================");
 
@@ -24,8 +38,8 @@ export const errorHandler = (error, req, res, next) => {
     message:
       statusCode === 500 && env.isProduction
         ? "Something went wrong."
-        : error.message,
-    errors: error.errors || [],
+        : message,
+    errors,
     stack: env.isProduction ? undefined : error.stack
   });
 };

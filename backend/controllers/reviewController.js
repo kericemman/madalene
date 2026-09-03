@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { Lead } from "../models/Lead.js";
+import { MediaAsset } from "../models/MediaAsset.js";
 import { Review } from "../models/Review.js";
+import { isCloudinaryConfigured, uploadBufferToCloudinary } from "../services/cloudinaryService.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { created, ok } from "../utils/apiResponse.js";
 
@@ -14,10 +16,10 @@ const reviewSchema = z.object({
   review: z.string().trim().min(20).max(1600),
   rating: z.coerce.number().int().min(1).max(5).default(5),
   source: z.string().trim().max(80).optional(),
-  consent: z.literal(true)
+  consent: z.union([z.literal(true), z.literal("true")]).transform(() => true)
 });
 
-const publicReviewFields = "name role headline before after review rating featured publishedAt createdAt";
+const publicReviewFields = "name role headline before after review rating featured publishedAt createdAt image";
 
 const splitName = (name = "") => {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -37,6 +39,7 @@ export const listPublicReviews = asyncHandler(async (req, res) => {
     .sort({ featured: -1, publishedAt: -1, createdAt: -1 })
     .limit(limit)
     .select(publicReviewFields)
+    .populate("image", "secureUrl optimizedUrl thumbnailUrl altText srcset")
     .lean();
 
   ok(res, "Reviews loaded.", { reviews });
@@ -55,7 +58,6 @@ export const submitReview = asyncHandler(async (req, res) => {
         firstName: names.firstName,
         lastName: names.lastName,
         email,
-        profession: data.role,
         leadSource: data.source || "about_page_review_modal",
         status: "New"
       },
@@ -70,6 +72,46 @@ export const submitReview = asyncHandler(async (req, res) => {
     { new: true, upsert: true }
   );
 
+  let imageAsset = null;
+  if (req.file) {
+    if (!isCloudinaryConfigured()) {
+      const error = new Error("Image uploads are not configured yet. Please submit without an image for now.");
+      error.statusCode = 503;
+      throw error;
+    }
+
+    const altText = `${data.name} testimonial image`;
+    let upload;
+    try {
+      upload = await uploadBufferToCloudinary({
+        buffer: req.file.buffer,
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        folder: "testimonials",
+        tags: ["testimonial", "review-submission"],
+        context: {
+          usage: "testimonial-request",
+          relatedModel: "Review",
+          alt: altText
+        }
+      });
+    } catch (uploadError) {
+      uploadError.statusCode = uploadError.http_code >= 400 && uploadError.http_code < 500 ? 400 : 502;
+      uploadError.message = "Could not upload the image. Please try a different image or submit without one.";
+      throw uploadError;
+    }
+
+    imageAsset = await MediaAsset.create({
+      ...upload,
+      altText,
+      tags: ["testimonial", "review-submission"],
+      context: {
+        usage: "testimonial-request",
+        relatedModel: "Review"
+      }
+    });
+  }
+
   const review = await Review.create({
     name: data.name,
     email,
@@ -83,11 +125,21 @@ export const submitReview = asyncHandler(async (req, res) => {
     consentAt: now,
     source: data.source || "about_page_review_modal",
     status: "pending",
-    lead: lead._id
+    lead: lead._id,
+    image: imageAsset?._id
   });
+
+  if (imageAsset) {
+    imageAsset.context = {
+      ...imageAsset.context,
+      relatedId: review._id
+    };
+    await imageAsset.save();
+  }
 
   created(res, "Thank you for sharing your review. It will appear after admin approval.", {
     reviewId: review._id,
+    imageId: imageAsset?._id,
     status: review.status
   });
 });

@@ -6,6 +6,7 @@ import ResourcesSection from "./home/ResourcesSection.jsx";
 import ProofSection from "./home/ProofSection.jsx";
 import FounderStorySection from "./home/FounderStorySection.jsx";
 import OffersSection from "./home/OffersSection.jsx";
+import ClientProofSection from "./home/ClientProofSection.jsx";
 import FinalCtaSection from "./home/FinalCtaSection.jsx";
 
 export default function HomePage() {
@@ -20,6 +21,7 @@ export default function HomePage() {
       <ProofSection />
       <FounderStorySection />
       <OffersSection />
+      <ClientProofSection />
       <FinalCtaSection />
     </>
   );

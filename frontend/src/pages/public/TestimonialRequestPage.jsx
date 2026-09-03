@@ -1,32 +1,75 @@
-import { useState } from "react";
-import { CheckCircle2, Send, ShieldCheck, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CheckCircle2, ImagePlus, Send, ShieldCheck, Star, X } from "lucide-react";
 import { submitReview } from "../../services/api.js";
 
 const initialForm = {
   name: "",
   email: "",
   role: "",
-  headline: "",
-  before: "",
-  after: "",
   review: "",
   rating: 5,
+  image: null,
   consent: false
 };
 
 const ratings = [5, 4, 3, 2, 1];
+const maxImageSizeMb = 8;
 
 export default function TestimonialRequestPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [form, setForm] = useState(initialForm);
+  const [previewUrl, setPreviewUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!form.image) {
+      setPreviewUrl("");
+      return undefined;
+    }
+
+    const objectUrl = URL.createObjectURL(form.image);
+    setPreviewUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [form.image]);
 
   const updateField = (event) => {
     const { name, value, type, checked } = event.target;
     setForm((current) => ({
       ...current,
       [name]: type === "checkbox" ? checked : value
+    }));
+  };
+
+  const updateImage = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please choose an image file.");
+      return;
+    }
+
+    if (file.size > maxImageSizeMb * 1024 * 1024) {
+      setError(`Please choose an image under ${maxImageSizeMb}MB.`);
+      return;
+    }
+
+    setError("");
+    setForm((current) => ({
+      ...current,
+      image: file
+    }));
+  };
+
+  const removeImage = () => {
+    setForm((current) => ({
+      ...current,
+      image: null
     }));
   };
 
@@ -66,9 +109,9 @@ export default function TestimonialRequestPage() {
           </p>
           <div className="mt-7 space-y-4 border-t border-mistWhite/14 pt-6">
             {[
-              "What felt unclear before the work?",
-              "What became clearer after?",
-              "What would you want others to know?"
+              "What changed through the work?",
+              "What felt most valuable about the experience?",
+              "What would you want someone considering this work to know?"
             ].map((prompt) => (
               <p key={prompt} className="flex gap-3 text-sm leading-6 text-mistWhite/76">
                 <CheckCircle2 className="mt-0.5 shrink-0 text-mutedMint" size={17} aria-hidden="true" />
@@ -128,22 +171,51 @@ export default function TestimonialRequestPage() {
                 </Field>
               </div>
 
-              <Field label="Short headline">
-                <input className="input bg-white" name="headline" value={form.headline} onChange={updateField} placeholder="What changed in one sentence?" />
-              </Field>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Before">
-                  <textarea className="input min-h-28 resize-y bg-white" name="before" value={form.before} onChange={updateField} placeholder="What felt unclear before?" />
-                </Field>
-                <Field label="After">
-                  <textarea className="input min-h-28 resize-y bg-white" name="after" value={form.after} onChange={updateField} placeholder="What became clearer after?" />
-                </Field>
-              </div>
-
               <Field label="Full testimonial">
                 <textarea className="input min-h-36 resize-y bg-white" name="review" value={form.review} onChange={updateField} required placeholder="Share the experience in your own words." />
               </Field>
+
+              <div className="grid gap-2 text-sm font-semibold">
+                <span>Image upload optional</span>
+                <div className="grid gap-4 border border-sage bg-mistWhite p-4 sm:grid-cols-[128px_1fr] sm:items-center">
+                  <div className="flex aspect-square items-center justify-center overflow-hidden border border-sage bg-white">
+                    {previewUrl ? (
+                      <img
+                        src={previewUrl}
+                        alt="Selected testimonial upload preview"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <ImagePlus className="text-deepEmerald" size={30} aria-hidden="true" />
+                    )}
+                  </div>
+                  <div className="grid gap-3">
+                    <div>
+                      <p className="text-base font-bold text-charcoal">Add a client photo or brand image.</p>
+                      <p className="mt-1 text-sm font-medium leading-6 text-charcoal/62">
+                        JPG, PNG, WebP, AVIF, or GIF. Keep it under {maxImageSizeMb}MB.
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <label className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-charcoal bg-charcoal px-4 py-2.5 text-sm font-bold text-mutedMint transition hover:bg-deepEmerald hover:text-mistWhite focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-deepEmerald">
+                        <ImagePlus size={16} aria-hidden="true" />
+                        {form.image ? "Change image" : "Upload image"}
+                        <input className="sr-only" type="file" accept="image/*" onChange={updateImage} />
+                      </label>
+                      {form.image && (
+                        <button
+                          type="button"
+                          onClick={removeImage}
+                          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-sage bg-white px-4 py-2.5 text-sm font-bold text-charcoal transition hover:border-charcoal"
+                        >
+                          <X size={16} aria-hidden="true" />
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <label className="flex gap-3 border border-sage bg-mistWhite px-4 py-3 text-sm leading-6 text-charcoal/72">
                 <input
@@ -154,7 +226,7 @@ export default function TestimonialRequestPage() {
                   required
                   className="mt-1 size-4 accent-deepEmerald"
                 />
-                <span>I consent to my name, role, rating, and testimonial being displayed publicly after approval.</span>
+                <span>I consent to my name, role, rating, testimonial, and uploaded image if provided being displayed publicly after approval.</span>
               </label>
 
               {error && (

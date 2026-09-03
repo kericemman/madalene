@@ -1,21 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 import { listPublicCodeOfResonanceEntries } from "../../../services/api.js";
 import { magnificImages, proofCaseStudies } from "./homeContent.js";
 import { SectionEyebrow } from "./HomeShared.jsx";
-
-const excerpt = (value = "", maxLength = 360) => {
-  const clean = String(value).replace(/\s+/g, " ").trim();
-  if (clean.length <= maxLength) return clean;
-  return `${clean.slice(0, maxLength - 1).trim()}...`;
-};
 
 const formatDate = (value) => {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
 
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric"
@@ -28,7 +23,7 @@ const imageForCaseStudy = (entry = {}) => {
   return {
     src: image.optimizedUrl || image.secureUrl || image.thumbnailUrl || magnificImages.proof.src,
     alt: image.altText || magnificImages.proof.alt,
-    objectPosition: magnificImages.proof.objectPosition
+    objectPosition: magnificImages.proof.objectPosition || "center"
   };
 };
 
@@ -62,61 +57,54 @@ const getCardKey = (caseStudy, index) => getUniqueCaseStudyKey(caseStudy) || `${
 
 function CaseStudyCard({ caseStudy, index }) {
   return (
-    <article className="group flex w-[82vw] max-w-[360px] shrink-0 snap-start flex-col overflow-hidden rounded-md border border-sage bg-mistWhite shadow-[0_18px_42px_rgba(26,26,26,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_58px_rgba(26,26,26,0.09)] sm:w-[62vw] lg:w-auto lg:max-w-none">
-      <a href={caseStudy.href} className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-deepEmerald">
-        <div className="relative aspect-[4/3] overflow-hidden bg-charcoal">
+    <article className="group relative flex w-[85vw] max-w-[360px] shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-sage/80 bg-white shadow-sm transition-all duration-300 hover:border-deepEmerald/50 hover:shadow-md sm:w-[60vw] lg:w-auto lg:max-w-none">
+      <Link to={caseStudy.href} className="block overflow-hidden bg-sage/30 focus:outline-none">
+        <div className="relative aspect-[16/10] w-full overflow-hidden">
           <img
             src={caseStudy.image.src}
             alt={caseStudy.image.alt}
             loading="lazy"
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             style={{ objectPosition: caseStudy.image.objectPosition }}
           />
-          <div
-            className="absolute inset-0 bg-[linear-gradient(180deg,rgba(26,26,26,0)_34%,rgba(26,26,26,0.58)_100%)]"
-            aria-hidden="true"
-          />
-          <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-mutedMint/35 bg-charcoal/82 px-3 py-1 text-[0.62rem] font-extrabold uppercase tracking-[0.14em] text-mutedMint backdrop-blur">
-              Case Study {String(index + 1).padStart(2, "0")}
+          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-transparent to-transparent" aria-hidden="true" />
+          
+          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+            <span className="rounded-full border border-white/20 bg-charcoal/80 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-mutedMint backdrop-blur-md">
+              Case Study 0{index + 1}
             </span>
             {caseStudy.publishedLabel && (
-              <span className="rounded-full border border-mutedMint/35 bg-charcoal/82 px-3 py-1 text-[0.62rem] font-extrabold uppercase tracking-[0.14em] text-mistWhite backdrop-blur">
+              <span className="text-[11px] font-semibold text-mistWhite/80">
                 {caseStudy.publishedLabel}
               </span>
             )}
           </div>
         </div>
-      </a>
+      </Link>
 
-      <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-deepEmerald">
-          {caseStudy.clientName}
-        </p>
-        <h3 className="mt-3 font-serif text-xl leading-tight text-charcoal text-balance">
-          {caseStudy.title}
-        </h3>
-        {/* <p className="mt-4 text-sm leading-7 text-charcoal/72">
-          {excerpt(caseStudy.summary, 220)}
-        </p> */}
+      <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-wider text-deepEmerald">
+            {caseStudy.clientName}
+          </span>
+          <h3 className="mt-2 font-serif text-xl sm:text-2xl font-bold leading-snug text-charcoal group-hover:text-deepEmerald transition-colors text-balance">
+            <Link to={caseStudy.href} className="focus:outline-none">
+              <span className="absolute inset-0 z-10" aria-hidden="true" />
+              {caseStudy.title}
+            </Link>
+          </h3>
+          <p className="mt-3 text-xs sm:text-sm leading-relaxed text-charcoal/70 line-clamp-2">
+            {caseStudy.summary}
+          </p>
+        </div>
 
-        {/* {caseStudy.proofPoints.length > 0 && (
-          <div className="mt-5 flex flex-wrap gap-2">
-            {caseStudy.proofPoints.slice(0, 2).map((point) => (
-              <span key={point} className="rounded-full border border-sage bg-white px-3 py-1 text-[0.66rem] font-bold uppercase tracking-[0.1em] text-charcoal/58">
-                {point}
-              </span>
-            ))}
-          </div>
-        )} */}
-
-        <a
-          href={caseStudy.href}
-          className="mt-auto inline-flex min-h-11 items-center gap-2 pt-6 text-sm font-extrabold text-deepEmerald transition hover:text-charcoal"
-        >
-          Read Full Case Study
-          <ArrowRight size={16} aria-hidden="true" />
-        </a>
+        <div className="mt-8 flex items-center justify-between border-t border-sage/60 pt-5">
+          <span className="text-xs font-semibold text-charcoal/50">Verified Proof</span>
+          <span className="relative z-20 inline-flex items-center gap-1.5 text-xs font-bold text-deepEmerald group-hover:translate-x-1 transition-transform">
+            <span>Read Study</span>
+            <ArrowRight size={14} aria-hidden="true" />
+          </span>
+        </div>
       </div>
     </article>
   );
@@ -160,37 +148,37 @@ export default function ProofSection() {
   }, [backendCaseStudies]);
 
   return (
-    <section className="border-y border-sage bg-white py-16 sm:py-20 lg:py-28">
-      <div className="container-shell">
-        <div className="grid gap-6 lg:grid-cols-[0.82fr_1fr] lg:items-end">
-          <div>
+    <section className="relative overflow-hidden border-y border-sage/60 bg-[#FAF9F6] py-8 sm:py-10 lg:py-15 text-charcoal">
+      <div className="container-shell mx-auto max-w-7xl px-1 sm:px-3 lg:px-6">
+        
+        {/* Section Header Split */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="max-w-3xl">
             <SectionEyebrow>Latest Case Studies</SectionEyebrow>
-            <h2 className="max-w-5xl font-serif text-xl font-bold leading-tight text-charcoal text-balance md:text-2xl lg:text-3xl">
+            <h2 className="mt-2 font-serif text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-charcoal leading-[1.15] text-balance">
               What changes when the right expertise becomes easier to recognise?
             </h2>
           </div>
-          {/* <p className="max-w-2xl text-sm leading-7 text-charcoal/70 md:text-base md:leading-8 lg:justify-self-end">
-            Real proof from the work: clearer positioning, stronger trust signals, and stories that make expertise easier to choose.
-          </p> */}
+          <div>
+            <Link
+              to="/code-of-resonance/case-studies"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-deepEmerald hover:text-charcoal transition group"
+            >
+              <span>Explore Code of Resonance</span>
+              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
 
-        <div className="-mx-4 mt-10 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0 [&::-webkit-scrollbar]:hidden">
-          <div className="flex snap-x snap-mandatory gap-4 overscroll-x-contain lg:grid lg:grid-cols-3 lg:gap-5">
+        {/* Case Studies Viewport: Horizontal Scroll on Mobile/Tablet, Grid on Desktop */}
+        <div className="mt-12 lg:mt-16 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 scrollbar-none lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0">
             {latestCaseStudies.map((caseStudy, index) => (
               <CaseStudyCard key={getCardKey(caseStudy, index)} caseStudy={caseStudy} index={index} />
             ))}
           </div>
         </div>
 
-        <div className="mt-8 flex justify-start lg:justify-end">
-          <a
-            href="/code-of-resonance/case-studies"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-charcoal bg-charcoal px-5 py-3 text-sm font-extrabold text-mutedMint transition hover:border-deepEmerald hover:bg-deepEmerald hover:text-mistWhite sm:w-auto"
-          >
-            Explore Code of Resonance
-            <ArrowRight size={17} aria-hidden="true" />
-          </a>
-        </div>
       </div>
     </section>
   );

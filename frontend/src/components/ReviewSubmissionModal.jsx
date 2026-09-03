@@ -6,9 +6,6 @@ const initialForm = {
   name: "",
   email: "",
   role: "",
-  headline: "",
-  before: "",
-  after: "",
   review: "",
   rating: 5,
   consent: false
@@ -121,22 +118,6 @@ export default function ReviewSubmissionModal({ open, onClose, onSubmitted }) {
                     </option>
                   ))}
                 </select>
-              </label>
-            </div>
-
-            <label className="grid gap-2 text-sm font-semibold">
-              Short headline
-              <input className="input bg-white" name="headline" value={form.headline} onChange={updateField} placeholder="What changed in one sentence?" />
-            </label>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-semibold">
-                Before
-                <textarea className="input min-h-28 resize-y bg-white" name="before" value={form.before} onChange={updateField} placeholder="What felt unclear before?" />
-              </label>
-              <label className="grid gap-2 text-sm font-semibold">
-                After
-                <textarea className="input min-h-28 resize-y bg-white" name="after" value={form.after} onChange={updateField} placeholder="What became clearer after?" />
               </label>
             </div>
 
