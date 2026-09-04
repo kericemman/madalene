@@ -11,6 +11,7 @@ import healthRoutes from "./healthRoutes.js";
 import mediaRoutes from "./mediaRoutes.js";
 import newsletterRoutes from "./newsletterRoutes.js";
 import offerRoutes from "./offerRoutes.js";
+import resourceRoutes from "./resourceRoutes.js";
 import reviewRoutes from "./reviewRoutes.js";
 
 const router = Router();
@@ -27,6 +28,7 @@ router.use("/emails", emailRoutes);
 router.use("/media", mediaRoutes);
 router.use("/newsletter", newsletterRoutes);
 router.use("/offers", offerRoutes);
+router.use("/resources", resourceRoutes);
 router.use("/reviews", reviewRoutes);
 
 export default router;

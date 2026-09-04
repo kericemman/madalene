@@ -278,7 +278,7 @@ const ensureAnotherActiveAdmin = async (admin) => {
 
 const toAbsoluteUrl = (value) => {
   const rawValue = String(value || "/assessment").trim();
-  if (/^(https?:|mailto:|tel:)/i.test(rawValue)) return rawValue;
+  if (/^(https:|mailto:|tel:)/i.test(rawValue)) return rawValue;
 
   const appUrl = String(env.frontendUrl || env.appUrl || "http://localhost:5173").replace(/\/+$/, "");
   return rawValue.startsWith("/") ? `${appUrl}${rawValue}` : `${appUrl}/${rawValue}`;

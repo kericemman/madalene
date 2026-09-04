@@ -15,7 +15,7 @@ import {
 import { queueAndAttemptEmail } from "../services/emailQueueService.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { created, ok } from "../utils/apiResponse.js";
-import { createSecureToken, hashToken } from "../utils/tokenUtils.js";
+import { createSecureToken, hashToken, hashTokenCandidates } from "../utils/tokenUtils.js";
 
 const answerValueSchema = z.union([
   z.string(),
@@ -99,9 +99,9 @@ const resultSummary = (result, resultToken) => ({
   secondWeakestCategory: result.secondWeakestCategory,
   credibilityStage: result.credibilityStage,
   recommendation: normalizePublicRecommendation(result.recommendationSnapshot),
-  stageResource: result.stageResource,
+  stageResource: withResourceReadAccess(resolveStageResource(result), resultToken),
   aiAnalysis: result.aiAnalysis,
-  gapResources: result.gapResources || [],
+  gapResources: (result.gapResources || []).map((resource) => withResourceReadAccess(resource, resultToken)),
   scoreSource: result.scoringSnapshot?.scoreSource || "self_assessment",
   evidenceReview: result.scoringSnapshot?.evidenceReview,
   submittedAt: result.submittedAt
@@ -122,13 +122,90 @@ const escapeHtml = (value = "") =>
 
 const toAbsoluteUrl = (value = "/contact") => {
   const rawValue = String(value || "/contact").trim();
-  if (/^(https?:|mailto:|tel:)/i.test(rawValue)) return rawValue;
+  if (/^(https:|mailto:|tel:)/i.test(rawValue)) return rawValue;
 
   const appUrl = String(env.frontendUrl || env.appUrl || "http://localhost:5173").replace(/\/+$/, "");
   return rawValue.startsWith("/") ? `${appUrl}${rawValue}` : `${appUrl}/${rawValue}`;
 };
 
 const oneToOneBookingUrl = () => toAbsoluteUrl(env.oneToOneBookingUrl || earnedCredibilityApplicationPath);
+
+const titleFromSlug = (slug = "") =>
+  String(slug)
+    .split("-")
+    .filter(Boolean)
+    .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
+    .join(" ");
+
+const slugFromResourcePath = (value = "") => {
+  const match = String(value || "").match(/\/resources\/([^/?#]+)/i);
+  return match?.[1] ? decodeURIComponent(match[1]) : "";
+};
+
+const resolveStageResource = (result) => {
+  if (result?.stageResource?.slug) return result.stageResource;
+
+  const slug = slugFromResourcePath(result?.credibilityStage?.primaryCtaUrl);
+  if (!slug) return result?.stageResource;
+
+  return {
+    ...(result?.stageResource || {}),
+    title: result?.stageResource?.title || result?.credibilityStage?.report?.recommendedResourceTitle || titleFromSlug(slug),
+    description:
+      result?.stageResource?.description ||
+      result?.credibilityStage?.recommendedAction ||
+      "Open this private resource from your result link and use it as your starting point.",
+    slug
+  };
+};
+
+const resourceReadPath = (slug, resultToken) => {
+  const resourceSlug = String(slug || "").trim();
+  const token = String(resultToken || "").trim();
+  if (!resourceSlug || !token) return "";
+  return `/resources/${resourceSlug}?token=${encodeURIComponent(token)}`;
+};
+
+const resourceReadUrl = (slug, resultToken) => {
+  const path = resourceReadPath(slug, resultToken);
+  return path ? toAbsoluteUrl(path) : "";
+};
+
+const withResourceReadAccess = (resource, resultToken) => {
+  if (!resource) return resource;
+  const readPath = resourceReadPath(resource.slug, resultToken);
+  return {
+    ...resource,
+    readPath: readPath || resource.readPath,
+    readUrl: readPath ? toAbsoluteUrl(readPath) : resource.readUrl
+  };
+};
+
+const buildResourceLinksHtml = (resources = [], resultToken) => {
+  const linkedResources = resources.filter((resource) => resource?.slug);
+  if (!linkedResources.length) return "";
+
+  return `<div style="margin:0 0 20px;">
+    <p style="margin:0 0 12px;font-weight:700;color:#0F4D3E;">Resources selected for your gaps</p>
+    <ul style="margin:0;padding-left:22px;">${linkedResources
+      .map((resource) => {
+        const href = resourceReadUrl(resource.slug, resultToken);
+        return `<li style="margin:0 0 10px;"><a href="${href}" style="color:#0F4D3E;font-weight:700;">${escapeHtml(
+          resource.title
+        )}</a>${resource.categoryName ? ` <span style="color:#59645f;">(${escapeHtml(resource.categoryName)})</span>` : ""}</li>`;
+      })
+      .join("")}</ul>
+  </div>`;
+};
+
+const buildResourceLinksText = (resources = [], resultToken) => {
+  const linkedResources = resources.filter((resource) => resource?.slug);
+  if (!linkedResources.length) return "";
+
+  return linkedResources
+    .map((resource) => `${resource.title}${resource.categoryName ? ` (${resource.categoryName})` : ""}: ${resourceReadUrl(resource.slug, resultToken)}`)
+    .join("\n");
+};
 
 const resolveEmailCta = ({ text, url } = {}) => {
   const rawText = String(text || "").trim();
@@ -397,6 +474,9 @@ export const submitAssessment = asyncHandler(async (req, res) => {
     text: recommendationSnapshot?.ctaText,
     url: recommendationSnapshot?.ctaDestination
   });
+  const resultsUrl = toAbsoluteUrl(`/results/${resultToken}`);
+  const emailStageResource = stageResource || resolveStageResource(result);
+  const stageResourceUrl = emailStageResource?.slug ? resourceReadUrl(emailStageResource.slug, resultToken) : resultsUrl;
   const resultDelivery = await queueAndAttemptEmail({
     to: result.participant.email,
     name: `${result.participant.firstName} ${result.participant.lastName || ""}`.trim(),
@@ -423,13 +503,16 @@ export const submitAssessment = asyncHandler(async (req, res) => {
       stageFinalNote:
         stageReport.finalNote ||
         "Your result is a snapshot of how your earned credibility is showing up today. Every improvement can make you easier to trust, remember, and choose.",
-      stageResourceTitle: stageResource?.title || stageReport.recommendedResourceTitle || "Your recommended resource",
+      stageResourceTitle: emailStageResource?.title || stageReport.recommendedResourceTitle || "Your recommended resource",
       stageResourceDescription:
-        stageResource?.description || "I will send this resource directly to your inbox so you can work through it without a separate download.",
+        emailStageResource?.description || "Open this private resource from your result link and use it as your starting point.",
+      stageResourceUrl,
+      gapResourcesHtml: buildResourceLinksHtml(gapResources, resultToken),
+      gapResourcesText: buildResourceLinksText(gapResources, resultToken),
       intensiveCtaText: intensiveCta.ctaText,
       intensiveCtaUrl: intensiveCta.ctaUrl,
       recommendedAction: intensiveCta.ctaText,
-      resultsUrl: toAbsoluteUrl(`/results/${resultToken}`)
+      resultsUrl
     }
   });
 
@@ -443,7 +526,7 @@ export const submitAssessment = asyncHandler(async (req, res) => {
 
 export const getAssessmentResultByToken = asyncHandler(async (req, res) => {
   const result = await AssessmentResult.findOne({
-    resultTokenHash: hashToken(req.params.token),
+    resultTokenHash: { $in: hashTokenCandidates(req.params.token) },
     resultTokenExpiresAt: { $gt: new Date() }
   }).lean();
 
@@ -456,6 +539,6 @@ export const getAssessmentResultByToken = asyncHandler(async (req, res) => {
   }
 
   ok(res, "Assessment result loaded.", {
-    result: resultSummary(result)
+    result: resultSummary(result, req.params.token)
   });
 });

@@ -327,7 +327,7 @@ export const defaultEmailTemplates = [
   },
   {
     key: "assessment_results",
-    version: 5,
+    version: 6,
     name: "Assessment Results Delivered",
     type: "results_delivered",
     subject: "Your Earned Credibility™ results are in",
@@ -353,14 +353,17 @@ export const defaultEmailTemplates = [
         </div>
         ${heading("Recommended for you")}
         ${paragraph("<strong>{{stageResourceTitle}}</strong><br />{{stageResourceDescription}}")}
-        ${paragraph("Use it to begin working on the credibility gap your result revealed, without needing to open a separate download.")}
+        ${button("{{stageResourceUrl}}", "Read Recommended Resource")}
+        <div style="margin:0 0 20px;color:${colors.charcoal};font-size:16px;line-height:1.65;">
+          {{{gapResourcesHtml}}}
+        </div>
         ${note("{{stageFinalNote}}")}
         ${note("Ready to turn these insights into a positioning direction people can recognise and remember?")}
         ${button("{{intensiveCtaUrl}}", "{{intensiveCtaText}}")}
         ${button("{{resultsUrl}}", "View Full Results")}
       `
     }),
-    text: "Hello {{firstName}},\n\nYour Earned Credibility™ Score is {{score}}/{{scoreMax}}.\n\n{{stage}}\n\n{{stageWhatItMeans}}\n\nYour Biggest Opportunity\n{{stageBiggestOpportunity}}\n\nStart Here\n{{stageNextStepsText}}\n\nRecommended for you: {{stageResourceTitle}}\n{{stageResourceDescription}}\n\n{{stageFinalNote}}\n\n{{intensiveCtaText}}: {{intensiveCtaUrl}}\n\nView your full results: {{resultsUrl}}",
+    text: "Hello {{firstName}},\n\nYour Earned Credibility™ Score is {{score}}/{{scoreMax}}.\n\n{{stage}}\n\n{{stageWhatItMeans}}\n\nYour Biggest Opportunity\n{{stageBiggestOpportunity}}\n\nStart Here\n{{stageNextStepsText}}\n\nRecommended for you: {{stageResourceTitle}}\n{{stageResourceDescription}}\nRead resource: {{stageResourceUrl}}\n\n{{gapResourcesText}}\n\n{{stageFinalNote}}\n\n{{intensiveCtaText}}: {{intensiveCtaUrl}}\n\nView your full results: {{resultsUrl}}",
     variables: withSystemVariables([
       "firstName",
       "score",
@@ -373,6 +376,9 @@ export const defaultEmailTemplates = [
       "stageFinalNote",
       "stageResourceTitle",
       "stageResourceDescription",
+      "stageResourceUrl",
+      "gapResourcesHtml",
+      "gapResourcesText",
       "intensiveCtaText",
       "intensiveCtaUrl",
       "recommendedAction",

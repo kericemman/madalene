@@ -7,6 +7,7 @@ import {
 import { Lead } from "../models/Lead.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { created, ok } from "../utils/apiResponse.js";
+import { sanitizeRichHtml } from "../utils/sanitizeHtml.js";
 
 const objectId = z.string().regex(/^[a-f\d]{24}$/i, "A valid record id is required.");
 
@@ -17,7 +18,24 @@ const emptyToUndefined = (value) => {
 
 const optionalUrl = z.preprocess(
   emptyToUndefined,
-  z.string().url("Enter a valid URL.").max(500).optional()
+  z
+    .string()
+    .url("Enter a valid URL.")
+    .max(500)
+    .refine((value) => new URL(value).protocol === "https:", "Enter an HTTPS URL.")
+    .optional()
+);
+
+const isSafeHref = (value) => {
+  const href = String(value || "").trim();
+  if (!href) return true;
+  if (href.startsWith("/") && !href.startsWith("//")) return true;
+  return /^(https:|mailto:|tel:)/i.test(href);
+};
+
+const optionalSafeHref = z.preprocess(
+  emptyToUndefined,
+  z.string().trim().max(500).refine(isSafeHref, "Enter an HTTPS URL, mailto/tel link, or internal path.").optional()
 );
 
 const optionalObjectId = z.preprocess(emptyToUndefined, objectId.optional());
@@ -65,7 +83,7 @@ const entrySchema = z.object({
   excerpt: z.string().max(700).optional(),
   body: z.string().max(30000).optional(),
   ctaText: z.string().max(120).optional(),
-  ctaUrl: optionalUrl,
+  ctaUrl: optionalSafeHref,
   category: z.string().max(120).optional(),
   tags: stringList,
   coverImage: optionalObjectId,
@@ -113,6 +131,16 @@ const parseBoolean = (value) => {
   if (value === "true" || value === true) return true;
   if (value === "false" || value === false) return false;
   return undefined;
+};
+
+const sanitizeEntryPayload = (payload) => {
+  if (payload.body !== undefined) {
+    return {
+      ...payload,
+      body: sanitizeRichHtml(payload.body)
+    };
+  }
+  return payload;
 };
 
 const pagination = (req) => {
@@ -222,7 +250,7 @@ export const getCodeOfResonanceEntry = asyncHandler(async (req, res) => {
 });
 
 export const createCodeOfResonanceEntry = asyncHandler(async (req, res) => {
-  const payload = entrySchema.parse(req.body);
+  const payload = sanitizeEntryPayload(entrySchema.parse(req.body));
   const entry = await CodeOfResonanceEntry.create({
     ...payload,
     lastEditedBy: req.user.sub
@@ -232,7 +260,7 @@ export const createCodeOfResonanceEntry = asyncHandler(async (req, res) => {
 });
 
 export const updateCodeOfResonanceEntry = asyncHandler(async (req, res) => {
-  const payload = entrySchema.partial().parse(req.body);
+  const payload = sanitizeEntryPayload(entrySchema.partial().parse(req.body));
   const entry = await findEntryOr404(req.params.id);
 
   Object.assign(entry, payload, { lastEditedBy: req.user.sub });

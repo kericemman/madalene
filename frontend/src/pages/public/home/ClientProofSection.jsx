@@ -60,7 +60,7 @@ export default function ClientProofSection() {
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-deepEmerald">Earned Evidence</span>
             <h2 className="mt-1 font-serif text-xl font-bold text-charcoal sm:text-2xl lg:text-3xl text-balance">
-              Reflections from practitioners who did the work.
+              Recommendantions from practitioners who did the work.
             </h2>
           </div>
 

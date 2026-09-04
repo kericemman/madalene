@@ -112,6 +112,11 @@ export const getAssessmentResultByToken = async (token) => {
   return data;
 };
 
+export const getRecommendedResource = async (slug, token) => {
+  const { data } = await api.get(`/resources/${slug}`, { params: { token } });
+  return data;
+};
+
 export const loginAdmin = async (payload) => {
   const { data } = await api.post("/auth/login", payload);
   setAdminAccessToken(data.data.accessToken);
@@ -300,6 +305,16 @@ export const updateRecommendationRule = async (id, payload) => {
 
 export const listAdminResources = async (params = {}) => {
   const { data } = await api.get("/admin/resources", { params });
+  return data;
+};
+
+export const createAdminResource = async (payload) => {
+  const { data } = await api.post("/admin/resources", payload);
+  return data;
+};
+
+export const updateAdminResource = async (id, payload) => {
+  const { data } = await api.patch(`/admin/resources/${id}`, payload);
   return data;
 };
 

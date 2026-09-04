@@ -6,13 +6,23 @@ import { renderTemplate } from "./emailTemplateRenderer.js";
 import { sendTransactionalEmail } from "./emailService.js";
 
 const findTemplate = async (templateKey, templateId) => {
+  const defaultTemplate = defaultEmailTemplateMap.get(templateKey);
+
   if (templateId) {
     const template = await EmailTemplate.findById(templateId).lean();
     if (template) return template;
   }
 
   const template = await EmailTemplate.findOne({ key: templateKey, active: true }).lean();
-  return template || defaultEmailTemplateMap.get(templateKey);
+  if (
+    template &&
+    defaultTemplate &&
+    Number(defaultTemplate.version || 1) > Number(template.version || 1)
+  ) {
+    return defaultTemplate;
+  }
+
+  return template || defaultTemplate;
 };
 
 export const scheduleEmail = async ({

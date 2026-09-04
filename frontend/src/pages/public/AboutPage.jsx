@@ -124,6 +124,7 @@ export default function AboutPage() {
   const [brandAssets, setBrandAssets] = useState([]);
   const [eventAssets, setEventAssets] = useState([]);
   const proofSliderRef = useRef(null);
+  const eventSliderRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -163,6 +164,15 @@ export default function AboutPage() {
     });
   };
 
+  const slideEventCards = (direction) => {
+    const slider = eventSliderRef.current;
+    if (!slider) return;
+    slider.scrollBy({
+      left: direction * Math.max(slider.clientWidth * 0.82, 280),
+      behavior: "smooth"
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-charcoal selection:bg-mutedMint/60">
       {/* Inline styles for continuous marquee animations without config changes */}
@@ -179,18 +189,21 @@ export default function AboutPage() {
         .animate-marquee-infinite:hover {
           animation-play-state: paused;
         }
-        .proof-card-slider {
+        .proof-card-slider,
+        .event-card-slider {
           scroll-behavior: smooth;
           scrollbar-width: none;
         }
-        .proof-card-slider::-webkit-scrollbar {
+        .proof-card-slider::-webkit-scrollbar,
+        .event-card-slider::-webkit-scrollbar {
           display: none;
         }
         @media (prefers-reduced-motion: reduce) {
           .animate-marquee-infinite {
             animation: none;
           }
-          .proof-card-slider {
+          .proof-card-slider,
+          .event-card-slider {
             scroll-behavior: auto;
           }
         }
@@ -480,30 +493,85 @@ export default function AboutPage() {
           </div>
         )}
 
-        {/* Invited Events Sub-grid if present */}
+        {/* Invited Events Sub-slider if present */}
         {eventAssets.length > 0 && (
           <div className="container-shell mx-auto max-w-7xl px-1 sm:px-6 lg:px-8 mt-10">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {eventAssets.map((asset) => {
-                const src = imageUrl(asset, asset.thumbnailUrl);
-                return (
-                  <article key={asset._id || asset.publicId} className="group overflow-hidden rounded-xl border border-sage/70 bg-[#FAF9F6]">
-                    <div className="aspect-[16/9] overflow-hidden bg-sage/30">
-                      {src ? (
-                        <img src={src} alt={assetName(asset)} className="h-full w-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-deepEmerald">
-                          <CalendarCheck size={24} />
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-deepEmerald">Invited Events</span>
+                <p className="mt-1 max-w-xl text-xs leading-relaxed text-charcoal/55 sm:text-sm">
+                  Selected rooms and stages that I have been invited into the conversation.
+                </p>
+              </div>
+
+              {eventAssets.length > 1 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => slideEventCards(-1)}
+                    className="grid size-10 place-items-center rounded-full border border-sage bg-white text-charcoal transition hover:border-deepEmerald hover:text-deepEmerald sm:size-11"
+                    aria-label="Show previous invited event"
+                  >
+                    <ArrowLeft size={17} aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => slideEventCards(1)}
+                    className="grid size-10 place-items-center rounded-full border border-charcoal bg-charcoal text-mutedMint transition hover:bg-deepEmerald hover:text-mistWhite sm:size-11"
+                    aria-label="Show next invited event"
+                  >
+                    <ArrowRight size={17} aria-hidden="true" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="-mx-4 overflow-hidden px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+              <div
+                ref={eventSliderRef}
+                className="event-card-slider flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:gap-6"
+                aria-label="Invited events"
+              >
+                {eventAssets.map((asset) => {
+                  const src = imageUrl(asset, asset.thumbnailUrl);
+                  return (
+                    <article
+                      key={asset._id || asset.publicId}
+                      className="group flex min-h-[20rem] shrink-0 basis-[82%] snap-start flex-col overflow-hidden rounded-xl border border-sage/70 bg-[#FAF9F6] shadow-sm transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(26,26,26,0.07)] sm:basis-[calc((100%-1.5rem)/2)] lg:basis-[calc((100%-3rem)/3)]"
+                    >
+                      <div className="relative aspect-[4/3] overflow-hidden bg-[#ECEFE8] p-2 sm:p-3">
+                        {src && (
+                          <img
+                            src={src}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-25 blur-2xl saturate-125"
+                            loading="lazy"
+                          />
+                        )}
+                        <div className="relative z-10 flex h-full w-full items-center justify-center">
+                          {src ? (
+                            <img
+                              src={src}
+                              alt={assetName(asset)}
+                              className="max-h-full max-w-full object-contain drop-shadow-[0_20px_32px_rgba(15,77,62,0.18)] transition duration-500 group-hover:brightness-105"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-deepEmerald">
+                              <CalendarCheck size={24} />
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    <div className="p-3.5 sm:p-4">
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-deepEmerald">Invited Stage</span>
-                      <h4 className="mt-0.5 font-serif text-sm sm:text-base font-bold text-charcoal">{assetName(asset)}</h4>
-                    </div>
-                  </article>
-                );
-              })}
+                      </div>
+                      <div className="min-w-0 p-3.5 sm:p-4">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-deepEmerald">Invited Stage</span>
+                        <h4 className="mt-0.5 break-words font-serif text-sm font-bold text-charcoal sm:text-base">{assetName(asset)}</h4>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}

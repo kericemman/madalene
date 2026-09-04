@@ -8,6 +8,7 @@ import morgan from "morgan";
 import { env } from "../config/env.js";
 
 export const applySecurityMiddleware = (app) => {
+  app.disable("x-powered-by");
   app.set("trust proxy", 1);
   app.use(helmet());
   app.use(compression());
@@ -19,7 +20,9 @@ export const applySecurityMiddleware = (app) => {
           callback(null, true);
           return;
         }
-        callback(new Error("Origin is not allowed by CORS."));
+        const error = new Error("Origin is not allowed by CORS.");
+        error.statusCode = 403;
+        callback(error);
       },
       credentials: true
     })
@@ -29,7 +32,14 @@ export const applySecurityMiddleware = (app) => {
       windowMs: 15 * 60 * 1000,
       limit: 300,
       standardHeaders: "draft-8",
-      legacyHeaders: false
+      legacyHeaders: false,
+      handler(req, res) {
+        res.status(429).json({
+          success: false,
+          message: "Too many requests from this network. Please try again shortly.",
+          errors: []
+        });
+      }
     })
   );
   app.use(mongoSanitize());

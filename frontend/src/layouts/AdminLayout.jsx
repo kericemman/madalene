@@ -3,6 +3,7 @@ import { NavLink, Navigate, Outlet, useLocation, useNavigate } from "react-route
 import {
   BarChart3,
   BookOpenText,
+  BookMarked,
   BriefcaseBusiness,
   CalendarClock,
   ClipboardCheck,
@@ -27,6 +28,7 @@ const navItems = [
   { label: "Results", href: "/admin/results", icon: FileText },
   { label: "Assessment", href: "/admin/assessment", icon: SlidersHorizontal },
   { label: "Offers", href: "/admin/offers", icon: BriefcaseBusiness },
+  { label: "Resources", href: "/admin/resources", icon: BookMarked },
   { label: "Applications", href: "/admin/applications", icon: ClipboardCheck },
   { label: "Bookings", href: "/admin/bookings", icon: CalendarClock },
   { label: "Code of Resonance", href: "/admin/code-of-resonance", icon: BookOpenText },

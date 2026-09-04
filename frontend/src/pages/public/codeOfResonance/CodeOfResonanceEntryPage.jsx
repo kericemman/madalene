@@ -18,7 +18,9 @@ const formatDate = (value) => {
 const safeExternalHref = (value) => {
   const rawValue = String(value || "").trim();
   if (!rawValue) return "";
-  return rawValue;
+  if (rawValue.startsWith("/")) return rawValue;
+  if (/^(https:|mailto:|tel:)/i.test(rawValue)) return rawValue;
+  return "";
 };
 
 const cleanText = (value = "") => String(value).replace(/\s+/g, " ").trim();
@@ -459,7 +461,7 @@ export default function CodeOfResonanceEntryPage() {
               srcSet={toSrcSet(entry.coverImage)}
               sizes="(min-width: 1024px) 48vw, 100vw"
               alt={entry.coverImage?.altText || entry.title}
-              className="h-64 min-w-0 w-full rounded border border-sage object-cover shadow-[0_20px_50px_rgba(34,34,34,0.08)] sm:h-[360px] lg:h-[420px]"
+              className="h-64 min-w-0 w-full rounded border border-sage bg-[linear-gradient(145deg,#0F4D3E_0%,#1A1A1A_58%,#B8D8C5_145%)] object-contain p-3 shadow-[0_20px_50px_rgba(34,34,34,0.08)] sm:h-[360px] sm:p-4 lg:h-[420px]"
             />
           </div>
         </div>

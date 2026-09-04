@@ -7,7 +7,6 @@ const allowedMimeTypes = new Set([
   "image/webp",
   "image/avif",
   "image/gif",
-  "image/svg+xml",
   "video/mp4",
   "video/quicktime",
   "video/webm",
@@ -31,7 +30,9 @@ export const uploadSingleFile = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: env.maxUploadMb * 1024 * 1024,
-    files: 1
+    files: 1,
+    fields: 8,
+    parts: 12
   },
   fileFilter(req, file, callback) {
     if (!allowedMimeTypes.has(file.mimetype)) {
@@ -46,7 +47,9 @@ export const uploadSingleImage = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: env.maxUploadMb * 1024 * 1024,
-    files: 1
+    files: 1,
+    fields: 16,
+    parts: 20
   },
   fileFilter(req, file, callback) {
     if (!allowedImageMimeTypes.has(file.mimetype)) {

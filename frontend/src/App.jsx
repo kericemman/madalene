@@ -25,11 +25,13 @@ import AdminSettingsPage from "./pages/admin/AdminSettingsPage.jsx";
 import AdminLeadsPage from "./pages/admin/AdminLeadsPage.jsx";
 import AdminMessagesPage from "./pages/admin/AdminMessagesPage.jsx";
 import AdminOffersPage from "./pages/admin/AdminOffersPage.jsx";
+import AdminResourcesPage from "./pages/admin/AdminResourcesPage.jsx";
 import AdminApplicationsPage from "./pages/admin/AdminApplicationsPage.jsx";
 import AdminBookingsPage from "./pages/admin/AdminBookingsPage.jsx";
 import AdminAssessmentSetupPage from "./pages/admin/AdminAssessmentSetupPage.jsx";
 import AdminEmailsPage from "./pages/admin/AdminEmailsPage.jsx";
 import CodeOfResonanceEntryPage from "./pages/public/codeOfResonance/CodeOfResonanceEntryPage.jsx";
+import CodeSubscribePage from "./pages/public/codeOfResonance/CodeSubscribePage.jsx";
 import CodeOfResonanceSectionPage from "./pages/public/codeOfResonance/CodeOfResonanceSectionPage.jsx";
 
 export default function App() {
@@ -59,6 +61,7 @@ export default function App() {
         <Route path="/code-of-resonance/case-studies" element={<CodeOfResonanceSectionPage sectionKey="case-studies" />} />
         <Route path="/code-of-resonance/guides" element={<CodeOfResonanceSectionPage sectionKey="guides" />} />
         <Route path="/code-of-resonance/stories" element={<CodeOfResonanceSectionPage sectionKey="stories" />} />
+        <Route path="/code-of-resonance/subscribe" element={<CodeSubscribePage />} />
         <Route path="/code-of-resonance/read/:slug" element={<CodeOfResonanceEntryPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Route>
@@ -69,6 +72,7 @@ export default function App() {
         <Route path="messages" element={<AdminMessagesPage />} />
         <Route path="assessment" element={<AdminAssessmentSetupPage />} />
         <Route path="offers" element={<AdminOffersPage />} />
+        <Route path="resources" element={<AdminResourcesPage />} />
         <Route path="applications" element={<AdminApplicationsPage />} />
         <Route path="bookings" element={<AdminBookingsPage />} />
         <Route path="code-of-resonance" element={<AdminCodeOfResonancePage />} />

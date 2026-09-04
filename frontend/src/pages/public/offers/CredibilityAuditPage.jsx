@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Check, CircleAlert, Quote, Search, ShieldCheck, 
 import { Link } from "react-router-dom";
 import SiteButton from "../../../components/SiteButton.jsx";
 import { listPublicReviews } from "../../../services/api.js";
+import diagnosisImage from "../../../assets/home/diag-optimized.jpg";
 import { magnificImages } from "../home/homeContent.js";
 
 const recognitionPoints = [
@@ -158,7 +159,7 @@ export default function CredibilityAuditPage({ actionPath, loading, offer }) {
                 <Search size={14} aria-hidden="true" />
                 <span>Credibility Clarity Audit™</span>
               </span>
-              <h1 className="mt-4 font-serif text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-charcoal leading-[1.1]">
+              <h1 className="mt-4 font-serif text-xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-charcoal leading-[1.1]">
                 Something isn't landing. Let's find out <span className="text-deepEmerald">what.</span>
               </h1>
 
@@ -284,7 +285,7 @@ export default function CredibilityAuditPage({ actionPath, loading, offer }) {
               </p>
 
               <div className="mt-8 overflow-hidden rounded-3xl border border-sage/80 shadow-md">
-                <img src="/src/assets/home/diag.jpg" alt="Magnific Credibility Audit Diagnosis" className="w-full h-auto object-cover" />
+                <img src={diagnosisImage} alt="Magnific Credibility Audit Diagnosis" className="w-full h-auto object-cover" />
               </div>
             </div>
 

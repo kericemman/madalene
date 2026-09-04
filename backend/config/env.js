@@ -76,8 +76,51 @@ export const assertRequiredEnv = () => {
     ["RESULT_TOKEN_SECRET", env.resultTokenSecret]
   ];
 
+  if (env.enableAiAssessmentAnalysis) {
+    required.push(["OPENAI_API_KEY", env.openaiApiKey], ["OPENAI_MODEL", env.openaiModel]);
+  }
+
   const missing = required.filter(([, value]) => !value).map(([key]) => key);
   if (missing.length) {
     throw new Error(`Missing required production environment variables: ${missing.join(", ")}`);
+  }
+
+  const weakValuePattern = /(replace-with|change-me|dev-only|example\.com|localhost)/i;
+  const secretKeys = [
+    ["JWT_ACCESS_SECRET", env.jwtAccessSecret],
+    ["JWT_REFRESH_SECRET", env.jwtRefreshSecret],
+    ["RESULT_TOKEN_SECRET", env.resultTokenSecret],
+    ["CRON_SECRET", env.cronSecret]
+  ].filter(([, value]) => value);
+
+  const weakSecrets = secretKeys
+    .filter(([, value]) => String(value).length < 32 || weakValuePattern.test(String(value)))
+    .map(([key]) => key);
+
+  if (weakSecrets.length) {
+    throw new Error(`Weak production secret values: ${weakSecrets.join(", ")}`);
+  }
+
+  if (env.jwtAccessSecret === env.jwtRefreshSecret) {
+    throw new Error("JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must be different.");
+  }
+
+  const insecureOrigins = [env.frontendUrl, env.adminUrl, env.appUrl, env.apiUrl, ...env.corsOrigins].filter(
+    (value) => value && !String(value).startsWith("https://")
+  );
+  if (insecureOrigins.length) {
+    throw new Error(`Production URLs must use HTTPS: ${insecureOrigins.join(", ")}`);
+  }
+
+  if (!Number.isFinite(env.maxUploadMb) || env.maxUploadMb <= 0 || env.maxUploadMb > 25) {
+    throw new Error("MAX_UPLOAD_MB must be greater than 0 and no more than 25 in production.");
+  }
+
+  if (
+    !Number.isFinite(env.aiAssessmentMinimumConfidence) ||
+    env.aiAssessmentMinimumConfidence < 0 ||
+    env.aiAssessmentMinimumConfidence > 1
+  ) {
+    throw new Error("OPENAI_ASSESSMENT_MIN_CONFIDENCE must be between 0 and 1.");
   }
 };

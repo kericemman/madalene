@@ -7,8 +7,27 @@ import { Resource } from "../models/Resource.js";
 import { ScoreRange } from "../models/ScoreRange.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { created, ok } from "../utils/apiResponse.js";
+import { sanitizeRichHtml } from "../utils/sanitizeHtml.js";
 
 const objectId = z.string().regex(/^[a-f\d]{24}$/i, "A valid record id is required.");
+
+const emptyToUndefined = (value) => (value === "" ? undefined : value);
+
+const isSafeHref = (value) => {
+  const href = String(value || "").trim();
+  if (!href) return true;
+  if (href.startsWith("/") && !href.startsWith("//")) return true;
+  return /^(https:|mailto:|tel:)/i.test(href);
+};
+
+const optionalSafeHref = (max = 500) =>
+  z.preprocess(
+    emptyToUndefined,
+    z.string().trim().max(max).refine(isSafeHref, "Enter an HTTPS URL, mailto/tel link, or internal path.").optional()
+  );
+
+const requiredSafeHref = (max = 500) =>
+  z.string().trim().min(1).max(max).refine(isSafeHref, "Enter an HTTPS URL, mailto/tel link, or internal path.");
 
 const categorySchema = z.object({
   key: z.string().min(2).max(80),
@@ -67,7 +86,7 @@ const scoreRangeSchema = z.object({
   description: z.string().min(4).max(1200),
   recommendedAction: z.string().max(500).optional(),
   primaryCtaText: z.string().max(160).optional(),
-  primaryCtaUrl: z.string().max(300).optional(),
+  primaryCtaUrl: optionalSafeHref(300),
   report: z
     .object({
       whatItMeans: z.string().max(4000).optional(),
@@ -103,11 +122,11 @@ const offerSchema = z.object({
   idealClient: z.string().max(1200).optional(),
   ctaText: z.string().max(160).optional(),
   ctaType: z.enum(["checkout", "booking", "application", "external_url", "download"]).optional(),
-  ctaUrl: z.string().max(300).optional(),
+  ctaUrl: optionalSafeHref(300),
   checkoutEnabled: z.boolean().optional(),
   bookingEnabled: z.boolean().optional(),
   applicationRequired: z.boolean().optional(),
-  externalBookingUrl: z.string().max(300).optional(),
+  externalBookingUrl: optionalSafeHref(300),
   active: z.boolean().optional(),
   displayOrder: z.number().optional(),
   featured: z.boolean().optional(),
@@ -132,8 +151,8 @@ const resourceSchema = z.object({
     "email_resource"
   ]),
   coverImage: objectId.optional(),
-  fileUrl: z.string().max(500).optional(),
-  externalUrl: z.string().max(500).optional(),
+  fileUrl: optionalSafeHref(500),
+  externalUrl: optionalSafeHref(500),
   price: z.number().min(0).optional(),
   free: z.boolean().optional(),
   emailGated: z.boolean().optional(),
@@ -150,7 +169,7 @@ const resourceSchema = z.object({
       bodyHtml: z.string().max(40000).optional(),
       text: z.string().max(40000).optional(),
       ctaText: z.string().max(160).optional(),
-      ctaUrl: z.string().max(500).optional()
+      ctaUrl: optionalSafeHref(500)
     })
     .optional(),
   active: z.boolean().optional()
@@ -177,17 +196,29 @@ const recommendationRuleSchema = z.object({
   resource: objectId.optional(),
   explanation: z.string().min(4).max(1200),
   ctaText: z.string().min(2).max(160),
-  ctaDestination: z.string().min(1).max(500),
+  ctaDestination: requiredSafeHref(500),
   secondaryAction: z
     .object({
       label: z.string().max(160).optional(),
-      url: z.string().max(500).optional()
+      url: optionalSafeHref(500)
     })
     .optional(),
   emailSequenceKey: z.string().max(120).optional()
 });
 
 const parseBody = (schema, body, partial = false) => (partial ? schema.partial().parse(body) : schema.parse(body));
+
+const sanitizeResourcePayload = (payload) => {
+  if (payload.emailDelivery?.bodyHtml === undefined) return payload;
+
+  return {
+    ...payload,
+    emailDelivery: {
+      ...payload.emailDelivery,
+      bodyHtml: sanitizeRichHtml(payload.emailDelivery.bodyHtml)
+    }
+  };
+};
 
 const pagination = (req) => {
   const page = Math.max(Number(req.query.page || 1), 1);
@@ -453,20 +484,18 @@ export const listResources = asyncHandler((req, res) =>
 );
 
 export const createResource = asyncHandler(async (req, res) => {
-  const payload = parseBody(resourceSchema, req.body);
+  const payload = sanitizeResourcePayload(parseBody(resourceSchema, req.body));
   const item = await Resource.create(payload);
   created(res, "Resource created.", { item });
 });
 
-export const updateResource = asyncHandler((req, res) =>
-  updateRecord({
-    model: Resource,
-    schema: resourceSchema,
-    req,
-    res,
-    label: "Resource"
-  })
-);
+export const updateResource = asyncHandler(async (req, res) => {
+  const payload = sanitizeResourcePayload(parseBody(resourceSchema, req.body, true));
+  const item = await findOr404(Resource, req.params.id);
+  Object.assign(item, payload);
+  await item.save();
+  ok(res, "Resource updated.", { item });
+});
 
 export const listRecommendationRules = asyncHandler((req, res) =>
   listCollection({

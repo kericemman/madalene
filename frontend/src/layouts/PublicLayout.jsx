@@ -21,7 +21,8 @@ const codeLinks = [
   { href: "/code-of-resonance/essays", label: "Latest Essays" },
   { href: "/code-of-resonance/trust-resonance", label: "Trust & Resonance" },
   { href: "/code-of-resonance/recommended-reading", label: "Recommended Reading" },
-  { href: "/code-of-resonance/case-studies", label: "Case Studies" }
+  { href: "/code-of-resonance/case-studies", label: "Case Studies" },
+  { href: "/code-of-resonance/subscribe", label: "Subscribe" }
 ];
 
 const footerColumns = [
@@ -41,6 +42,7 @@ const footerColumns = [
       { href: "/code-of-resonance/guides", label: "Credibility Guides" },
       { href: "/code-of-resonance/recommended-reading", label: "Recommended Reading" },
       { href: "/code-of-resonance/case-studies", label: "Case Studies" },
+      { href: "/code-of-resonance/subscribe", label: "Subscribe" },
       { href: "/contact", label: "Contact" }
     ]
   },
@@ -154,6 +156,13 @@ const seoByPath = {
     description:
       "Stories and reflections on earned credibility, lived experience, and the moments that shape trusted authority.",
     canonicalPath: "/code-of-resonance/stories",
+    image: seoImage
+  },
+  "/code-of-resonance/subscribe": {
+    title: "Subscribe to The Code of Resonance | Magdalene Wambui",
+    description:
+      "Join Magdalene Wambui's email publication for notes on credibility, positioning, trust, and becoming easier to choose.",
+    canonicalPath: "/code-of-resonance/subscribe",
     image: seoImage
   },
   "/contact": {

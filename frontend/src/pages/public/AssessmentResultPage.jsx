@@ -13,11 +13,11 @@ const scorePercent = (score, max = 100) => Math.round((clampScore(score, max) / 
 
 const resolveHref = (value) => {
   const rawValue = String(value || "/assessment").trim();
-  if (/^(https?:|mailto:|tel:)/i.test(rawValue)) return rawValue;
+  if (/^(https:|mailto:|tel:)/i.test(rawValue)) return rawValue;
   return rawValue.startsWith("/") ? rawValue : `/${rawValue}`;
 };
 
-const isExternalHref = (value) => /^(https?:|mailto:|tel:)/i.test(String(value || ""));
+const isExternalHref = (value) => /^(https:|mailto:|tel:)/i.test(String(value || ""));
 
 const scoreTone = (score, max = 100) => {
   const numericScore = scorePercent(score, max);
@@ -61,6 +61,12 @@ function ActionLink({ href, children }) {
     </Link>
   );
 }
+
+const resourceReadPath = (resource, token) => {
+  if (resource?.readPath) return resource.readPath;
+  if (!resource?.slug || !token) return "";
+  return `/resources/${resource.slug}?token=${encodeURIComponent(token)}`;
+};
 
 export default function AssessmentResultPage() {
   useEffect(() => {
@@ -132,6 +138,7 @@ export default function AssessmentResultPage() {
   const gapInsights = aiReport.gapInsights || [];
   const gapResources = result.gapResources || [];
   const stageResource = result.stageResource;
+  const resourceToken = result.resultToken || token;
   const recommendation = result.recommendation || {};
   const ctaText = recommendation.ctaText || "Book a 1:1 Call";
   const ctaUrl = resolveHref(recommendation.ctaDestination || oneToOneBookingUrl);
@@ -241,7 +248,15 @@ export default function AssessmentResultPage() {
                 <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">Recommended for you</p>
                 <h2 className="mt-2 font-serif text-3xl leading-tight text-charcoal">{stageResource.title}</h2>
                 <p className="mt-3 text-sm leading-7 text-charcoal/72">{stageResource.description}</p>
-                <p className="mt-4 text-sm font-bold text-deepEmerald">The full resource is being delivered to your inbox.</p>
+                {resourceReadPath(stageResource, resourceToken) && (
+                  <Link
+                    to={resourceReadPath(stageResource, resourceToken)}
+                    className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-deepEmerald px-5 py-3 text-sm font-extrabold text-mistWhite transition hover:bg-charcoal"
+                  >
+                    Read recommended resource
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                )}
               </article>
             )}
 
@@ -249,7 +264,7 @@ export default function AssessmentResultPage() {
               <article className="rounded border border-sage bg-white p-6 shadow-[0_16px_36px_rgba(26,26,26,0.035)]">
                 <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-deepEmerald">Resources selected for your gaps</p>
                 <p className="mt-3 text-sm leading-6 text-charcoal/68">
-                  The full content for each resource is being delivered to your inbox, so you can read and use it without a separate download.
+                  These private resources are selected from the categories where your earned credibility needs the most support.
                 </p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   {gapResources.map((resource) => (
@@ -257,6 +272,15 @@ export default function AssessmentResultPage() {
                       <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-deepEmerald">{resource.categoryName}</p>
                       <h3 className="mt-2 font-serif text-2xl leading-tight text-charcoal">{resource.title}</h3>
                       <p className="mt-2 text-sm leading-6 text-charcoal/68">{resource.description}</p>
+                      {resourceReadPath(resource, resourceToken) && (
+                        <Link
+                          to={resourceReadPath(resource, resourceToken)}
+                          className="mt-4 inline-flex items-center gap-2 text-sm font-extrabold text-deepEmerald underline-offset-4 hover:underline"
+                        >
+                          Read resource
+                          <ArrowRight size={15} aria-hidden="true" />
+                        </Link>
+                      )}
                     </div>
                   ))}
                 </div>

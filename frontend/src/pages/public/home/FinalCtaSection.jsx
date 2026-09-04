@@ -11,7 +11,7 @@ export default function FinalCtaSection() {
       <div className="container-shell mx-auto max-w-7xl px-1 sm:px-6 lg:px-8">
         
         {/* Main CTA Container Card */}
-        <div className="overflow-hidden rounded-3xl border border-sage/80 bg-white shadow-xl lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center p-8 sm:p-12 lg:p-16">
+        <div className="overflow-hidden rounded-3xl border border-sage/80 bg-white shadow-xl lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center p-4 sm:p-6 lg:p-8">
           
           {/* Left Column: Copy & Action CTAs */}
           <div className="max-w-2xl">

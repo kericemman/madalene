@@ -1,6 +1,7 @@
 import { CodeOfResonanceEntry, codeOfResonanceTypes } from "../models/CodeOfResonanceEntry.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ok } from "../utils/apiResponse.js";
+import { sanitizeRichHtml } from "../utils/sanitizeHtml.js";
 
 export const listPublicCodeOfResonanceEntries = asyncHandler(async (req, res) => {
   const limit = Math.min(Math.max(Number(req.query.limit || 6), 1), 24);
@@ -22,7 +23,7 @@ export const listPublicCodeOfResonanceEntries = asyncHandler(async (req, res) =>
     .sort(sort)
     .limit(limit)
     .select(
-      "title slug contentType excerpt body ctaText ctaUrl category tags coverImage readingTimeMinutes strategicGoal editorialPlan source caseStudy testimonial seo updatedAt publishedAt createdAt"
+      "title slug contentType excerpt ctaText ctaUrl category tags coverImage readingTimeMinutes strategicGoal editorialPlan source caseStudy testimonial seo updatedAt publishedAt createdAt"
     )
     .populate("coverImage", "secureUrl optimizedUrl thumbnailUrl altText srcset")
     .lean();
@@ -49,5 +50,10 @@ export const getPublicCodeOfResonanceEntry = asyncHandler(async (req, res) => {
     });
   }
 
-  ok(res, "Code of Resonance entry loaded.", { entry });
+  ok(res, "Code of Resonance entry loaded.", {
+    entry: {
+      ...entry,
+      body: sanitizeRichHtml(entry.body)
+    }
+  });
 });

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logoTransparent from "../assets/brand/logo.png";
 import logoLockupDarkCrop from "../assets/brand/mw-lockup-dark-crop.png";
 
 export default function BrandLogo({ variant = "nav", onClick }) {
@@ -22,9 +23,9 @@ export default function BrandLogo({ variant = "nav", onClick }) {
       aria-label="Earned Credibility home"
     >
       <img
-        src={logoLockupDarkCrop}
+        src={logoTransparent}
         alt="Magdalene Wambui - Become The Trusted Choice"
-        className="h-full w-full object-contain object-left mix-blend-lighten"
+        className="h-full w-full object-contain object-left"
       />
     </Link>
   );

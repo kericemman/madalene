@@ -48,14 +48,14 @@ function FeaturedHeroCard({ entry }) {
   return (
     <article className="group relative overflow-hidden rounded-3xl border border-sage/80 bg-white shadow-xl transition-all hover:shadow-2xl">
       <div className="grid lg:grid-cols-[1.15fr_1fr]">
-        <div className="relative min-h-[300px] overflow-hidden bg-sage/40 lg:min-h-[460px]">
+        <div className="relative min-h-[320px] overflow-hidden bg-[linear-gradient(145deg,#0F4D3E_0%,#1A1A1A_58%,#B8D8C5_145%)] sm:min-h-[420px] lg:min-h-[520px]">
           <img
             src={coverSrc}
             srcSet={toSrcSet(entry.coverImage)}
             sizes="(min-width: 1024px) 55vw, 100vw"
             alt={entry.coverImage?.altText || entry.title}
             loading="eager"
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="absolute inset-0 h-full w-full object-contain p-3 transition duration-500 ease-out group-hover:brightness-105 sm:p-5"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-transparent to-transparent lg:hidden" />
         </div>
@@ -91,10 +91,13 @@ function FeaturedHeroCard({ entry }) {
             <span className="text-xs font-semibold text-charcoal/50">
               {formatDate(entry.publishedAt || entry.updatedAt)}
             </span>
-            <span className="relative z-20 inline-flex items-center gap-1.5 text-xs sm:text-sm font-extrabold text-deepEmerald group-hover:translate-x-1 transition-transform">
+            <Link
+              to={targetUrl}
+              className="relative z-20 inline-flex min-h-11 items-center gap-1.5 rounded-full px-1 text-xs font-extrabold text-deepEmerald transition-transform hover:text-charcoal focus:outline-none focus-visible:ring-2 focus-visible:ring-deepEmerald focus-visible:ring-offset-2 sm:text-sm"
+            >
               <span>Read insight</span>
               <ArrowRight size={15} />
-            </span>
+            </Link>
           </div>
         </div>
       </div>
@@ -150,10 +153,13 @@ function StandardCard({ entry }) {
           <span className="text-[11px] font-semibold text-charcoal/45">
             {formatDate(entry.publishedAt || entry.updatedAt)}
           </span>
-          <span className="relative z-20 inline-flex items-center gap-1 text-xs font-bold text-deepEmerald group-hover:translate-x-0.5 transition-transform">
+          <Link
+            to={targetUrl}
+            className="relative z-20 inline-flex min-h-11 items-center gap-1 rounded-full px-1 text-xs font-bold text-deepEmerald transition-transform hover:text-charcoal focus:outline-none focus-visible:ring-2 focus-visible:ring-deepEmerald focus-visible:ring-offset-2"
+          >
             <span>Read</span>
             <ArrowRight size={13} />
-          </span>
+          </Link>
         </div>
       </div>
     </article>

@@ -13,7 +13,7 @@ const router = Router();
 
 router.get("/public", listPublicMedia);
 router.get("/", ...requireAdmin, listMedia);
-router.get("/:id", getMedia);
+router.get("/:id", ...requireAdmin, getMedia);
 router.post("/", ...requireAdmin, uploadSingleFile, uploadMedia);
 router.delete("/:id", ...requireAdmin, deleteMedia);
 

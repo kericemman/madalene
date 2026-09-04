@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import SiteButton from "../../../components/SiteButton.jsx";
 import { listPublicReviews } from "../../../services/api.js";
+import earnedInsightImage from "../../../assets/home/earned.avif";
 import { magnificImages } from "../home/homeContent.js";
 
 const recognitionQuotes = [
@@ -211,7 +212,7 @@ export default function EarnedCredibilityIntensivePage({ actionPath, loading, of
               {/* Cropped Image Below Cost H2 */}
               <div className="mt-6 overflow-hidden rounded-2xl border border-white/15 shadow-lg">
                 <img
-                  src="/src/assets/home/earned.avif"
+                  src={earnedInsightImage}
                   alt="Earned credibility strategy insight"
                   className="w-full h-48 sm:h-56 object-cover object-top"
                 />
