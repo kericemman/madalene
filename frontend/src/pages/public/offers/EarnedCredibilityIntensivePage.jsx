@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import SiteButton from "../../../components/SiteButton.jsx";
-import { listPublicReviews } from "../../../services/api.js";
+import { listPublicMediaAssets } from "../../../services/api.js";
+import { imageUrl, toSrcSet } from "../../../utils/cloudinaryImage.js";
 import earnedInsightImage from "../../../assets/home/earned.avif";
 import { magnificImages } from "../home/homeContent.js";
 
@@ -115,16 +116,59 @@ function EditorialImage({ image, className = "", priority = false }) {
     <figure className={`overflow-hidden rounded-3xl border border-sage/80 bg-sage shadow-md ${className}`}>
       <img
         src={image.src}
+        srcSet={image.srcSet}
+        sizes={image.sizes}
         alt={image.alt}
         className="h-full w-full object-cover"
         style={{ objectPosition: image.objectPosition }}
         loading={priority ? "eager" : "lazy"}
+        onError={image.onError}
       />
     </figure>
   );
 }
 
 export default function EarnedCredibilityIntensivePage({ actionPath, loading, offer }) {
+  const [heroMedia, setHeroMedia] = useState(null);
+  const heroFallback = magnificImages.assessment;
+  const heroImage = useMemo(() => {
+    if (!heroMedia) return heroFallback;
+
+    return {
+      src: imageUrl(heroMedia, heroFallback.src),
+      srcSet: toSrcSet(heroMedia),
+      sizes: "(min-width: 1024px) 42vw, 100vw",
+      alt: heroMedia.altText || heroMedia.displayName || heroFallback.alt,
+      objectPosition: heroMedia.metadata?.objectPosition || heroFallback.objectPosition,
+      onError: (event) => {
+        event.currentTarget.src = heroFallback.src;
+        event.currentTarget.removeAttribute("srcset");
+      }
+    };
+  }, [heroFallback, heroMedia]);
+
+  useEffect(() => {
+    let active = true;
+
+    listPublicMediaAssets({
+      usage: "earned-credibility-hero",
+      q: "Tiba Nominee",
+      resourceType: "image",
+      limit: 1
+    })
+      .then((response) => {
+        if (!active) return;
+        setHeroMedia(response.data?.items?.[0] || null);
+      })
+      .catch(() => {
+        if (active) setHeroMedia(null);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <main className="bg-[#FAF9F6] text-charcoal">
       
@@ -165,7 +209,7 @@ export default function EarnedCredibilityIntensivePage({ actionPath, loading, of
             </div>
 
             <div className="mx-auto w-full max-w-md lg:max-w-none">
-              <EditorialImage image={magnificImages.assessment} priority className="aspect-[4/5]" />
+              <EditorialImage image={heroImage} priority className="aspect-[4/5]" />
               <p className="mt-3 border-l-2 border-deepEmerald pl-3 text-xs sm:text-sm leading-relaxed text-charcoal/70">
                 Your authority should not sound like everyone else's version of expertise.
               </p>

@@ -381,8 +381,7 @@ export default function PublicLayout() {
             <div>
               <BrandLogo variant="footer" />
               <p className="mt-4 max-w-md text-sm leading-7 text-mistWhite/70">
-                Helping wellness practitioners transform lived experience into earned credibility
-                and become the trusted choice.
+                Helping wellness practitioners position their expertise + lived experience so the right people understand why YOU and choose you with confidence.
               </p>
               <SiteButton
                 to="/assessment"

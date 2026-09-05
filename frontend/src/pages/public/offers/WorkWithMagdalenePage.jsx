@@ -58,11 +58,13 @@ export default function WorkWithMagdalenePage() {
             </div>
 
             <h1 className="mt-6 font-serif text-2xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-white leading-[1.15] text-balance">
-              Three deliberate pathways to make your earned credibility visible.
+                You’ve Earned the Credibility. Let’s Make It Easier to Choose YOU.
+
+
             </h1>
 
             <p className="mt-6 text-base sm:text-lg leading-relaxed text-mistWhite/75 font-serif italic">
-              "You don't need a louder megaphone. You need structural positioning that makes your expertise self-evident to the right clients."
+             Whether your positioning needs clarity, your personal brand needs direction, or you want hands-on support bringing it all together, choose the level of support that meets you where you are.
             </p>
           </div>
         </div>

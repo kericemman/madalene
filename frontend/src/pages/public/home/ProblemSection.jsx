@@ -1,5 +1,7 @@
-import { ArrowRight, Link } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import SiteButton from "../../../components/SiteButton.jsx";
+import { listPublicMediaAssets } from "../../../services/api.js";
+import { imageUrl, toSrcSet } from "../../../utils/cloudinaryImage.js";
 import { magnificImages } from "./homeContent.js";
 import { SectionEyebrow } from "./HomeShared.jsx";
 
@@ -9,6 +11,36 @@ const bulletPoints = [
 ];
 
 export default function ProblemSection() {
+  const [mediaImage, setMediaImage] = useState(null);
+  const fallbackImage = magnificImages.problem;
+  const problemImage = useMemo(() => {
+    if (!mediaImage) return fallbackImage;
+
+    return {
+      src: imageUrl(mediaImage, fallbackImage.src),
+      srcSet: toSrcSet(mediaImage),
+      alt: mediaImage.altText || mediaImage.displayName || fallbackImage.alt,
+      objectPosition: mediaImage.metadata?.objectPosition || fallbackImage.objectPosition
+    };
+  }, [fallbackImage, mediaImage]);
+
+  useEffect(() => {
+    let active = true;
+
+    listPublicMediaAssets({ q: "Favikon", resourceType: "image", limit: 1 })
+      .then((response) => {
+        if (!active) return;
+        setMediaImage(response.data?.items?.[0] || null);
+      })
+      .catch(() => {
+        if (active) setMediaImage(null);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <section
       id="earned-credibility"
@@ -83,11 +115,17 @@ export default function ProblemSection() {
           {/* Left Side: Visual Frame */}
           <div className="relative min-h-[480px] lg:min-h-[600px] overflow-hidden rounded-3xl border border-sage/80 bg-charcoal shadow-xl">
             <img
-              src={magnificImages.problem.src}
-              alt={magnificImages.problem.alt}
+              src={problemImage.src}
+              srcSet={problemImage.srcSet}
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              alt={problemImage.alt}
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: magnificImages.problem.objectPosition }}
+              style={{ objectPosition: problemImage.objectPosition }}
+              onError={(event) => {
+                event.currentTarget.src = fallbackImage.src;
+                event.currentTarget.removeAttribute("srcset");
+              }}
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(26,26,26,0.02)_34%,rgba(26,26,26,0.85)_100%),linear-gradient(115deg,rgba(15,77,62,0.3),transparent_58%)]" aria-hidden="true" />
             

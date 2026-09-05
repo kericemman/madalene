@@ -71,11 +71,11 @@ export default function CodeSubscribePage() {
               aria-hidden="true"
             />
             <img
-              src={magnificImages.finalCta.src}
-              alt={magnificImages.finalCta.alt}
+              src={magnificImages.emailSubscribe.src}
+              alt={magnificImages.emailSubscribe.alt}
               loading="eager"
               className="absolute inset-0 h-full w-full object-contain opacity-[0.88] mix-blend-soft-light sm:mix-blend-normal sm:opacity-90 lg:opacity-[0.88]"
-              style={{ objectPosition: magnificImages.finalCta.objectPosition }}
+              style={{ objectPosition: magnificImages.emailSubscribe.objectPosition }}
             />
             <div
               className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,77,62,0.2)_0%,rgba(26,26,26,0.18)_30%,rgba(26,26,26,0.94)_100%)] lg:bg-[linear-gradient(90deg,rgba(15,77,62,0.1)_0%,rgba(15,77,62,0.18)_36%,rgba(26,26,26,0.92)_100%)]"

@@ -58,7 +58,7 @@ export default function CodeSubscribeModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-hidden bg-charcoal/72 px-3 py-3 backdrop-blur-sm sm:px-6 sm:py-8"
+      className="fixed inset-0 z-50 overflow-hidden bg-charcoal/72 px-4 py-3 backdrop-blur-sm sm:px-6 sm:py-8"
       role="dialog"
       aria-modal="true"
       aria-label={title}
@@ -119,7 +119,7 @@ export default function CodeSubscribeModal({
 
             {message && (
               <div
-                className={`mt-5 flex gap-3 rounded border p-3 text-sm font-semibold ${
+                className={`mt-5 flex gap-3 rounded border p-4 text-sm font-semibold ${
                   status === "error"
                     ? "border-red-200 bg-red-50 text-red-700"
                     : "border-deepEmerald/20 bg-mutedMint text-deepEmerald"

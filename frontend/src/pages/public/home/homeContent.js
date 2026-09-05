@@ -48,6 +48,12 @@ const magnific = {
     src: "https://res.cloudinary.com/fkaaucee/image/upload/c_limit,dpr_auto,f_auto,q_auto,w_1280/v1/earned-credibility/site/home/maggy-safron-gardens-00425-edit?_a=BAMAPqM50",
     alt: "Magdalene Wambui seated in an emerald outfit with a white blazer.",
     objectPosition: "center 44%"
+  }, 
+
+  emailSubscribe: {
+    src: "https://res.cloudinary.com/fkaaucee/image/upload/v1788628244/MAGGY_SAFRON_GARDENS00388_1.jpg",
+    alt: "Magdalene Wambui smiling in a white blouse and emerald trousers in a garden.",
+    objectPosition: "center 42%"
   }
 };
 
@@ -59,7 +65,8 @@ export const magnificImages = {
   proof: magnific.problemGarden,
   founder: magnific.heroStudio,
   offers: magnific.clinicalNotes,
-  finalCta: magnific.credibilityLeadership
+  finalCta: magnific.credibilityLeadership,
+  emailSubscribe: magnific.emailSubscribe
 };
 
 export const dimensions = [

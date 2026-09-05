@@ -23,7 +23,7 @@ const uploadSchema = z.object({
   relatedModel: z.string().max(80).optional()
 });
 
-const publicMediaUsages = ["about-brand", "about-event"];
+const publicMediaUsages = ["about-brand", "about-event", "home-hero", "home-problem", "earned-credibility-hero"];
 const publicResourceTypes = ["image", "video"];
 
 const parseListParam = (value) =>
@@ -31,6 +31,8 @@ const parseListParam = (value) =>
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+
+const escapeRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export const uploadMedia = asyncHandler(async (req, res) => {
   if (!req.file) {
@@ -105,12 +107,17 @@ export const listPublicMedia = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
   const requestedUsages = parseListParam(req.query.usage).filter((usage) => publicMediaUsages.includes(usage));
   const requestedResourceType = publicResourceTypes.includes(req.query.resourceType) ? req.query.resourceType : "image";
+  const search = String(req.query.name || req.query.q || "").trim().slice(0, 80);
 
   const query = {
     resourceType: requestedResourceType,
     "context.usage": requestedUsages.length ? { $in: requestedUsages } : { $in: publicMediaUsages }
   };
   if (req.query.tag) query.tags = req.query.tag;
+  if (search) {
+    const searchRegex = new RegExp(escapeRegex(search), "i");
+    query.$or = [{ displayName: searchRegex }, { originalFilename: searchRegex }, { altText: searchRegex }];
+  }
 
   const [items, total] = await Promise.all([
     MediaAsset.find(query).sort({ "metadata.displayOrder": 1, createdAt: -1 }).skip(skip).limit(limit).lean(),

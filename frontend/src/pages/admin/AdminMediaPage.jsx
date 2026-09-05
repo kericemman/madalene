@@ -27,6 +27,8 @@ const usageOptions = [
   { value: "about-brand", label: "About brand logo" },
   { value: "about-event", label: "About event / invitation" },
   { value: "home-hero", label: "Home hero" },
+  { value: "home-problem", label: "Home problem section" },
+  { value: "earned-credibility-hero", label: "Earned Credibility hero" },
   { value: "email", label: "Email" },
   { value: "code-entry", label: "Code of Resonance entry" }
 ];
@@ -320,9 +322,9 @@ export default function AdminMediaPage() {
                 list="media-usage-options"
                 value={uploadForm.usage}
                 onChange={(event) => setUploadForm((current) => ({ ...current, usage: event.target.value }))}
-                placeholder="about-brand, about-event, email"
+                placeholder="home-problem, about-brand, email"
               />
-              <span className="text-xs leading-5 text-charcoal/52">Use about-brand for worked-with logos and about-event for invited events.</span>
+              <span className="text-xs leading-5 text-charcoal/52">Use home-problem for the homepage problem image, earned-credibility-hero for the Intensive hero, about-brand for logos, and about-event for invited events.</span>
             </label>
             <label className="grid gap-2 lg:col-span-2">
               <span className="text-sm font-extrabold text-charcoal">Tags</span>
@@ -413,7 +415,7 @@ export default function AdminMediaPage() {
               <label className="grid gap-2">
                 <span className="text-sm font-extrabold text-charcoal">Usage</span>
                 <input className="input bg-white" list="media-usage-options" value={editForm.usage} onChange={(event) => setEditForm((current) => ({ ...current, usage: event.target.value }))} />
-                <span className="text-xs leading-5 text-charcoal/52">About page: about-brand or about-event.</span>
+                <span className="text-xs leading-5 text-charcoal/52">Website images: home-problem, home-hero, earned-credibility-hero, about-brand, or about-event.</span>
               </label>
               <label className="grid gap-2">
                 <span className="text-sm font-extrabold text-charcoal">Tags</span>
